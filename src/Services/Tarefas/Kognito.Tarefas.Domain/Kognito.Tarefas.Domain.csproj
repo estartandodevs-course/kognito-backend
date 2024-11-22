@@ -10,4 +10,8 @@
     <PackageReference Include="EstartandoDevs.Core" Version="1.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="todo.md" />
+  </ItemGroup>
+
 </Project>
