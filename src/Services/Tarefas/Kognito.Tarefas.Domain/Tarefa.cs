@@ -10,6 +10,7 @@ public class Tarefa : Entity, IAggregateRoot
     public DateTime CriadoEm { get; private set; }
     public Guid TurmaId { get; private set; }
     public Entrega Entrega { get; private set; }
+    public Nota Nota { get; private set; }
     
     private Tarefa() { }
     
@@ -27,4 +28,5 @@ public class Tarefa : Entity, IAggregateRoot
     public void AtribuirDataFinalEntrega(DateTime dataFinalEntrega) => DataFinalEntrega = dataFinalEntrega;
     public void AtribuirTurmaId(Guid turmaId) => TurmaId = turmaId;
     public void AtribuirEntrega(Entrega entrega) => Entrega = entrega;
+    public void AtribuirNota(Nota nota) => Nota = nota;
 }

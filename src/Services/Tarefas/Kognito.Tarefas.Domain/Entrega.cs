@@ -5,7 +5,7 @@ namespace Kognito.Tarefas.Domain;
 
 using System;
 
-public class Entrega : Entity, IAggregateRoot
+public class Entrega : Entity
 {
     public string Conteudo { get; private set; }
     public DateTime EntregueEm { get; private set; }
