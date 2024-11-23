@@ -10,4 +10,8 @@
     <PackageReference Include="EstartandoDevs.Core" Version="1.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Kognito.Tarefas.Domain\Kognito.Tarefas.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
