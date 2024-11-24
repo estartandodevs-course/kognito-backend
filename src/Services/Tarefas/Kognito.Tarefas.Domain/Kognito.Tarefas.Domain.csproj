@@ -14,4 +14,8 @@
     <None Remove="todo.md" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="interfaces\INotaRepository.cs" />
+  </ItemGroup>
+
 </Project>

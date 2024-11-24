@@ -11,6 +11,7 @@ public class TarefaViewModel
     public DateTime CriadoEm { get; set; }
     public Guid TurmaId { get; set; }
     public EntregaViewModel Entrega { get; set; }
+    public NotaViewModel Nota { get; set; }
 
     public static TarefaViewModel Mapear(Tarefa tarefa)
     {
@@ -22,7 +23,8 @@ public class TarefaViewModel
             DataFinalEntrega = tarefa.DataFinalEntrega,
             CriadoEm = tarefa.CriadoEm,
             TurmaId = tarefa.TurmaId,
-            Entrega = tarefa.Entrega != null ? EntregaViewModel.Mapear(tarefa.Entrega) : null
+            Entrega = tarefa.Entrega != null ? EntregaViewModel.Mapear(tarefa.Entrega) : null,
+            Nota = tarefa.Nota != null ? NotaViewModel.Mapear(tarefa.Nota) : null
         };
     }
 }
