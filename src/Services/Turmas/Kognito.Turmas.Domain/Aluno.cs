@@ -1,12 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using EstartandoDevsCore.DomainObjects;
 
 namespace Kognito.Turmas.Domain;
 
-public class Aluno{
+public class Aluno
+{
     public Guid Id { get; set; }
     public string Neurodivergencia { get; set; }
     public int Ofensiva { get; private set; }
@@ -17,5 +14,17 @@ public class Aluno{
         Neurodivergencia = neurodivergencia;
         Ofensiva = ofensiva;
     }
+    private Aluno(){}
     
+    public void AtribuirNeurodivergencia(string neurodivergencia) => Neurodivergencia = neurodivergencia;
+
+    public void AcrescentaDiaOfensiva()
+    {
+        Ofensiva++;
+    }
+
+    public void ResetaOfensiva()
+    {
+        Ofensiva = 0;
+    }
 }
