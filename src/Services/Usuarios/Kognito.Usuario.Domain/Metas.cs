@@ -1,7 +1,7 @@
 using System;
 using EstartandoDevsCore.DomainObjects;
 
-namespace Kognito.Usuarios.Domain
+namespace Kognito.Usuarios.Domain;
 public class Metas : Entity, IAggregateRoot
 {
     public string Titulo { get; private set; }

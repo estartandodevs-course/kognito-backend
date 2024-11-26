@@ -35,13 +35,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kognito.Turmas.Domain", "sr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kognito.Turmas.Infra", "src\Services\Turmas\Kognito.Turmas.Infra\Kognito.Turmas.Infra.csproj", "{689AA795-5C82-49A3-8EEF-30DC12F65B35}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kognito.Usuario.Domain", "src\Services\Usuarios\Kognito.Usuario.Domain\Kognito.Usuario.Domain.csproj", "{6E91D2D5-7020-49C0-9DBA-58DA0C4F5C5C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kognito.Usuario.Infra", "src\Services\Usuarios\Kognito.Usuario.Infra\Kognito.Usuario.Infra.csproj", "{25550E36-A22C-47F2-B007-ED8A1A009D25}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{4B373631-F8E2-40A7-8D42-E410628326F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -80,6 +81,17 @@ Global
 		{689AA795-5C82-49A3-8EEF-30DC12F65B35}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{689AA795-5C82-49A3-8EEF-30DC12F65B35}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{689AA795-5C82-49A3-8EEF-30DC12F65B35}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E91D2D5-7020-49C0-9DBA-58DA0C4F5C5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E91D2D5-7020-49C0-9DBA-58DA0C4F5C5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E91D2D5-7020-49C0-9DBA-58DA0C4F5C5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E91D2D5-7020-49C0-9DBA-58DA0C4F5C5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25550E36-A22C-47F2-B007-ED8A1A009D25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25550E36-A22C-47F2-B007-ED8A1A009D25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25550E36-A22C-47F2-B007-ED8A1A009D25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25550E36-A22C-47F2-B007-ED8A1A009D25}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{81A29A9B-F322-480C-9890-258B564727E1} = {2B6E434F-CDA5-40CF-9B08-725DAFB78DB2}
@@ -97,5 +109,7 @@ Global
 		{44FD3288-53FC-4847-9051-32E9247C532F} = {D63E25C3-7DC4-4B35-8640-B597BD83285C}
 		{2DA55878-230F-4A62-A404-0E70A56DD41B} = {4A7A01E2-FC28-4D2D-8279-B25DB366619B}
 		{689AA795-5C82-49A3-8EEF-30DC12F65B35} = {4A7A01E2-FC28-4D2D-8279-B25DB366619B}
+		{6E91D2D5-7020-49C0-9DBA-58DA0C4F5C5C} = {FC176337-9B4B-4E56-9AA9-8CA09F09E4C4}
+		{25550E36-A22C-47F2-B007-ED8A1A009D25} = {FC176337-9B4B-4E56-9AA9-8CA09F09E4C4}
 	EndGlobalSection
 EndGlobal
