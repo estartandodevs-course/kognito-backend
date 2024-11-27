@@ -1,7 +1,5 @@
-using Kognito.Usuario.Domain;
+namespace Kognito.Usuario.App.ViewModels;
 
-namespace Kognito.Usuario.App.ViewModels
-{
     public class EmblemaViewModel
     {
         public Guid Id { get; set; }
@@ -19,4 +17,4 @@ namespace Kognito.Usuario.App.ViewModels
             DesbloqueadoEm = desbloqueadoEm;
         }
     }
-}
+

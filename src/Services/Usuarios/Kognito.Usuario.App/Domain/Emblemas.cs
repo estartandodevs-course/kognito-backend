@@ -1,7 +1,7 @@
 using EstartandoDevsCore.DomainObjects;
 
-namespace Kognito.Usuarios.Domain
-{
+namespace Kognito.Usuarios.App.Domain;
+
     public class Emblemas : Entity, IAggregateRoot
 {
     public string Nome { get; private set; }
@@ -27,4 +27,3 @@ namespace Kognito.Usuarios.Domain
 
 }
 
-}

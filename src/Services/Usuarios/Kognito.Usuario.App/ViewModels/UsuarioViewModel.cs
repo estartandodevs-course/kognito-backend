@@ -1,5 +1,3 @@
-using Kognito.Usuario.Domain;
-
 namespace Kognito.Usuario.App.ViewModels
 {
     public class UsuarioViewModel
