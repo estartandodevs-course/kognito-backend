@@ -5,10 +5,10 @@ namespace Kognito.Turmas.Domain;
 public class Enturmamento : Entity, IAggregateRoot
 {
     // trocar string por usuario
-    public string Aluno { get; set; }
+    public Usuario Aluno { get; set; }
     public Turma Turma { get; set; }
     public EnturtamentoStatus Status { get; set; }
-    public Enturmamento(string aluno, Turma turma, EnturtamentoStatus status)
+    public Enturmamento(Usuario aluno, Turma turma, EnturtamentoStatus status)
     {
         Aluno = aluno;
         Turma = turma;
@@ -16,7 +16,7 @@ public class Enturmamento : Entity, IAggregateRoot
     }
     private Enturmamento(){}
     
-    public void AtribuirAluno(string aluno) => Aluno = aluno;
+    public void AtribuirAluno(string aluno) => Aluno = Aluno;
 
     public void AtrbuirTurma(string turma) => Turma = Turma; 
 

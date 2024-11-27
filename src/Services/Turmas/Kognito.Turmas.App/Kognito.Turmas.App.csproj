@@ -6,4 +6,18 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Events\" />
+    <Folder Include="Queries\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EstartandoDevs.Core" Version="1.0.0" />
+    <PackageReference Include="EstartandoDevsWebApi.Core" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Kognito.Turmas.Domain\Kognito.Turmas.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,17 +1,18 @@
 using EstartandoDevsCore.DomainObjects;
 
+
 namespace Kognito.Turmas.Domain;
 
 public class Turma : Entity, IAggregateRoot
 { 
     //Tirar esse string e colocar Usuario
-    public string Professor{ get; set; }
-    public string Nome { get; set; }
-    public string Descricao { get; set; }
-    public string Materia { get; set; }
-    public string LinkAcesso { get; set; }
+    public Usuario Professor{ get; private set; }
+    public string Nome { get; private set; }
+    public string Descricao { get; private set; }
+    public string Materia { get; private set; }
+    public string LinkAcesso { get; private set; }
 
-    public Turma(string professor, string nome, string descricao, string materia, string linkAcesso)
+    public Turma(Usuario professor, string nome, string descricao, string materia, string linkAcesso)
     {
         Professor = professor;
         Nome = nome;
@@ -21,7 +22,7 @@ public class Turma : Entity, IAggregateRoot
     }
     private Turma(){}
 
-    public void AtribuirProfessor(string professor) => Professor = professor;
+    public void AtribuirProfessor(string professor) => Professor = Professor;
     public void AtribuirNome(string nome) => Nome = nome;
     public void AtribuirDescricao(string descricao) => Descricao = descricao;
     public void AtribuirMateria(string materia) => Materia = materia;

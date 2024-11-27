@@ -4,8 +4,8 @@ namespace Kognito.Turmas.Domain;
 
 public class Aluno
 {
-    public Guid Id { get; set; }
-    public string Neurodivergencia { get; set; }
+    public Guid Id { get; private set; }
+    public string Neurodivergencia { get; private set; }
     public int Ofensiva { get; private set; }
         
     public Aluno(Guid id, string neurodivergencia, int ofensiva)
