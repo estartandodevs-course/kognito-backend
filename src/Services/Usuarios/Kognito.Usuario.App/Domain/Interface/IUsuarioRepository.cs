@@ -1,10 +1,10 @@
 using System;
 using EstartandoDevsCore.Data;
 
-namespace Kognito.Usuarios.Domain.interfaces;
+namespace Kognito.Usuarios.App.Domain;
 public interface IUsuariosRepository : IRepository<Usuarios>
 {
-    Task<Usuarios> ObterPorId(Guid usuarioId);
+    Task<App.Domain.Usuarios> ObterPorId(Guid usuarioId);
     void Adicionar(Usuarios usuario);
     void Atualizar(Usuarios usuario);
     void Remover(Usuarios usuario);

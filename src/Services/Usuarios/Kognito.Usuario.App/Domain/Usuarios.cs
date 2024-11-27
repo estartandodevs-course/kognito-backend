@@ -2,7 +2,8 @@ using System;
 using EstartandoDevsCore.DomainObjects;
 using EstartandoDevsCore.ValueObjects;
 
-namespace Kognito.Usuarios.Domain;
+namespace Kognito.Usuarios.App.Domain;
+
 public class Usuarios : Entity, IAggregateRoot
 {
     public string Nome { get; private set; }
@@ -10,7 +11,9 @@ public class Usuarios : Entity, IAggregateRoot
     public Login Login { get; private set; }
     public string Neurodivergencia { get; private set; }
 
-    private Usuarios() { }
+    private Usuarios()
+    {
+    }
 
     public Usuarios(string nome, Cpf cpf, string neurodivergencia) : this()
     {

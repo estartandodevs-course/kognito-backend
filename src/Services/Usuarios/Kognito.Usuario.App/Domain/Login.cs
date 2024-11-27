@@ -1,7 +1,7 @@
 using EstartandoDevsCore.DomainObjects;
 using EstartandoDevsCore.ValueObjects;
 
-namespace Kognito.Usuarios.Domain;
+namespace Kognito.Usuarios.App.Domain;
 public sealed class Login : Entity, IAggregateRoot
 {
     public Guid Hash { get; private set; }
