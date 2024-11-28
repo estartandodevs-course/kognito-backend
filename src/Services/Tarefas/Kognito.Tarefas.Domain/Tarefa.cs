@@ -9,8 +9,7 @@ public class Tarefa : Entity, IAggregateRoot
     public DateTime DataFinalEntrega { get; private set; }
     public DateTime CriadoEm { get; private set; }
     public Guid TurmaId { get; private set; }
-    public Entrega Entrega { get; private set; }
-    public Nota Nota { get; private set; }
+    public ICollection<Entrega> Entregas { get; private set; } = new List<Entrega>();
     
     private Tarefa() { }
     
@@ -27,6 +26,5 @@ public class Tarefa : Entity, IAggregateRoot
     public void AtribuirConteudo(string conteudo) => Conteudo = conteudo;
     public void AtribuirDataFinalEntrega(DateTime dataFinalEntrega) => DataFinalEntrega = dataFinalEntrega;
     public void AtribuirTurmaId(Guid turmaId) => TurmaId = turmaId;
-    public void AtribuirEntrega(Entrega entrega) => Entrega = entrega;
-    public void AtribuirNota(Nota nota) => Nota = nota;
+    public void AdicionarEntrega(Entrega entrega) => Entregas.Add(entrega);
 }

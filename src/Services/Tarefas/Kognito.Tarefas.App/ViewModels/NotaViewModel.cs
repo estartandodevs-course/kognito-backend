@@ -9,6 +9,7 @@ public class NotaViewModel
     public double ValorNota { get; set; }
     public Guid AlunoId { get; set; }
     public Guid TurmaId { get; set; }
+    public Guid EntregaId { get; set; }
     public DateTime AtribuidoEm { get; set; }
 
     public static NotaViewModel Mapear(Nota nota)
@@ -20,6 +21,7 @@ public class NotaViewModel
             ValorNota = nota.ValorNota,
             AlunoId = nota.AlunoId,
             TurmaId = nota.TurmaId,
+            EntregaId = nota.EntregaId,
             AtribuidoEm = nota.AtribuidoEm
         };
     }
