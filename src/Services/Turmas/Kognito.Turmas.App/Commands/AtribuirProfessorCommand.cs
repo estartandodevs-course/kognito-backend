@@ -7,18 +7,12 @@ namespace Kognito.Turmas.App.Commands;
 
 public class AtribuirProfessorCommand : Command
 {
-
-
-    public Guid Id { get; set; }
-    public Usuario Professor{ get; set; }
-    public Cpf Cpf { get; set; }
-    public string Name { get; set; }
-
-    public AtribuirProfessorCommand(Guid id, Usuario professor, Cpf cpf, string name)
+    public Guid TurmaId { get; set; }
+    public Guid ProfessorId { get; set; }
+    
+    public AtribuirProfessorCommand(Guid turmaId, Guid professorId)
     {
-        Id = id;
-        Professor = professor;
-        Cpf = cpf;
-        Name = name;
+        TurmaId = turmaId;
+        ProfessorId = professorId;
     }
 }

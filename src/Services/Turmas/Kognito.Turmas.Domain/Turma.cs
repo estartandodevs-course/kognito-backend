@@ -11,14 +11,16 @@ public class Turma : Entity, IAggregateRoot
     public string Descricao { get; private set; }
     public string Materia { get; private set; }
     public string LinkAcesso { get; private set; }
+    public string Cor { get; private set; }
 
-    public Turma(Usuario professor, string nome, string descricao, string materia, string linkAcesso)
+    public Turma(Usuario professor, string nome, string descricao, string materia, string linkAcesso, string cor)
     {
         Professor = professor;
         Nome = nome;
         Descricao = descricao;
         Materia = materia;
         LinkAcesso = linkAcesso;
+        Cor = cor;
     }
     private Turma(){}
 
@@ -27,4 +29,5 @@ public class Turma : Entity, IAggregateRoot
     public void AtribuirDescricao(string descricao) => Descricao = descricao;
     public void AtribuirMateria(string materia) => Materia = materia;
     public void AtribuirLinkAcesso(string linkAcesso) => LinkAcesso = linkAcesso;
+    public void AtribuirCor(string cor) => Cor = cor;
 }

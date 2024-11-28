@@ -6,17 +6,13 @@ namespace Kognito.Turmas.App.Commands;
 
 public class ExcluirAlunoDaTurmaCommand
 {
-
-    public Guid Id { get; set; }
-    public Usuario Aluno { get; set; }
-    public Turma Turma { get; set; }
+    public Guid AlunoId { get; set; }
+    public Guid TurmaId { get; set; }
     public EnturtamentoStatus Status { get; set; }
-
-    public ExcluirAlunoDaTurmaCommand(Guid id, Usuario aluno, Turma turma, EnturtamentoStatus status)
+    public ExcluirAlunoDaTurmaCommand(Guid alunoId, Guid turmaId, EnturtamentoStatus status)
     {
-        Id = id;
-        Aluno = aluno;
-        Turma = turma;
+        AlunoId = alunoId;
+        TurmaId = turmaId;
         Status = status;
     }
 }

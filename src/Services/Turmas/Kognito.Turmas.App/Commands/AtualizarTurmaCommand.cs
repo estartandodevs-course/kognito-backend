@@ -1,5 +1,6 @@
 using System;
 using EstartandoDevsCore.Messages;
+using Kognito.Turmas.App.ViewModels;
 using Kognito.Turmas.Domain;
 
 namespace Kognito.Turmas.App.Commands;

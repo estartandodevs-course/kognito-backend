@@ -7,12 +7,12 @@ namespace Kognito.Turmas.App.Commands;
 
 public class CriarTurmaCommand : Command
 {
-    public Guid Id { get; private set; }
-    public Usuario Professor{ get; private set; }
-    public string Nome { get; private set; }
-    public string Descricao { get; private set; }
-    public string Materia { get; private set; }
-    public string LinkAcesso { get; private set; }
+    public Guid Id { get;  set; }
+    public Usuario Professor{ get;  set; }
+    public string Nome { get;  set; }
+    public string Descricao { get;  set; }
+    public string Materia { get;  set; }
+    public string LinkAcesso { get;  set; }
 
     public CriarTurmaCommand(Guid id, Usuario professor, string nome, string descricao, string materia, string linkAcesso)
     {

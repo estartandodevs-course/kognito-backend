@@ -6,15 +6,12 @@ namespace Kognito.Turmas.App.Commands;
 public class ExcluirConteudo : Command 
 {
 
-    public Guid Id { get; set; }
-    public string Titulo { get; set; }
-    public string ConteudoDidatico { get; set; }
+    public Guid ConteudoId { get; set; }
 
-    public ExcluirConteudo(Guid id, string titulo, string conteudoDidatico)
+    public ExcluirConteudo(Guid conteudoId)
     {
-        Id = id;
-        Titulo = titulo;
-        ConteudoDidatico = conteudoDidatico;
+        ConteudoId = conteudoId;
+
     }
 }
 

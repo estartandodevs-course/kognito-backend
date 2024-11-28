@@ -9,13 +9,9 @@
   <ItemGroup>
     <PackageReference Include="EstartandoDevs.Core" Version="1.0.0" />
   </ItemGroup>
-<<<<<<< HEAD
 
   <ItemGroup>
     <ProjectReference Include="..\Kognito.Usuario.Domain\Kognito.Usuario.Domain.csproj" />
   </ItemGroup>
 
-=======
-  
->>>>>>> 32bd31c2f1164efd093ef82248b36287cb2f17e3
 </Project>
