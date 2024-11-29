@@ -20,5 +20,5 @@
   <ItemGroup>
     <ProjectReference Include="..\Kognito.Tarefas.Domain\Kognito.Tarefas.Domain.csproj" />
   </ItemGroup>
-
+  
 </Project>

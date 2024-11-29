@@ -1,8 +1,8 @@
 ﻿using EstartandoDevsCore.Data;
-using EstartandoDevsCore.Ultilities;
 using EstartandoDevsCore.DomainObjects;
 using EstartandoDevsCore.Mediator;
 using EstartandoDevsCore.Messages;
+using EstartandoDevsCore.Ultilities;
 using Kognito.Tarefas.Domain;
 using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
@@ -11,13 +11,13 @@ namespace Kognito.Tarefas.Infra.Data;
 
 public class TarefasContext : DbContext, IUnitOfWorks
 {
-    private readonly IMediatorHandler _mediatorHandler;
+    private readonly IMediatorHandler? _mediatorHandler;
 
     public DbSet<Tarefa> Tarefas { get; set; }
     public DbSet<Entrega> Entregas { get; set; }
     public DbSet<Nota> Notas { get; set; }
 
-    public TarefasContext(DbContextOptions<TarefasContext> options, IMediatorHandler mediatorHandler)
+    public TarefasContext(DbContextOptions<TarefasContext> options, IMediatorHandler? mediatorHandler = null)
         : base(options)
     {
         _mediatorHandler = mediatorHandler;
@@ -55,20 +55,25 @@ public class TarefasContext : DbContext, IUnitOfWorks
         {
             if (entry.State == EntityState.Added)
             {
-                entry.Property("CriadoEm").CurrentValue = 
+                entry.Property("CriadoEm").CurrentValue =
                     TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, cetZone);
             }
         }
 
         var sucesso = await SaveChangesAsync() > 0;
 
-        if (sucesso) await PublicarEventos();
+        if (sucesso && _mediatorHandler != null)
+        {
+            await PublicarEventos();
+        }
 
         return sucesso;
     }
 
     private async Task PublicarEventos()
     {
+        if (_mediatorHandler == null) return;
+
         var domainEntities = ChangeTracker
             .Entries<Entity>()
             .Where(x => x.Entity.Notificacoes != null && x.Entity.Notificacoes.Any());
