@@ -1,5 +1,4 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
@@ -25,11 +24,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kognito.Turmas.Infra", "Tur
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Usuarios", "Usuarios", "{0028B2B0-C6E7-48FC-94E9-1084385580B2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kognito.Tarefas.Infra", "Usuarios\Kognito.Tarefas.Infra\Kognito.Tarefas.Infra.csproj", "{03F6758C-F72A-4156-8537-29C390C494E8}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kognito.Usuario.App", "Usuarios\Kognito.Usuario.App\Kognito.Usuario.App.csproj", "{A5DEF216-6D8E-46CF-98C3-9E1103BB5D8E}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kognito.Usuarios.Domain", "Usuarios\Kognito.Usuarios.Domain\Kognito.Usuarios.Domain.csproj", "{0901A238-CEB9-4A8D-ACA2-0D2A1D262322}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -65,18 +60,10 @@ Global
 		{1ED0121C-ABF0-4254-A724-CC805D2724B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1ED0121C-ABF0-4254-A724-CC805D2724B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1ED0121C-ABF0-4254-A724-CC805D2724B3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{03F6758C-F72A-4156-8537-29C390C494E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{03F6758C-F72A-4156-8537-29C390C494E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{03F6758C-F72A-4156-8537-29C390C494E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{03F6758C-F72A-4156-8537-29C390C494E8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A5DEF216-6D8E-46CF-98C3-9E1103BB5D8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A5DEF216-6D8E-46CF-98C3-9E1103BB5D8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A5DEF216-6D8E-46CF-98C3-9E1103BB5D8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A5DEF216-6D8E-46CF-98C3-9E1103BB5D8E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0901A238-CEB9-4A8D-ACA2-0D2A1D262322}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0901A238-CEB9-4A8D-ACA2-0D2A1D262322}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0901A238-CEB9-4A8D-ACA2-0D2A1D262322}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0901A238-CEB9-4A8D-ACA2-0D2A1D262322}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -89,9 +76,7 @@ Global
 		{05144728-1B2C-42A0-A3E9-5E40E196C938} = {45900582-51E4-4476-99D2-354100706CAE}
 		{F9CF9583-2585-44EC-AEAE-AC9B9D3D9430} = {45900582-51E4-4476-99D2-354100706CAE}
 		{1ED0121C-ABF0-4254-A724-CC805D2724B3} = {45900582-51E4-4476-99D2-354100706CAE}
-		{03F6758C-F72A-4156-8537-29C390C494E8} = {0028B2B0-C6E7-48FC-94E9-1084385580B2}
 		{A5DEF216-6D8E-46CF-98C3-9E1103BB5D8E} = {0028B2B0-C6E7-48FC-94E9-1084385580B2}
-		{0901A238-CEB9-4A8D-ACA2-0D2A1D262322} = {0028B2B0-C6E7-48FC-94E9-1084385580B2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9F31FD6F-CD48-4C3C-A794-9BB59A836BFD}

@@ -11,7 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Kognito.Usuario.Domain\Kognito.Usuario.Domain.csproj" />
+    <Folder Include="Domain\" />
+    <Folder Include="Infra\" />
   </ItemGroup>
 
 </Project>
