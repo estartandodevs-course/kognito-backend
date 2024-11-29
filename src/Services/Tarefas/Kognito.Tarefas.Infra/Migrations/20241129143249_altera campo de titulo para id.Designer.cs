@@ -4,6 +4,7 @@ using Kognito.Tarefas.Infra.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Kognito.Tarefas.Infra.Migrations
 {
     [DbContext(typeof(TarefasContext))]
-    partial class TarefasContextModelSnapshot : ModelSnapshot
+    [Migration("20241129143249_altera campo de titulo para id")]
+    partial class alteracampodetituloparaid
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

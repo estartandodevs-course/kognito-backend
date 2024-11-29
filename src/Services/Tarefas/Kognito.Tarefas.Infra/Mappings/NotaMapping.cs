@@ -12,7 +12,7 @@ public class NotaMapping : IEntityTypeConfiguration<Nota>
 
         builder.HasKey(x => x.Id);
 
-        builder.Property(c => c.TituloTarefa)
+        builder.Property(c => c.EntregaId)
             .IsRequired();
 
         builder.Property(c => c.ValorNota)

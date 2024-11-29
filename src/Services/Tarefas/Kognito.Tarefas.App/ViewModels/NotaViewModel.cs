@@ -5,7 +5,6 @@ namespace Kognito.Tarefas.App.ViewModels;
 public class NotaViewModel
 {
     public Guid Id { get; set; }
-    public string TituloTarefa { get; set; }
     public double ValorNota { get; set; }
     public Guid AlunoId { get; set; }
     public Guid TurmaId { get; set; }
@@ -17,7 +16,6 @@ public class NotaViewModel
         return new NotaViewModel
         {
             Id = nota.Id,
-            TituloTarefa = nota.TituloTarefa,
             ValorNota = nota.ValorNota,
             AlunoId = nota.AlunoId,
             TurmaId = nota.TurmaId,

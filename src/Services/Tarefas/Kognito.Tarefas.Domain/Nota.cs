@@ -4,7 +4,6 @@ namespace Kognito.Tarefas.Domain;
 
 public class Nota : Entity
 {
-    public string TituloTarefa { get; private set; }
     public double ValorNota { get; private set; }
     public Guid AlunoId { get; private set; }
     public Guid TurmaId { get; private set; }
@@ -14,9 +13,8 @@ public class Nota : Entity
 
     private Nota() { }
 
-    public Nota(string tituloTarefa, double valorNota, Guid alunoId, Guid turmaId, Guid entregaId) : this()
+    public Nota(double valorNota, Guid alunoId, Guid turmaId, Guid entregaId) : this()
     {
-        TituloTarefa = tituloTarefa;
         ValorNota = valorNota;
         AlunoId = alunoId;
         TurmaId = turmaId;
@@ -24,7 +22,6 @@ public class Nota : Entity
         AtribuidoEm = DateTime.Now;
     }
 
-    public void AtribuirTituloTarefa(string tituloTarefa) => TituloTarefa = tituloTarefa;
     public void AtribuirValorNota(double valorNota) 
     {
         ValorNota = valorNota;
