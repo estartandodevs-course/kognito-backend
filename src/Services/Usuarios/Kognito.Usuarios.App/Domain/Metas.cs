@@ -9,7 +9,7 @@ public class Metas : Entity, IAggregateRoot
     public string Descricao { get; private set; }
     public bool Concluida { get; private set; }
     public DateTime CriadaEm { get; private set; }
-    public DateTime? ConcluidaEm { get; private set; } //Data e hora em que a meta foi concluída, inicialmente null.
+    public DateTime? ConcluidaEm { get; private set; } 
     private Metas() 
     {
         CriadaEm = DateTime.Now;

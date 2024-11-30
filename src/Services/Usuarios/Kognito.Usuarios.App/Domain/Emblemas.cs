@@ -1,3 +1,4 @@
+using System;
 using EstartandoDevsCore.DomainObjects;
 
 namespace Kognito.Usuarios.App.Domain;
