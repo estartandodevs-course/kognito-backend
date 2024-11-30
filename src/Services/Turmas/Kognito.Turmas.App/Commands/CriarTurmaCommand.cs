@@ -1,4 +1,5 @@
 using EstartandoDevsCore.Messages;
+using FluentValidation.Results;
 using Kognito.Turmas.Domain;
 
 public class CriarTurmaCommand : Command
