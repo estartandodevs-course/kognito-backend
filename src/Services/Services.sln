@@ -24,7 +24,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kognito.Turmas.Infra", "Tur
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Usuarios", "Usuarios", "{0028B2B0-C6E7-48FC-94E9-1084385580B2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kognito.Usuario.App", "Usuarios\Kognito.Usuario.App\Kognito.Usuario.App.csproj", "{A5DEF216-6D8E-46CF-98C3-9E1103BB5D8E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kognito.Usuarios.App", "Usuarios\Kognito.Usuarios.App\Kognito.Usuarios.App.csproj", "{A5DEF216-6D8E-46CF-98C3-9E1103BB5D8E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

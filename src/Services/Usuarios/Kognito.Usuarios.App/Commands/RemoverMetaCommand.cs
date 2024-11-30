@@ -1,6 +1,8 @@
+using System;
+
 using EstartandoDevsCore.Messages;
 
-namespace Kognito.Usuario.App.Commands;
+namespace Kognito.Usuarios.App.Commands;
 
     public class RemoverMetaCommand : Command
     {
