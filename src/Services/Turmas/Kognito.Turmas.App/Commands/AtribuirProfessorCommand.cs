@@ -12,7 +12,17 @@ public class AtribuirProfessorCommand : Command
     
     public AtribuirProfessorCommand(Guid turmaId, Guid professorId)
     {
+        ValidarIds(turmaId, professorId);
+
         TurmaId = turmaId;
         ProfessorId = professorId;
+    }
+    private void ValidarIds(Guid turmaId, Guid professorId)
+    {
+        if (turmaId == Guid.Empty)
+            throw new ArgumentException("Id da turma inválido", nameof(turmaId));
+            
+        if (professorId == Guid.Empty)
+            throw new ArgumentException("Id do professor inválido", nameof(professorId));
     }
 }

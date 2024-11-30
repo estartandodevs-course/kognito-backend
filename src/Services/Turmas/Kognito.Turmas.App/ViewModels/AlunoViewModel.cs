@@ -13,6 +13,9 @@ public class AlunoViewModel
 
    public static AlunoViewModel Mapear(Aluno aluno)
    {
+        if(aluno == null)
+            return null;
+
         return new AlunoViewModel
         {
             Id = aluno.Id,

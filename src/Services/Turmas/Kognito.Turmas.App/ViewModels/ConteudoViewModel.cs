@@ -11,6 +11,9 @@ public class ConteudoViewModel
 
     public static ConteudoViewModel Mapear(Conteudo conteudo)
     {
+        if(conteudo == null)
+            return null;
+
         return new ConteudoViewModel
         {
             Id = conteudo.Id,

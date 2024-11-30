@@ -1,7 +1,7 @@
 using EstartandoDevsCore.DomainObjects;
 
 namespace Kognito.Turmas.Domain;
-
+//DELETA ESSA PORRA
 public class Aluno
 {
     public Guid Id { get; private set; }
@@ -18,13 +18,4 @@ public class Aluno
     
     public void AtribuirNeurodivergencia(string neurodivergencia) => Neurodivergencia = neurodivergencia;
 
-    public void AcrescentaDiaOfensiva()
-    {
-        Ofensiva++;
-    }
-
-    public void ResetaOfensiva()
-    {
-        Ofensiva = 0;
-    }
 }

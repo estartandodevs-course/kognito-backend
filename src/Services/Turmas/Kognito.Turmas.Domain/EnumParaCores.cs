@@ -1,8 +1,8 @@
 using System;
 
-namespace Kognito.Turmas.App.ViewModels;
+namespace Kognito.Turmas.Domain;
 
-public class EnumParaCoresViewModel
+public class EnumParaCores
 {
     public enum Cor
     {

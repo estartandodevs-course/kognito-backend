@@ -4,21 +4,22 @@ using EstartandoDevsCore.ValueObjects;
 
 namespace Kognito.Turmas.Domain;
 
-public class Usuario : Entity, IAggregateRoot
+public class Usuario
 {
+    public Guid Id { get; private set; }
     public string Nome { get; private set; }
-    public Cpf Cpf { get; private set; }
-    public string Neurodivergencia { get; private set; }
+    protected Usuario(){}
 
-    private Usuario(){}
-
-    public Usuario(string nome, Cpf cpf, string neurodivergencia)
+    public Usuario(string nome, Guid id)
     {
+        ValidarNome(nome);
         Nome = nome;
-        Cpf = cpf;
-        Neurodivergencia = neurodivergencia;
-    }
+        Id = id;
 
-    public void AtribuirNome (string nome) => Nome = nome;
-    public void AtribuirNeurodivergencia(string neurodivergencia) => Neurodivergencia = neurodivergencia;
+    }
+    private void ValidarNome(string nome)
+    {
+        if (string.IsNullOrWhiteSpace(nome))
+            throw new ArgumentException("Nome não pode ser vazio ou nulo");
+    }
 }

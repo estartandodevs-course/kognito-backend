@@ -11,6 +11,7 @@ public class ProfessorViewModel
     {
         Id = id;
         Nome = nome;
+
     }
 
 }

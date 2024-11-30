@@ -9,15 +9,21 @@ public class AtualizarAlunoCommand : Command
 
     public Guid Id { get; set; }
     public Guid AlunoId { get; set; }
-    public string Neurodivergencia { get; set; }
-    public int Ofensiva { get; set; }
 
-    public AtualizarAlunoCommand(Guid id, Guid alunoId, string neurodivergencia, int ofensiva)
+
+    public AtualizarAlunoCommand(Guid id, Guid alunoId)
     {
+        ValidarIds(id, alunoId);
         Id = id;
         AlunoId = alunoId;
-        Neurodivergencia = neurodivergencia;
-        Ofensiva = ofensiva;
+    }
+    private void ValidarIds(Guid id, Guid alunoId)
+    {
+        if (id == Guid.Empty)
+            throw new ArgumentException("Id inválido", nameof(id));
+            
+        if (alunoId == Guid.Empty)
+            throw new ArgumentException("Id do aluno inválido", nameof(alunoId));
     }
  
 }

@@ -10,6 +10,9 @@ public class ExcluirTurmaCommand : Command
 
     public ExcluirTurmaCommand(Guid turmaId)
     {
+        if (turmaId == Guid.Empty)
+            throw new ArgumentException("Id da turma inválido", nameof(turmaId));
+            
         TurmaId = turmaId;
     }
 
