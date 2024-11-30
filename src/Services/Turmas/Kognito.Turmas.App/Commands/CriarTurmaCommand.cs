@@ -1,5 +1,6 @@
 using System;
 using EstartandoDevsCore.Messages;
+using FluentValidation.Results;
 using Kognito.Turmas.Domain;
 using MediatR;
 

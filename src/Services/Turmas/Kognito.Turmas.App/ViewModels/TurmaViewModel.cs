@@ -11,6 +11,8 @@ public class TurmaViewModel
     public string Descricao { get; set; }
     public string Materia { get; set; }
     public string LinkAcesso { get; set; }
+    
+    
     public EnumParaCores Cor { get; set; }
     public EnumParaIcones Icones { get; set; }
     public static TurmaViewModel Mapear(Turma turma)
@@ -31,3 +33,5 @@ public class TurmaViewModel
         };
     }
 }
+
+

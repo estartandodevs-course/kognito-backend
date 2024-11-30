@@ -8,7 +8,6 @@ public class Usuario
 {
     public Guid Id { get; private set; }
     public string Nome { get; private set; }
-    protected Usuario(){}
 
     public Usuario(string nome, Guid id)
     {
