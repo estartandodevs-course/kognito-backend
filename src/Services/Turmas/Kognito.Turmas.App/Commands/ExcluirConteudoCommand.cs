@@ -10,6 +10,9 @@ public class ExcluirConteudo : Command
 
     public ExcluirConteudo(Guid conteudoId)
     {
+        if (conteudoId == Guid.Empty)
+            throw new ArgumentException("Id do conteúdo inválido", nameof(conteudoId));
+            
         ConteudoId = conteudoId;
 
     }

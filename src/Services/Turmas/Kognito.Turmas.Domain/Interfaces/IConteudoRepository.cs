@@ -7,8 +7,9 @@ namespace Kognito.Turmas.Domain.Interfaces;
 public interface IConteudoRepository : IRepository<Conteudo>, IDisposable
 {
     Task<IEnumerable<Conteudo>> ObterTodosConteudo();
-    void Adicionar(Conteudo conteudo);
-    void Atualizar(Conteudo conteudo);
-    void Remover (Conteudo conteudo);
-    DbConnection ObterConexao();
+    Task Adicionar(Conteudo conteudo);
+    Task Atualizar(Conteudo conteudo);
+    Task Remover(Conteudo conteudo);
+    Task<DbConnection> ObterConexao();
+
 }
