@@ -10,6 +10,7 @@ public class Metas : Entity, IAggregateRoot
     public bool Concluida { get; private set; }
     public DateTime CriadaEm { get; private set; }
     public DateTime? ConcluidaEm { get; private set; } 
+    
     private Metas() 
     {
         CriadaEm = DateTime.Now;
@@ -26,15 +27,21 @@ public class Metas : Entity, IAggregateRoot
 
     public void AtribuirDescricao(string descricao) => Descricao = descricao;
 
-    public void MarcarComoConcluida() //Define a meta como concluída e registra o momento atual em ConcluidaEm//
+    public void Concluir()
     {
-        Concluida = true;
-        ConcluidaEm = DateTime.Now;
+        if (!Concluida)
+        {
+            Concluida = true;
+            ConcluidaEm = DateTime.Now;
+        }
     }
 
-    public void DesmarcarComoConcluida()
+    public void Reabrir()
     {
-        Concluida = false;
-        ConcluidaEm = null;
+        if (Concluida)
+        {
+            Concluida = false;
+            ConcluidaEm = null;
+        }
     }
 }

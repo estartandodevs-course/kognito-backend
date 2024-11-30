@@ -10,11 +10,13 @@ public class UsuarioRepository : IUsuariosRepository
 {
     private readonly UsuarioContext _context;
     protected readonly DbSet<Usuario> DbSet;
+    protected readonly DbSet<Metas> MetasSet;
 
     public UsuarioRepository(UsuarioContext context)
     {
         _context = context;
         DbSet = _context.Set<Usuario>();
+        MetasSet = _context.Set<Metas>();
     }
 
     public IUnitOfWorks UnitOfWork => _context;
@@ -48,6 +50,11 @@ public class UsuarioRepository : IUsuariosRepository
         return usuario?.Metas ?? Enumerable.Empty<Metas>();
     }
 
+    public async Task<Metas> ObterMetaPorId(Guid metaId)
+    {
+        return await MetasSet.FindAsync(metaId);
+    }
+
     public void Adicionar(Usuario usuario)
     {
         DbSet.Add(usuario);
@@ -56,6 +63,21 @@ public class UsuarioRepository : IUsuariosRepository
     public void Atualizar(Usuario usuario)
     {
         DbSet.Update(usuario);
+    }
+
+    public void AdicionarMeta(Metas meta)
+    {
+        MetasSet.Add(meta);
+    }
+
+    public void AtualizarMeta(Metas meta)
+    {
+        MetasSet.Update(meta);
+    }
+
+    public void RemoverMeta(Metas meta)
+    {
+        MetasSet.Remove(meta);
     }
 
     public void Apagar(Func<Usuario, bool> predicate)
