@@ -1,6 +1,5 @@
-using System;
 using Kognito.Turmas.Domain;
-using static Kognito.Turmas.Domain.Enturmamento;
+using static Enturmamento;
 
 namespace Kognito.Turmas.App.ViewModels;
 

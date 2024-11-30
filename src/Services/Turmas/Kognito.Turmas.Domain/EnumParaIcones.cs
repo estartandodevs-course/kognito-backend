@@ -1,13 +1,13 @@
-using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Kognito.Turmas.Domain;
 
-public class EnumParaIcones
+public enum Icones
 {
-    public enum Icones
-    {
-        Primeiro,
-        Segundo,
-        Terceiro,
-    }
+    [Display(Name = "Primeiro Ícone")]
+    Primeiro = 1,
+    [Display(Name = "Segundo Ícone")]
+    Segundo = 2,
+    [Display(Name = "Terceiro Ícone")]
+    Terceiro = 3
 }

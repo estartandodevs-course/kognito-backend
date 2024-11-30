@@ -1,15 +1,21 @@
-using System;
 using EstartandoDevsCore.Messages;
-using static Kognito.Turmas.Domain.EnumParaCores;
-
-namespace Kognito.Turmas.App.Commands;
+using Kognito.Turmas.Domain;
 
 public class SelecionarCorCommand : Command
 {
-    public Cor SelecionarCor{ get; set; }
+    public Guid TurmaId { get; private set; }
+    public Cor SelecionarCor { get; private set; }
 
-    public SelecionarCorCommand(Cor selecionarCor)
+    public SelecionarCorCommand(Guid turmaId, Cor cor)
     {
-        SelecionarCor = selecionarCor;
+        ValidarTurmaId(turmaId);
+        TurmaId = turmaId;
+        SelecionarCor = cor;
+    }
+
+    private void ValidarTurmaId(Guid turmaId)
+    {
+        if (turmaId == Guid.Empty)
+            throw new ArgumentException("Id da turma inválido", nameof(turmaId));
     }
 }

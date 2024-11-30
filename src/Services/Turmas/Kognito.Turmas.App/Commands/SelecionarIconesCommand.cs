@@ -1,17 +1,21 @@
-using System;
 using EstartandoDevsCore.Messages;
-using static Kognito.Turmas.Domain.EnumParaIcones;
-
-
-namespace Kognito.Turmas.App.Commands;
+using Kognito.Turmas.Domain;
 
 public class SelecionarIconesCommand : Command
 {
+    public Guid TurmaId { get; private set; }
+    public Icones SelecionarIcones { get; private set; }
 
-    public Icones  SelecionarIcones { get; set; }
-
-    public SelecionarIconesCommand(Icones selecionarIcones)
+    public SelecionarIconesCommand(Guid turmaId, Icones icones)
     {
-        SelecionarIcones = selecionarIcones;
+        ValidarTurmaId(turmaId);
+        TurmaId = turmaId;
+        SelecionarIcones = icones;
+    }
+
+    private void ValidarTurmaId(Guid turmaId)
+    {
+        if (turmaId == Guid.Empty)
+            throw new ArgumentException("Id da turma inválido", nameof(turmaId));
     }
 }
