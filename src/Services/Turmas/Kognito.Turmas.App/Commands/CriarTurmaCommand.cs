@@ -1,11 +1,11 @@
 using System;
 using EstartandoDevsCore.Messages;
 using Kognito.Turmas.Domain;
-
+using MediatR;
 
 namespace Kognito.Turmas.App.Commands;
 
-public class CriarTurmaCommand : Command
+public class CriarTurmaCommand : Command, IRequest<ValidationResult>
 {
     public Guid Id { get;  set; }
     public Usuario Professor{ get;  set; }
