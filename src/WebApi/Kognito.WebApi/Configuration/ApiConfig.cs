@@ -1,5 +1,6 @@
 ﻿using EstartandoDevsWebApiCore.Identidade;
 using Kognito.Tarefas.Infra.Data;
+using Kognito.Usuarios.App.Infra.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,11 +17,11 @@ public static class ApiConfig
 
         services.AddDbContext<TarefasContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString(ConexaoBancoDeDados)));
-        
-        services.Configure<ApiBehaviorOptions>(options =>
-        {
-            options.SuppressModelStateInvalidFilter = true;
-        });
+
+        services.AddDbContext<UsuarioContext>(options =>
+            options.UseSqlServer(configuration.GetConnectionString(ConexaoBancoDeDados)));
+
+        services.Configure<ApiBehaviorOptions>(options => { options.SuppressModelStateInvalidFilter = true; });
 
         services.AddCors(options =>
         {

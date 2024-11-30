@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{81
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Usuarios", "Usuarios", "{FC176337-9B4B-4E56-9AA9-8CA09F09E4C4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kognito.Usuario.App", "src\Services\Usuarios\Kognito.Usuario.App\Kognito.Usuario.App.csproj", "{4B373631-F8E2-40A7-8D42-E410628326F4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kognito.Usuarios.App", "src\Services\Usuarios\Kognito.Usuarios.App\Kognito.Usuarios.App.csproj", "{4B373631-F8E2-40A7-8D42-E410628326F4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Turmas", "Turmas", "{4A7A01E2-FC28-4D2D-8279-B25DB366619B}"
 EndProject

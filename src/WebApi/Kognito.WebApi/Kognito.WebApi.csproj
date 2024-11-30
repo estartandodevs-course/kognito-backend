@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="EstartandoDevs.Core" Version="1.0.0" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="8.0.1" />
     <PackageReference Include="EstartandoDevsWebApi.Core" Version="1.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
@@ -27,7 +28,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Services\Tarefas\Kognito.Tarefas.App\Kognito.Tarefas.App.csproj" />
     <ProjectReference Include="..\..\Services\Tarefas\Kognito.Tarefas.Infra\Kognito.Tarefas.Infra.csproj" />
+    <ProjectReference Include="..\..\Services\Usuarios\Kognito.Usuarios.App\Kognito.Usuarios.App.csproj" />
   </ItemGroup>
 
 </Project>
