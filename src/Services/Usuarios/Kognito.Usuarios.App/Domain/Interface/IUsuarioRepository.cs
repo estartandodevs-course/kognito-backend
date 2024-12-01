@@ -7,6 +7,7 @@ public interface IUsuariosRepository : IRepository<Usuario>, IDisposable
     Task<IEnumerable<Usuario>> ObterTodosAsync();
     Task<Usuario> ObterPorEmail(string email);
     Task<IEnumerable<Emblemas>> ObterEmblemasAsync(Guid usuarioId);
+    Task<Usuario> ObterPorIdAsync(Guid usuarioId);
     Task<IEnumerable<Metas>> ObterMetasAsync(Guid usuarioId);
     Task<Metas> ObterMetaPorId(Guid metaId);
     Task<Usuario> ObterPorCpf(string cpf);

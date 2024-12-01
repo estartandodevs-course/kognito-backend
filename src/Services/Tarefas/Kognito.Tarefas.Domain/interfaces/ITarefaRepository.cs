@@ -9,3 +9,5 @@ public interface ITarefaRepository : IRepository<Tarefa>, IDisposable
     Task<Tarefa> ObterPorIdAsync(Guid id);
     Task<IEnumerable<Tarefa>> ObterTarefasComNotasPorTurmaAsync(Guid turmaId);
 }
+
+
