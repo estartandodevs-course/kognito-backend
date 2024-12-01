@@ -7,7 +7,7 @@ public interface ITurmaQueries
     /// <summary>
     /// Obtém uma turma pelo seu Id
     /// </summary>
-    Task<IEnumerable<TurmaViewModel>> ObterPorId(Guid id);
+    Task<TurmaViewModel> ObterPorId(Guid id);
 
     /// <summary>
     /// Obtém todas as turmas cadastradas

@@ -14,17 +14,22 @@ public class TurmaQueries : ITurmaQueries
     {
         _turmaRepository = turmaRepository;
     }
+<<<<<<< HEAD
     public async Task<IEnumerable<TurmaViewModel>> ObterPorId(Guid id)
     {
         
         if (id == Guid.Empty)
             throw new ArgumentException("Id da turma inválido", nameof(id));
 
+=======
+
+   public async Task<TurmaViewModel> ObterPorId(Guid id)
+    {
+>>>>>>> 892a573 (feat(turmas): implementa sistema de links de acesso para turmas)
         var turma = await _turmaRepository.ObterPorId(id);
-        return turma == null 
-            ? Enumerable.Empty<TurmaViewModel>() 
-            : new List<TurmaViewModel> { TurmaViewModel.Mapear(turma) };
+        return turma == null ? null : TurmaViewModel.Mapear(turma);
     }
+
 
     public async Task<IEnumerable<TurmaViewModel>> ObterTodasTurmas()
     {
