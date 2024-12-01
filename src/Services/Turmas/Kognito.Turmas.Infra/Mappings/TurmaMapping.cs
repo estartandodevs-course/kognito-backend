@@ -10,7 +10,6 @@ namespace Kognito.Turmas.Infra.Data.Mappings
         {
             
             builder.HasKey(t => t.Id);
-
             
             builder.Property(t => t.Nome)
                 .IsRequired()
@@ -18,7 +17,7 @@ namespace Kognito.Turmas.Infra.Data.Mappings
 
             builder.Property(t => t.Descricao)
                 .HasColumnType("varchar(500)")
-                .IsRequired(false);
+                .IsRequired(true);
 
             builder.Property(t => t.Materia)
                 .IsRequired()
@@ -30,19 +29,11 @@ namespace Kognito.Turmas.Infra.Data.Mappings
 
             builder.Property(t => t.Cor)
                 .IsRequired()
-                .HasColumnType("int"); 
+                .HasColumnType("int");
 
             builder.Property(t => t.Icones)
                 .IsRequired()
-                .HasColumnType("int"); 
-
-            
-            builder.Property(t => t.DataDeCadastro)
-                .IsRequired();
-
-            builder.Property(t => t.DataDeAlteracao)
-                .IsRequired(false);
-
+                .HasColumnType("int");
            
             builder.OwnsOne(t => t.Professor, professor =>
             {
@@ -79,13 +70,6 @@ namespace Kognito.Turmas.Infra.Data.Mappings
                 enturmamento.Property(e => e.Status)
                     .IsRequired()
                     .HasColumnType("int"); 
-
-                
-                enturmamento.Property(e => e.DataDeCadastro)
-                    .IsRequired();
-
-                enturmamento.Property(e => e.DataDeAlteracao)
-                    .IsRequired(false);
 
                 enturmamento.ToTable("Enturmamentos");
             });

@@ -34,6 +34,7 @@
     <ProjectReference Include="..\..\Services\Autenticacao\Kognito.Autenticacao.App\Kognito.Autenticacao.App.csproj" />
     <ProjectReference Include="..\..\Services\Tarefas\Kognito.Tarefas.App\Kognito.Tarefas.App.csproj" />
     <ProjectReference Include="..\..\Services\Tarefas\Kognito.Tarefas.Infra\Kognito.Tarefas.Infra.csproj" />
+    <ProjectReference Include="..\..\Services\Turmas\Kognito.Turmas.Infra\Kognito.Turmas.Infra.csproj" />
     <ProjectReference Include="..\..\Services\Usuarios\Kognito.Usuarios.App\Kognito.Usuarios.App.csproj" />
   </ItemGroup>
 
