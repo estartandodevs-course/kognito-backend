@@ -28,78 +28,8 @@ public class UsuarioContext : DbContext, IUnitOfWorks
     {
         modelBuilder.Ignore<ValidationResult>();
         modelBuilder.Ignore<Event>();
-
-        modelBuilder.Entity<Usuario>(e =>
-        {
-            e.ToTable("Usuarios");
-            
-            e.HasKey(x => x.Id);
-
-            e.Property(c => c.Nome)
-                .HasColumnType("nvarchar(200)")
-                .HasMaxLength(200)
-                .HasColumnName("Nome")
-                .IsRequired();
-            
-            e.Property(u => u.Ofensiva)
-                .IsRequired()
-                .HasDefaultValue(0);
-
-            e.Property(c => c.Neurodivergencia)
-                .HasColumnType("nvarchar(50)")
-                .HasMaxLength(50)
-                .HasColumnName("Neurodivergencia")
-                .IsRequired(false);
-
-            e.Property(c => c.DataDeCadastro)
-                .HasColumnType("datetime2")
-                .HasColumnName("DataDeCadastro");
-
-            e.Property(c => c.DataDeAlteracao)
-                .HasColumnType("datetime2");
-
-            e.HasMany(c => c.Emblemas)
-                .WithOne()
-                .HasForeignKey("UsuarioId");
-
-            e.HasMany(c => c.Metas)
-                .WithOne()
-                .HasForeignKey("UsuarioId");
-
-            e.OwnsOne(c => c.Cpf, cpf =>
-            {
-                cpf.Property(c => c.Numero)
-                    .HasMaxLength(11)
-                    .HasColumnName("Cpf")
-                    .IsRequired();
-
-                cpf.HasIndex(c => c.Numero)
-                    .IsUnique();
-            });
-
-            e.OwnsOne(c => c.Login, login =>
-            {
-                login.Property(c => c.Hash)
-                    .HasColumnType("uniqueidentifier")
-                    .HasColumnName("LoginHash");
-
-                login.OwnsOne(c => c.Email, email =>
-                {
-                    email.Property(x => x.Endereco)
-                        .HasColumnType("nvarchar(256)")
-                        .HasMaxLength(256)
-                        .HasColumnName("Email");
-                });
-
-                login.OwnsOne(c => c.Senha, senha =>
-                {
-                    senha.Property(x => x.Valor)
-                        .HasColumnType("nvarchar(1000)")
-                        .HasMaxLength(1000)
-                        .HasColumnName("Senha");
-                });
-            });
-        });
+        
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(UsuarioContext).Assembly);
     }
 
     public async Task<bool> Commit()
