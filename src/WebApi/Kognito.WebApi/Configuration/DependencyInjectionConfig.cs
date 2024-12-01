@@ -4,8 +4,10 @@ using Kognito.Tarefas.App.Commands;
 using Kognito.Tarefas.App.Queries;
 using Kognito.Tarefas.Domain.interfaces;
 using Kognito.Tarefas.Domain.Repositories;
+using Kognito.Usuarios.App.Commands;
 using Kognito.Usuarios.App.Domain.Interface;
 using Kognito.Usuarios.App.Infra.Repositories;
+using Kognito.Usuarios.App.Queries;
 using MediatR;
 
 namespace Kognito.WebApi.Configuration;
@@ -15,6 +17,12 @@ public static class DependencyInjectionConfig
     public static void RegisterServices(this IServiceCollection services)
     {
         services.AddScoped<IMediatorHandler, MediatorHandler>();
+        
+        services.AddScoped<IMediatorHandler, MediatorHandler>();
+        services.AddScoped<IUsuariosRepository, UsuarioRepository>();
+        services.AddScoped<IUsuarioQueries, UsuarioQueries>();
+        
+        services.AddMediatR(typeof(CriarUsuarioCommand));
 
         services.AddScoped<ITarefaRepository, TarefaRepository>();
         services.AddScoped<ITarefaQueries, TarefaQueries>();

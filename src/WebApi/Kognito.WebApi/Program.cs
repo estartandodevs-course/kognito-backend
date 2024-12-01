@@ -14,7 +14,7 @@ var configuration = builder.Configuration;
 
 builder.Services.AddApiConfiguration(configuration);
 
-// builder.Services.AddIdentityConfiguration(configuration);
+builder.Services.AddIdentityConfiguration(configuration);
 
 builder.Services.RegisterServices();
 
