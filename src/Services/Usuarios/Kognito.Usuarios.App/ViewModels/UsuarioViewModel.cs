@@ -10,7 +10,6 @@ public class UsuarioViewModel
     public string Cpf { get; set; }
     public Neurodivergencia? Neurodivergencia { get; set; }
     public string Email { get; set; }
-    public int Ofensiva { get; set; }
 
     public static UsuarioViewModel Mapear(Usuario usuario)
     {
@@ -20,10 +19,9 @@ public class UsuarioViewModel
         {
             Id = usuario.Id,
             Nome = usuario.Nome,
-            Cpf = usuario.Cpf?.Numero,
+            Cpf = usuario.Cpf.Numero,
             Neurodivergencia = usuario.Neurodivergencia,
             Email = usuario.Login?.Email?.Endereco,
-            Ofensiva = usuario.Ofensiva
         };
     }
 }

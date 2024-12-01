@@ -7,7 +7,7 @@ namespace Kognito.Usuarios.App.Domain;
 public class Usuario : Entity, IAggregateRoot
 {
     public string Nome { get; private set; }
-    public Cpf? Cpf { get; private set; }
+    public Cpf Cpf { get; private set; }
     public Login Login { get; private set; }
     public Neurodivergencia? Neurodivergencia { get; private set; }
     public int Ofensiva { get; private set; }
@@ -25,7 +25,7 @@ public class Usuario : Entity, IAggregateRoot
         Ofensiva = 0;
     }
 
-    public Usuario(string nome, Cpf? cpf, Neurodivergencia? neurodivergencia = null) : this()
+    public Usuario(string nome, Cpf cpf, Neurodivergencia? neurodivergencia = null) : this()
     {
         Nome = nome;
         Cpf = cpf;

@@ -29,4 +29,11 @@ public class UsuarioQueries : IUsuarioQueries
         var metas = await _usuarioRepository.ObterMetasAsync(usuarioId);
         return metas.Select(MetaViewModel.Mapear);
     }
+
+    public async Task<UsuarioViewModel> ObterPorEmail(string email)
+    {
+        var usuario = await _usuarioRepository.ObterPorEmail(email);
+        return UsuarioViewModel.Mapear(usuario);
+    }
+
 }

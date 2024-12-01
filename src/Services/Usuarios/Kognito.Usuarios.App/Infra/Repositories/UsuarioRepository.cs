@@ -37,7 +37,19 @@ public class UsuarioRepository : IUsuariosRepository
             .OrderBy(u => u.Nome)
             .ToListAsync();
     }
+    
+    public async Task<Usuario> ObterPorEmail(string email)
+    {
+        return await _context.Usuarios
+            .FirstOrDefaultAsync(u => u.Login.Email.Endereco == email);
+    }
 
+    public async Task<Usuario> ObterPorCpf(string cpf)
+    {
+        return await _context.Usuarios
+            .FirstOrDefaultAsync(u => u.Cpf.Numero == cpf);
+    }
+    
     public async Task<IEnumerable<Emblemas>> ObterEmblemasAsync(Guid usuarioId)
     {
         var usuario = await ObterPorId(usuarioId);

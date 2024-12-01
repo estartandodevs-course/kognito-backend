@@ -69,10 +69,12 @@ public class UsuarioContext : DbContext, IUnitOfWorks
             e.OwnsOne(c => c.Cpf, cpf =>
             {
                 cpf.Property(c => c.Numero)
-                    .HasColumnType("nvarchar(11)")
                     .HasMaxLength(11)
                     .HasColumnName("Cpf")
-                    .IsRequired(false);
+                    .IsRequired();
+
+                cpf.HasIndex(c => c.Numero)
+                    .IsUnique();
             });
 
             e.OwnsOne(c => c.Login, login =>

@@ -27,10 +27,38 @@ public class UsuariosCommandHandler : CommandHandler,
     {
         if (!request.EstaValido()) return request.ValidationResult;
 
-        var usuario = new Usuario(request.Nome, new Cpf(request.Cpf), (Neurodivergencia)Enum.Parse(typeof(Neurodivergencia), request.Neurodivergencia));
+        var cpf = new Cpf(request.Cpf);
+        if (!cpf.EstaValido())
+        {
+            AdicionarErro("CPF inválido");
+            return ValidationResult;
+        }
+
+        var usuarioExistente = await _usuarioRepository.ObterPorCpf(request.Cpf);
+        if (usuarioExistente != null)
+        {
+            AdicionarErro("CPF já está em uso");
+            return ValidationResult;
+        }
         
+        if (string.IsNullOrEmpty(request.Nome))
+        {
+            AdicionarErro("O nome do usuário é obrigatório");
+            return ValidationResult;
+        }
+
+        Neurodivergencia? neurodivergencia = null;
+        if (!string.IsNullOrEmpty(request.Neurodivergencia))
+        {
+            neurodivergencia = (Neurodivergencia)Enum.Parse(typeof(Neurodivergencia), request.Neurodivergencia);
+        }
+
+        var usuario = new Usuario(request.Nome, cpf, neurodivergencia);
+        var login = new Login(new Email(request.Email), new Senha(request.Senha));
+        usuario.AtribuirLogin(login);
+
         _usuarioRepository.Adicionar(usuario);
-        
+    
         return await PersistirDados(_usuarioRepository.UnitOfWork);
     }
 
