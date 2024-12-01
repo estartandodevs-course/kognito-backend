@@ -8,14 +8,26 @@ public class ConteudoViewModel
     public Guid Id { get; set; }
     public string Titulo { get; set; }
     public string ConteudoDidatico { get; set; }
+    public Guid TurmaId { get; set; }  
+    public string TurmaNome { get; set; }
+    public DateTime DataDeCadastro { get; set; }
+    public DateTime? DataDeAlteracao { get; set; }
 
     public static ConteudoViewModel Mapear(Conteudo conteudo)
     {
+        if (conteudo == null) return null;
+
         return new ConteudoViewModel
         {
+            
             Id = conteudo.Id,
             Titulo = conteudo.Titulo,
-            ConteudoDidatico = conteudo.ConteudoDidatico
+            ConteudoDidatico = conteudo.ConteudoDidatico,
+            TurmaId = conteudo.TurmaId,
+            TurmaNome = conteudo.Turma?.Nome,
+            DataDeCadastro = conteudo.DataDeCadastro,
+            DataDeAlteracao = conteudo.DataDeAlteracao
         };
+        
     }
 }

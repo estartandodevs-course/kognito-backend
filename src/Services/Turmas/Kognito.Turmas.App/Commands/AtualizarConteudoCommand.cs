@@ -6,14 +6,14 @@ namespace Kognito.Turmas.App.Commands;
 public class AtualizarConteudoCommand : Command
 {
 
-    public Guid Id { get; set; }
+    public Guid ConteudoId { get; set; }
     public string Titulo { get; set; }
     public string ConteudoDidatico { get; set; }
 
-    public AtualizarConteudoCommand(Guid id, string titulo, string conteudoDidatico)
+    public AtualizarConteudoCommand(Guid conteudoId, string titulo, string conteudoDidatico)
     {
-        ValidarParametros(id, titulo);
-        Id = id;
+        ValidarParametros(conteudoId, titulo);
+        ConteudoId = conteudoId;
         Titulo = titulo;
         ConteudoDidatico = conteudoDidatico;
     }

@@ -1,5 +1,10 @@
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Linq;
 using Kognito.Turmas.App.ViewModels;
+using Kognito.Turmas.Domain.Interfaces;
+
 namespace Kognito.Turmas.App.Queries;
 
 public interface ITurmaQueries
@@ -18,4 +23,9 @@ public interface ITurmaQueries
     /// Obtém todas as turmas de um professor específico
     /// </summary>
     Task<IEnumerable<TurmaViewModel>> ObterTurmasPorProfessor(Guid professorId);
+
+    /// <summary>
+    /// Obtém a quantidade de alunos em uma turma
+    /// </summary>
+    Task<int> ObterQuantidadeAlunos(Guid turmaId);
 }

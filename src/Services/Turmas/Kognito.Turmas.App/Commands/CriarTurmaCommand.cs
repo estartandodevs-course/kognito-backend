@@ -10,6 +10,8 @@ public class CriarTurmaCommand : Command
     public string Descricao { get; private set; }
     public string Materia { get; private set; }
     public string LinkAcesso { get; private set; }
+    public Cor Cor { get; private set; }
+    public Icones Icone { get; private set; }
 
     public CriarTurmaCommand(
         Guid id, 
@@ -17,7 +19,9 @@ public class CriarTurmaCommand : Command
         string nome, 
         string descricao, 
         string materia, 
-        string linkAcesso)
+        string linkAcesso,
+        Cor cor,
+        Icones icone)
     {
         ValidarParametros(id, professor, nome, materia);
         Id = id;
@@ -26,6 +30,8 @@ public class CriarTurmaCommand : Command
         Descricao = descricao;
         Materia = materia;
         LinkAcesso = linkAcesso;
+        Cor = cor;
+        Icone = icone;
     }
 
     private void ValidarParametros(Guid id, Usuario professor, string nome, string materia)
