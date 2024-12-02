@@ -48,13 +48,12 @@ public class TurmaCommandHandler : CommandHandler,
             }
 
             var turma = new Turma(
-                request.Professor ?? throw new ArgumentNullException(nameof(request.Professor)),
-                request.Nome,
-                request.Descricao,
-                request.Materia,
-                request.LinkAcesso,
-                request.Cor,
-                request.Icone
+                professor: request.Professor ?? throw new ArgumentNullException(nameof(request.Professor)),
+                nome: request.Nome,
+                descricao: request.Descricao,
+                materia: request.Materia,
+                cor: request.Cor,
+                icones: request.Icone 
             );
 
             _turmaRepository.Adicionar(turma);
@@ -96,7 +95,6 @@ public class TurmaCommandHandler : CommandHandler,
             turma.AtribuirNome(request.Nome);
             turma.AtribuirDescricao(request.Descricao);
             turma.AtribuirMateria(request.Materia);
-            turma.AtribuirLinkAcesso(request.LinkAcesso);
 
             _turmaRepository.Atualizar(turma);
             return await PersistirDados(_turmaRepository.UnitOfWork);
