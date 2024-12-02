@@ -43,12 +43,14 @@ public static class ApiConfig
     {
         if (app.Environment.IsDevelopment())
         {
+            app.UseSwaggerConfiguration();
             app.UseSwagger();
             app.UseSwaggerUI();
         }
 
         app.UseHttpsRedirection();
         app.UseCors(PermissoesDeOrigem);
+        
         app.MapControllers();
         app.UseAuthConfiguration();
     }
