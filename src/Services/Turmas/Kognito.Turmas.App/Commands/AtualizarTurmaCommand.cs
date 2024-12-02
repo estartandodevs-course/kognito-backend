@@ -13,7 +13,7 @@ public class AtualizarTurmaCommand : Command
     public string Nome { get; private set; }
     public string Descricao { get; private set; }
     public string Materia { get; private set; }
-    public string LinkAcesso { get; private set; }
+
 
     public AtualizarTurmaCommand(Guid id, Usuario professor, string nome, string descricao, string materia, string linkAcesso)
     {
@@ -23,7 +23,6 @@ public class AtualizarTurmaCommand : Command
         Nome = nome;
         Descricao = descricao;
         Materia = materia;
-        LinkAcesso = linkAcesso;
     }
       private void ValidarParametros(Guid id, Usuario professor, string nome, string materia)
     {

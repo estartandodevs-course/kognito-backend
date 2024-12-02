@@ -71,6 +71,12 @@ public class TurmaRepository : ITurmaRepository
             .Where(t => t.Professor.Id == professorId)
             .ToListAsync();
     }
+    public async Task<Turma> ObterPorHashAcesso(string hash)
+    {
+        return await _context.Turmas
+            .Include(t => t.Professor)
+            .FirstOrDefaultAsync(t => t.HashAcesso == hash);
+    }
 
     public void Dispose()
     {

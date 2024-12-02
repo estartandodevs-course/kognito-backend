@@ -48,6 +48,15 @@ public class TurmaQueries : ITurmaQueries
         return await _turmaRepository.ObterQuantidadeAlunos(turmaId);
     }
 
+    public async Task<TurmaAcessoViewModel> ObterAcessoTurma(Guid turmaId)
+    {
+        if (turmaId == Guid.Empty)
+            throw new ArgumentException("Id da turma inválido", nameof(turmaId));
+
+        var turma = await _turmaRepository.ObterPorId(turmaId);
+        return TurmaAcessoViewModel.Mapear(turma);
+    }
+
     public async Task<bool> ValidarHashAcesso(Guid turmaId, string hash)
     {
         if (turmaId == Guid.Empty || string.IsNullOrEmpty(hash))
@@ -55,5 +64,8 @@ public class TurmaQueries : ITurmaQueries
 
         var turma = await _turmaRepository.ObterPorId(turmaId);
         return turma != null && turma.HashAcesso == hash;
+
+        return hash.Length == 8 && turma.HashAcesso == hash;
+
     }
 }

@@ -9,7 +9,6 @@ public class CriarTurmaCommand : Command
     public string Nome { get; private set; }
     public string Descricao { get; private set; }
     public string Materia { get; private set; }
-    public string LinkAcesso { get; private set; }
     public Cor Cor { get; private set; }
     public Icones Icone { get; private set; }
 
@@ -19,7 +18,7 @@ public class CriarTurmaCommand : Command
         string nome, 
         string descricao, 
         string materia, 
-        string linkAcesso,
+
         Cor cor,
         Icones icone)
     {
@@ -29,7 +28,6 @@ public class CriarTurmaCommand : Command
         Nome = nome;
         Descricao = descricao;
         Materia = materia;
-        LinkAcesso = linkAcesso;
         Cor = cor;
         Icone = icone;
     }

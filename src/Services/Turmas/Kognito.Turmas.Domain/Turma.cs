@@ -32,10 +32,16 @@ public class Turma : Entity, IAggregateRoot
         Cor = cor;
         Icones = icones;
         GerarHashAcesso();
+        GerarLinkAcesso();
     }
     private void GerarHashAcesso()
     {
          HashAcesso = Convert.ToBase64String(Guid.NewGuid().ToByteArray()).Replace("/", "_").Replace("+", "-").Substring(0, 8);
+    }
+
+    private void GerarLinkAcesso()
+    {
+        LinkAcesso = $"/turma/{Id}/{HashAcesso}";
     }
 
 

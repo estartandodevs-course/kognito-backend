@@ -23,10 +23,6 @@ namespace Kognito.Turmas.Infra.Data.Mappings
                 .IsRequired()
                 .HasColumnType("varchar(100)");
 
-            builder.Property(t => t.LinkAcesso)
-                .HasColumnType("varchar(200)")
-                .IsRequired(false);
-
             builder.Property(t => t.Cor)
                 .IsRequired()
                 .HasColumnType("int");
@@ -34,10 +30,16 @@ namespace Kognito.Turmas.Infra.Data.Mappings
             builder.Property(t => t.Icones)
                 .IsRequired()
                 .HasColumnType("int");
-                
+
             builder.Property(t => t.HashAcesso)
+            .IsRequired()
+            .HasColumnType("varchar(8)");
+        
+
+            builder.Property(t => t.LinkAcesso)
                 .IsRequired()
-                .HasColumnType("varchar(8)");
+                .HasColumnType("varchar(200)");
+             
 
             builder.OwnsOne(t => t.Professor, professor =>
             {

@@ -31,4 +31,9 @@ public interface ITurmaQueries
     /// <param name="hash">Hash de acesso a ser verificado</param>
     /// <returns>Verdadeiro se o hash for válido, falso caso contrário</returns>
     Task<bool> ValidarHashAcesso(Guid turmaId, string hash);
+
+    /// <summary>
+    /// Obtém as informações de acesso de uma turma
+    /// </summary>
+    Task<TurmaAcessoViewModel> ObterAcessoTurma(Guid turmaId);
 }
