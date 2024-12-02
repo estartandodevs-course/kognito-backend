@@ -5,11 +5,11 @@ namespace Kognito.Usuarios.App.ViewModels;
 public class MetaViewModel
 {
     public Guid Id { get; set; }
-    public string Titulo { get; set; }
-    public string Descricao { get; set; }
-    public bool Concluida { get; set; }
-    public DateTime CriadaEm { get; set; }
-    public DateTime? ConcluidaEm { get; set; }
+    public string Title { get; set; }
+    public string Description { get; set; }
+    public bool Completed { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime? CompletedAt { get; set; }
 
     public static MetaViewModel Mapear(Metas meta)
     {
@@ -18,11 +18,11 @@ public class MetaViewModel
         return new MetaViewModel
         {
             Id = meta.Id,
-            Titulo = meta.Titulo,
-            Descricao = meta.Descricao,
-            Concluida = meta.Concluida,
-            CriadaEm = meta.CriadaEm,
-            ConcluidaEm = meta.ConcluidaEm
+            Title = meta.Titulo,
+            Description = meta.Descricao,
+            Completed = meta.Concluida,
+            CreatedAt = meta.CriadaEm,
+            CompletedAt = meta.ConcluidaEm
         };
     }
 }
