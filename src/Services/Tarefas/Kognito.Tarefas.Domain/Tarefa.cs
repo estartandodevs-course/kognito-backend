@@ -10,22 +10,17 @@ public class Tarefa : Entity, IAggregateRoot
     public DateTime CriadoEm { get; private set; }
     public Guid TurmaId { get; private set; }
     public DateTime DataDeEntrega { get; private set; }
-    public bool Entregue { get; private set; }
     public ICollection<Entrega> Entregas { get; private set; } = new List<Entrega>();
     
     private Tarefa() { }
     
-    public Tarefa(string descricao, string conteudo, DateTime dataFinalEntrega, Guid turmaId, 
-        DateTime dataDeEntrega) : this()
+    public Tarefa(string descricao, string conteudo, DateTime dataFinalEntrega, Guid turmaId) : this()
     {
         Descricao = descricao;
         Conteudo = conteudo;
         DataFinalEntrega = dataFinalEntrega;
         TurmaId = turmaId;
         CriadoEm = DateTime.Now;
-        DataDeEntrega = dataDeEntrega;
-        Entregue = false;
-
     }
 
     public void AtribuirDescricao(string descricao) => Descricao = descricao;
