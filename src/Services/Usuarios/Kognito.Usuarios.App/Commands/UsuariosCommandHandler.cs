@@ -40,7 +40,7 @@ public class UsuariosCommandHandler : CommandHandler,
             AdicionarErro("CPF já está em uso");
             return ValidationResult;
         }
-        
+    
         if (string.IsNullOrEmpty(request.Nome))
         {
             AdicionarErro("O nome do usuário é obrigatório");
@@ -50,7 +50,12 @@ public class UsuariosCommandHandler : CommandHandler,
         Neurodivergencia? neurodivergencia = null;
         if (!string.IsNullOrEmpty(request.Neurodivergencia))
         {
-            neurodivergencia = (Neurodivergencia)Enum.Parse(typeof(Neurodivergencia), request.Neurodivergencia);
+            if (!Enum.TryParse<Neurodivergencia>(request.Neurodivergencia, out var parsedNeurodivergencia))
+            {
+                AdicionarErro("Neurodivergência informada é inválida");
+                return ValidationResult;
+            }
+            neurodivergencia = parsedNeurodivergencia;
         }
 
         var usuario = new Usuario(request.Nome, cpf, neurodivergencia);
@@ -58,7 +63,7 @@ public class UsuariosCommandHandler : CommandHandler,
         usuario.AtribuirLogin(login);
 
         _usuarioRepository.Adicionar(usuario);
-    
+
         return await PersistirDados(_usuarioRepository.UnitOfWork);
     }
 
@@ -74,24 +79,40 @@ public class UsuariosCommandHandler : CommandHandler,
         }
 
         usuario.AtribuirNome(request.Nome);
-        usuario.AtribuirNeurodivergencia((Neurodivergencia)Enum.Parse(typeof(Neurodivergencia), request.Neurodivergencia));
-        
+
+        if (!string.IsNullOrEmpty(request.Neurodivergencia))
+        {
+            if (!Enum.TryParse<Neurodivergencia>(request.Neurodivergencia, out var neurodivergencia))
+            {
+                AdicionarErro("Neurodivergência informada é inválida");
+                return ValidationResult;
+            }
+            usuario.AtribuirNeurodivergencia(neurodivergencia);
+        }
+    
         _usuarioRepository.Atualizar(usuario);
-        
+    
         return await PersistirDados(_usuarioRepository.UnitOfWork);
     }
 
     public async Task<ValidationResult> Handle(CriarMetaCommand request, CancellationToken cancellationToken)
     {
         if (!request.EstaValido()) return request.ValidationResult;
-        
+    
+        var usuario = await _usuarioRepository.ObterPorId(request.UsuarioId);
+        if (usuario == null)
+        {
+            AdicionarErro("Usuário não encontrado");
+            return ValidationResult;
+        }
+    
         var meta = new Metas(request.Titulo, request.Descricao);
-        
-        _usuarioRepository.AdicionarMeta(meta);
-        
+        usuario.AdicionarMeta(meta);
+    
         return await PersistirDados(_usuarioRepository.UnitOfWork);
     }
-
+    
+    
     public async Task<ValidationResult> Handle(AtualizarMetaCommand request, CancellationToken cancellationToken)
     {
         if (!request.EstaValido()) return request.ValidationResult;

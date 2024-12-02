@@ -35,5 +35,13 @@ public class UsuarioQueries : IUsuarioQueries
         var usuario = await _usuarioRepository.ObterPorEmail(email);
         return UsuarioViewModel.Mapear(usuario);
     }
+    
+    public async Task<OfensivaViewModel> ObterOfensiva(Guid usuarioId)
+    {
+        var usuario = await _usuarioRepository.ObterPorId(usuarioId);
+        return OfensivaViewModel.Mapear(usuario);
+    }
+    
+    
 
 }

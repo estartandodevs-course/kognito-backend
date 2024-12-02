@@ -20,7 +20,7 @@ public class UsuarioViewModel
             Id = usuario.Id,
             Nome = usuario.Nome,
             Cpf = usuario.Cpf.Numero,
-            Neurodivergencia = usuario.Neurodivergencia,
+            Neurodivergencia = usuario.Neurodivergencia.HasValue ? usuario.Neurodivergencia.Value : null,
             Email = usuario.Login?.Email?.Endereco,
         };
     }
