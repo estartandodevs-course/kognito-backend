@@ -21,9 +21,10 @@ namespace Kognito.Turmas.Infra.Migrations
                     Nome = table.Column<string>(type: "varchar(100)", nullable: false),
                     Descricao = table.Column<string>(type: "varchar(500)", nullable: false),
                     Materia = table.Column<string>(type: "varchar(100)", nullable: false),
-                    LinkAcesso = table.Column<string>(type: "varchar(200)", nullable: true),
+                    LinkAcesso = table.Column<string>(type: "varchar(200)", nullable: false),
                     Cor = table.Column<int>(type: "int", nullable: false),
                     Icones = table.Column<int>(type: "int", nullable: false),
+                    HashAcesso = table.Column<string>(type: "varchar(8)", nullable: false),
                     DataDeCadastro = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DataDeAlteracao = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -51,7 +52,7 @@ namespace Kognito.Turmas.Infra.Migrations
                         column: x => x.TurmaId,
                         principalTable: "Turmas",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(

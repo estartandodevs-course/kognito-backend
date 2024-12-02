@@ -8,7 +8,6 @@ namespace Kognito.Turmas.Infra.Data.Mappings
     {
         public void Configure(EntityTypeBuilder<Turma> builder)
         {
-            
             builder.HasKey(t => t.Id);
             
             builder.Property(t => t.Nome)
@@ -32,15 +31,13 @@ namespace Kognito.Turmas.Infra.Data.Mappings
                 .HasColumnType("int");
 
             builder.Property(t => t.HashAcesso)
-            .IsRequired()
-            .HasColumnType("varchar(8)");
-        
+                .IsRequired()
+                .HasColumnType("varchar(8)");
 
             builder.Property(t => t.LinkAcesso)
                 .IsRequired()
                 .HasColumnType("varchar(200)");
              
-
             builder.OwnsOne(t => t.Professor, professor =>
             {
                 professor.Property(p => p.Id)
@@ -51,17 +48,14 @@ namespace Kognito.Turmas.Infra.Data.Mappings
                     .HasColumnName("ProfessorNome")
                     .HasColumnType("varchar(100)")
                     .IsRequired();
-                    
             });
 
-            
             builder.OwnsMany(t => t.Enturmamentos, enturmamento =>
             {
                 enturmamento.WithOwner(e => e.Turma);
                 
                 enturmamento.HasKey(e => e.Id);
                 
-                // Configuração do Aluno
                 enturmamento.OwnsOne(e => e.Aluno, aluno =>
                 {
                     aluno.Property(a => a.Id)
@@ -81,12 +75,10 @@ namespace Kognito.Turmas.Infra.Data.Mappings
                 enturmamento.ToTable("Enturmamentos");
             });
 
-            
             builder.HasMany<Conteudo>()
                 .WithOne(c => c.Turma)
                 .HasForeignKey(c => c.TurmaId)
-                .IsRequired(false)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.ToTable("Turmas");
         }

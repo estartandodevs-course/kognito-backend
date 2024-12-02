@@ -8,7 +8,6 @@ namespace Kognito.Turmas.Infra.Data.Mappings
     {
         public void Configure(EntityTypeBuilder<Conteudo> builder)
         {
-            
             builder.HasKey(c => c.Id);
             
             builder.Property(c => c.Titulo)
@@ -24,9 +23,8 @@ namespace Kognito.Turmas.Infra.Data.Mappings
 
             builder.HasOne(c => c.Turma)
                 .WithMany()
-                .HasForeignKey(c => c.TurmaId)  
-                .IsRequired(false)
-                .OnDelete(DeleteBehavior.SetNull);
+                .HasForeignKey(c => c.TurmaId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.ToTable("Conteudos");
         }

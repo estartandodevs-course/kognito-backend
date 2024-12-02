@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Kognito.Turmas.Infra.Migrations
 {
     [DbContext(typeof(TurmaContext))]
-    [Migration("20241201224637_initial")]
+    [Migration("20241202023014_initial")]
     partial class initial
     {
         /// <inheritdoc />
@@ -74,10 +74,15 @@ namespace Kognito.Turmas.Infra.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(500)");
 
+                    b.Property<string>("HashAcesso")
+                        .IsRequired()
+                        .HasColumnType("varchar(8)");
+
                     b.Property<int>("Icones")
                         .HasColumnType("int");
 
                     b.Property<string>("LinkAcesso")
+                        .IsRequired()
                         .HasColumnType("varchar(200)");
 
                     b.Property<string>("Materia")
@@ -98,7 +103,8 @@ namespace Kognito.Turmas.Infra.Migrations
                     b.HasOne("Turma", "Turma")
                         .WithMany()
                         .HasForeignKey("TurmaId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Turma");
                 });
