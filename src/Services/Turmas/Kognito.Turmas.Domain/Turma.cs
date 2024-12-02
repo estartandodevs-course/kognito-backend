@@ -12,6 +12,7 @@ public class Turma : Entity, IAggregateRoot
     public string LinkAcesso { get; private set; }
     public Cor Cor { get; private set; }
     public Icones Icones { get; private set; }
+    public string HashAcesso { get; private set; }
     public IReadOnlyCollection<Enturmamento> Enturmamentos => _enturmamentos;
    
     protected Turma()
@@ -30,7 +31,13 @@ public class Turma : Entity, IAggregateRoot
         LinkAcesso = linkAcesso;
         Cor = cor;
         Icones = icones;
+        GerarHashAcesso();
     }
+    private void GerarHashAcesso()
+    {
+         HashAcesso = Convert.ToBase64String(Guid.NewGuid().ToByteArray()).Replace("/", "_").Replace("+", "-").Substring(0, 8);
+    }
+
 
     public void AdicionarEnturmamento(Enturmamento enturmamento)
     {

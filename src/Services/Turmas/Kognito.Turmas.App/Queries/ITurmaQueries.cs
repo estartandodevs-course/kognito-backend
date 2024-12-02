@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Linq;
 using Kognito.Turmas.App.ViewModels;
-using Kognito.Turmas.Domain.Interfaces;
 
 namespace Kognito.Turmas.App.Queries;
 
@@ -28,4 +23,12 @@ public interface ITurmaQueries
     /// Obtém a quantidade de alunos em uma turma
     /// </summary>
     Task<int> ObterQuantidadeAlunos(Guid turmaId);
+
+    /// <summary>
+    /// Valida se o hash de acesso fornecido corresponde ao hash da turma
+    /// </summary>
+    /// <param name="turmaId">Id da turma a ser validada</param>
+    /// <param name="hash">Hash de acesso a ser verificado</param>
+    /// <returns>Verdadeiro se o hash for válido, falso caso contrário</returns>
+    Task<bool> ValidarHashAcesso(Guid turmaId, string hash);
 }

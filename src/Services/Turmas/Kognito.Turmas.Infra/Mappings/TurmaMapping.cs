@@ -34,7 +34,11 @@ namespace Kognito.Turmas.Infra.Data.Mappings
             builder.Property(t => t.Icones)
                 .IsRequired()
                 .HasColumnType("int");
-           
+                
+            builder.Property(t => t.HashAcesso)
+                .IsRequired()
+                .HasColumnType("varchar(8)");
+
             builder.OwnsOne(t => t.Professor, professor =>
             {
                 professor.Property(p => p.Id)
@@ -45,6 +49,7 @@ namespace Kognito.Turmas.Infra.Data.Mappings
                     .HasColumnName("ProfessorNome")
                     .HasColumnType("varchar(100)")
                     .IsRequired();
+                    
             });
 
             

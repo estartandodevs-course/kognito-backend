@@ -47,4 +47,13 @@ public class TurmaQueries : ITurmaQueries
 
         return await _turmaRepository.ObterQuantidadeAlunos(turmaId);
     }
+
+    public async Task<bool> ValidarHashAcesso(Guid turmaId, string hash)
+    {
+        if (turmaId == Guid.Empty || string.IsNullOrEmpty(hash))
+            return false;
+
+        var turma = await _turmaRepository.ObterPorId(turmaId);
+        return turma != null && turma.HashAcesso == hash;
+    }
 }
