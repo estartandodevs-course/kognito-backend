@@ -47,13 +47,19 @@ public class UsuariosController : MainController
         return CustomResponse(emblemas);
     }
 
-    [HttpGet("{usuarioId:guid}/metas")]
-    public async Task<IActionResult> ObterMetas(Guid usuarioId)
+    [HttpGet("{id:guid}/ofensiva")]
+    public async Task<IActionResult> ObterOfensiva(Guid id)
     {
-        var metas = await _usuarioQueries.ObterMetas(usuarioId);
-        return CustomResponse(metas);
-    }
+        var ofensiva = await _usuarioQueries.ObterOfensiva(id);
+    
+        if (ofensiva == null)
+        {
+            AdicionarErro("Usuário não encontrado");
+            return CustomResponse();
+        }
 
+        return CustomResponse(ofensiva);
+    }
     
     [HttpPost]
     public async Task<IActionResult> CriarUsuario([FromBody] UsuarioInputModel model)
