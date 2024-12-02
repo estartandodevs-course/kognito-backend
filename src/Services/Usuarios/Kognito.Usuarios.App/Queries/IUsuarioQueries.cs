@@ -8,4 +8,5 @@ public interface IUsuarioQueries
     Task<IEnumerable<EmblemaViewModel>> ObterEmblemas(Guid usuarioId);
     Task<IEnumerable<MetaViewModel>> ObterMetas(Guid usuarioId);
     Task<UsuarioViewModel> ObterPorEmail(string email);
+    Task<OfensivaViewModel> ObterOfensiva(Guid usuarioId);
 }
