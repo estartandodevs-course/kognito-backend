@@ -6,16 +6,16 @@ namespace Kognito.Turmas.App.ViewModels;
 public class TurmaViewModel
 {
     public Guid Id { get; set; }
-    public string Nome { get; set; }
-    public string Descricao { get; set; }
-    public string Materia { get; set; }
-    public Cor Cor { get; set; }
-    public Icones Icones { get; set; }
-    public DateTime DataDeCadastro { get; set; }
-    public DateTime? DataDeAlteracao { get; set; }
+    public string Name { get; set; }
+    public string Description { get; set; }
+    public string Subject { get; set; }
+    public Cor Color { get; set; }
+    public Icones Icons { get; set; }
+    public DateTime RegistrationDate { get; set; }
+    public DateTime? LastModifiedDate { get; set; }
 
-    public string HashAcesso { get; set; }
-    public string LinkAcesso { get; set; }
+    public string AccessHash { get; set; }
+    public string AccessLink { get; set; }
     
 
     public static TurmaViewModel Mapear(Turma turma)
@@ -26,15 +26,15 @@ public class TurmaViewModel
         return new TurmaViewModel
         {
             Id = turma.Id,
-            Nome = turma.Nome,
-            Descricao = turma.Descricao,
-            Materia = turma.Materia,
-            Cor = turma.Cor,
-            Icones = turma.Icones,
-            DataDeCadastro = turma.DataDeCadastro,
-            DataDeAlteracao = turma.DataDeAlteracao,
-            HashAcesso = turma.HashAcesso,
-            LinkAcesso = turma.LinkAcesso
+            Name = turma.Nome,
+            Description = turma.Descricao,
+            Subject = turma.Materia,
+            Color = turma.Cor,
+            Icons = turma.Icones,
+            RegistrationDate = turma.DataDeCadastro,
+            LastModifiedDate = turma.DataDeAlteracao,
+            AccessHash = turma.HashAcesso,
+            AccessLink = turma.LinkAcesso
 
         };
     }

@@ -6,12 +6,12 @@ namespace Kognito.Turmas.App.ViewModels;
 public class ConteudoViewModel
 {
     public Guid Id { get; set; }
-    public string Titulo { get; set; }
-    public string ConteudoDidatico { get; set; }
-    public Guid TurmaId { get; set; }  
-    public string TurmaNome { get; set; }
-    public DateTime DataDeCadastro { get; set; }
-    public DateTime? DataDeAlteracao { get; set; }
+    public string Title { get; set; }
+    public string DidacticContent { get; set; }
+    public Guid ClassId { get; set; }  
+    public string ClassName { get; set; }
+    public DateTime RegistrationDate { get; set; }
+    public DateTime? LastModifiedDate { get; set; }
 
     public static ConteudoViewModel Mapear(Conteudo conteudo)
     {
@@ -21,12 +21,12 @@ public class ConteudoViewModel
         {
             
             Id = conteudo.Id,
-            Titulo = conteudo.Titulo,
-            ConteudoDidatico = conteudo.ConteudoDidatico,
-            TurmaId = conteudo.TurmaId,
-            TurmaNome = conteudo.Turma?.Nome,
-            DataDeCadastro = conteudo.DataDeCadastro,
-            DataDeAlteracao = conteudo.DataDeAlteracao
+            Title = conteudo.Titulo,
+            DidacticContent = conteudo.ConteudoDidatico,
+            ClassId = conteudo.TurmaId,
+            ClassName = conteudo.Turma?.Nome,
+            RegistrationDate = conteudo.DataDeCadastro,
+            LastModifiedDate = conteudo.DataDeAlteracao
         };
         
     }

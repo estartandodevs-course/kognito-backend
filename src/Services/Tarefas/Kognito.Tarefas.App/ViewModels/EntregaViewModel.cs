@@ -6,24 +6,24 @@ namespace Kognito.Tarefas.App.ViewModels;
 public class EntregaViewModel
 {
     public Guid Id { get; set; }
-    public string Conteudo { get; set; }
-    public DateTime EntregueEm { get; set; }
-    public Guid AlunoId { get; set; }
-    public Guid TarefaId { get; set; }
-    public bool Atrasada { get; set; }
-    public ICollection<NotaViewModel> Notas { get; set; } = new List<NotaViewModel>();
+    public string Content { get; set; }
+    public DateTime DeliveredOn { get; set; }
+    public Guid StudentId { get; set; }
+    public Guid TaskId { get; set; }
+    public bool IsLate { get; set; }
+    public ICollection<NotaViewModel> Grades { get; set; } = new List<NotaViewModel>();
 
     public static EntregaViewModel Mapear(Entrega entrega)
     {
         return new EntregaViewModel
         {
             Id = entrega.Id,
-            Conteudo = entrega.Conteudo,
-            EntregueEm = entrega.EntregueEm,
-            AlunoId = entrega.AlunoId,
-            TarefaId = entrega.TarefaId,
-            Atrasada = entrega.Atrasada,
-            Notas = entrega.Notas?.Select(NotaViewModel.Mapear).ToList() ?? new List<NotaViewModel>()
+            Content = entrega.Conteudo,
+            DeliveredOn = entrega.EntregueEm,
+            StudentId = entrega.AlunoId,
+            TaskId = entrega.TarefaId,
+            IsLate = entrega.Atrasada,
+            Grades = entrega.Notas?.Select(NotaViewModel.Mapear).ToList() ?? new List<NotaViewModel>()
         };
     }
 }

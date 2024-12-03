@@ -5,22 +5,22 @@ namespace Kognito.Tarefas.App.ViewModels;
 public class NotaViewModel
 {
     public Guid Id { get; set; }
-    public double ValorNota { get; set; }
-    public Guid AlunoId { get; set; }
-    public Guid TurmaId { get; set; }
-    public Guid EntregaId { get; set; }
-    public DateTime AtribuidoEm { get; set; }
+    public double GradeValue { get; set; }
+    public Guid StudentId { get; set; }
+    public Guid ClassId { get; set; }
+    public Guid DeliveryId { get; set; }
+    public DateTime AssignedOn { get; set; }
 
     public static NotaViewModel Mapear(Nota nota)
     {
         return new NotaViewModel
         {
             Id = nota.Id,
-            ValorNota = nota.ValorNota,
-            AlunoId = nota.AlunoId,
-            TurmaId = nota.TurmaId,
-            EntregaId = nota.EntregaId,
-            AtribuidoEm = nota.AtribuidoEm
+            GradeValue = nota.ValorNota,
+            StudentId = nota.AlunoId,
+            ClassId = nota.TurmaId,
+            DeliveryId = nota.EntregaId,
+            AssignedOn = nota.AtribuidoEm
         };
     }
 }

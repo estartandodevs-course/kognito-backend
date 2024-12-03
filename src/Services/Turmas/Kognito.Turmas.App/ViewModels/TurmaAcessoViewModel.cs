@@ -1,8 +1,8 @@
 public class TurmaAcessoViewModel
 {
-    public Guid TurmaId { get; set; }
-    public string LinkAcesso { get; set; }
-    public string HashAcesso { get; set; }
+    public Guid ClassId { get; set; }
+    public string AccessLink { get; set; }
+    public string AccessHash { get; set; }
 
     public static TurmaAcessoViewModel Mapear(Turma turma)
     {
@@ -10,9 +10,9 @@ public class TurmaAcessoViewModel
 
         return new TurmaAcessoViewModel
         {
-            TurmaId = turma.Id,
-            LinkAcesso = turma.LinkAcesso,
-            HashAcesso = turma.HashAcesso
+            ClassId = turma.Id,
+            AccessLink = turma.LinkAcesso,
+            AccessHash = turma.HashAcesso
         };
     }
 }

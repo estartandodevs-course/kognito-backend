@@ -6,8 +6,8 @@ namespace Kognito.Turmas.App.ViewModels;
 public class EnturmamentoViewModel
 {
     public Guid Id { get; set; }
-    public Usuario Aluno { get; set; }
-    public Turma Turma { get; set; }
+    public Usuario Student { get; set; }
+    public Turma Class { get; set; }
     public EnturtamentoStatus Status { get; set; }
 
     public static EnturmamentoViewModel Mapear(Enturmamento enturmamento)
@@ -18,8 +18,8 @@ public class EnturmamentoViewModel
         return new EnturmamentoViewModel
         {
             Id = enturmamento.Id,
-            Aluno = enturmamento.Aluno,
-            Turma = enturmamento.Turma,
+            Student = enturmamento.Aluno,
+            Class = enturmamento.Turma,
             Status = enturmamento.Status,
             
         };
