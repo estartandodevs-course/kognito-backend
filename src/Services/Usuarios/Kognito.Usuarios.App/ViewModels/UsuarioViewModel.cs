@@ -6,9 +6,9 @@ namespace Kognito.Usuarios.App.ViewModels;
 public class UsuarioViewModel
 {
     public Guid Id { get; set; }
-    public string Nome { get; set; }
+    public string Name { get; set; }
     public string Cpf { get; set; }
-    public Neurodivergencia? Neurodivergencia { get; set; }
+    public Neurodivergencia? Neurodiversity { get; set; }
     public string Email { get; set; }
 
     public static UsuarioViewModel Mapear(Usuario usuario)
@@ -18,9 +18,9 @@ public class UsuarioViewModel
         return new UsuarioViewModel
         {
             Id = usuario.Id,
-            Nome = usuario.Nome,
+            Name = usuario.Nome,
             Cpf = usuario.Cpf.Numero,
-            Neurodivergencia = usuario.Neurodivergencia.HasValue ? usuario.Neurodivergencia.Value : null,
+            Neurodiversity = usuario.Neurodivergencia.HasValue ? usuario.Neurodivergencia.Value : null,
             Email = usuario.Login?.Email?.Endereco,
         };
     }
