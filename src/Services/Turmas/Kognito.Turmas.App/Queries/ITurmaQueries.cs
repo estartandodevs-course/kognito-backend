@@ -36,4 +36,10 @@ public interface ITurmaQueries
     /// Obtém as informações de acesso de uma turma
     /// </summary>
     Task<TurmaAcessoViewModel> ObterAcessoTurma(Guid turmaId);
+
+
+    /// <summary>
+    /// Vincula um conteúdo a uma turma
+    /// </summary>
+    Task<bool> VincularTurma(Guid conteudoId, Guid turmaId);
 }

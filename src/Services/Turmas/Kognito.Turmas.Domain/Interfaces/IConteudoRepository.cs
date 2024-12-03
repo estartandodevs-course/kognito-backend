@@ -10,5 +10,5 @@ public interface IConteudoRepository : IRepository<Conteudo>, IDisposable
     Task<IEnumerable<Conteudo>> ObterPorTurma(Guid turmaId);
     Task<int> ObterQuantidadeConteudosPorTurma(Guid turmaId);
     Task<DbConnection> ObterConexao();
-
+    Task<Conteudo> ObterPorId(Guid id);
 }

@@ -20,9 +20,10 @@ public class Turma : Entity, IAggregateRoot
         _enturmamentos = new List<Enturmamento>();
     }
 
-    public Turma(Usuario professor, string nome, string descricao, string materia, Cor cor, Icones icones)
+    public Turma(Guid id,Usuario professor, string nome, string descricao, string materia, Cor cor, Icones icones)
         : this()
     {
+        AtribuirEntidadeId(id);
         ValidarCampos(nome, materia);
         Professor = professor;
         Nome = nome;
@@ -30,6 +31,7 @@ public class Turma : Entity, IAggregateRoot
         Materia = materia;
         Cor = cor;
         Icones = icones;
+
         GerarHashAcesso();
         GerarLinkAcesso();
     }

@@ -15,7 +15,7 @@ public class AtualizarTurmaCommand : Command
     public string Materia { get; private set; }
 
 
-    public AtualizarTurmaCommand(Guid id, Usuario professor, string nome, string descricao, string materia, string linkAcesso)
+    public AtualizarTurmaCommand(Guid id, Usuario professor, string nome, string descricao, string materia)
     {
         ValidarParametros(id, professor, nome, materia);
         Id = id;

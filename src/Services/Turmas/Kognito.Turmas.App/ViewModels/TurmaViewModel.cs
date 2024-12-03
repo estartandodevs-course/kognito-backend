@@ -14,6 +14,9 @@ public class TurmaViewModel
     public DateTime DataDeCadastro { get; set; }
     public DateTime? DataDeAlteracao { get; set; }
 
+    public string HashAcesso { get; set; }
+    public string LinkAcesso { get; set; }
+    
 
     public static TurmaViewModel Mapear(Turma turma)
     {
@@ -30,6 +33,8 @@ public class TurmaViewModel
             Icones = turma.Icones,
             DataDeCadastro = turma.DataDeCadastro,
             DataDeAlteracao = turma.DataDeAlteracao,
+            HashAcesso = turma.HashAcesso,
+            LinkAcesso = turma.LinkAcesso
 
         };
     }

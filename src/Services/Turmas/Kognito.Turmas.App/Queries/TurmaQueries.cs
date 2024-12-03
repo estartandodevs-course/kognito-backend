@@ -6,10 +6,12 @@ namespace Kognito.Turmas.App.Queries;
 public class TurmaQueries : ITurmaQueries
 {
     private readonly ITurmaRepository _turmaRepository;
+    private readonly IConteudoRepository _conteudoRepository;
 
-    public TurmaQueries(ITurmaRepository turmaRepository)
+    public TurmaQueries(ITurmaRepository turmaRepository, IConteudoRepository conteudoRepository)
     {
         _turmaRepository = turmaRepository;
+        _conteudoRepository = conteudoRepository;
     }
 
     public async Task<IEnumerable<TurmaViewModel>> ObterPorId(Guid id)
@@ -56,6 +58,19 @@ public class TurmaQueries : ITurmaQueries
         var turma = await _turmaRepository.ObterPorId(turmaId);
         return TurmaAcessoViewModel.Mapear(turma);
     }
+    public async Task<bool> VincularTurma(Guid conteudoId, Guid turmaId)
+    {
+        var conteudo = await _conteudoRepository.ObterPorId(conteudoId);
+        if (conteudo == null) return false;
+
+        var turma = await _turmaRepository.ObterPorId(turmaId);
+        if (turma == null) return false;
+
+        conteudo.VincularTurma(turma);
+        _conteudoRepository.Atualizar(conteudo);
+
+        return true;
+    }
 
     public async Task<bool> ValidarHashAcesso(Guid turmaId, string hash)
     {
@@ -64,8 +79,5 @@ public class TurmaQueries : ITurmaQueries
 
         var turma = await _turmaRepository.ObterPorId(turmaId);
         return turma != null && turma.HashAcesso == hash;
-
-        return hash.Length == 8 && turma.HashAcesso == hash;
-
     }
 }

@@ -6,10 +6,9 @@ namespace Kognito.Turmas.Domain.Interfaces;
 
 public interface ITurmaRepository : IRepository<Turma>, IDisposable
 {
-     Task<IEnumerable<Turma>> ObterTurmasPorProfessor(Guid professorId);
+    Task<IEnumerable<Turma>> ObterTurmasPorProfessor(Guid professorId);
     Task<IEnumerable<Turma>> ObterTodos();
     Task<DbConnection> ObterConexao();
     Task<int> ObterQuantidadeAlunos(Guid turmaId);
-
     Task<Turma> ObterPorHashAcesso(string hash);
 }

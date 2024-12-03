@@ -10,7 +10,7 @@ public class AtualizarConteudoCommand : Command
     public string Titulo { get; set; }
     public string ConteudoDidatico { get; set; }
 
-    public AtualizarConteudoCommand(Guid conteudoId, string titulo, string conteudoDidatico)
+    public AtualizarConteudoCommand(Guid conteudoId, string titulo, string conteudoDidatico, Guid classId)
     {
         ValidarParametros(conteudoId, titulo);
         ConteudoId = conteudoId;

@@ -40,14 +40,9 @@ public class TurmaCommandHandler : CommandHandler,
 
         try
         {
-            var turmas = await _turmaQueries.ObterTodasTurmas();
-            if (turmas.Any(t => t.Nome.Equals(request.Nome, StringComparison.OrdinalIgnoreCase)))
-            {
-                AdicionarErro("Já existe uma turma com este nome");
-                return ValidationResult;
-            }
 
             var turma = new Turma(
+                id:request.Id,
                 professor: request.Professor ?? throw new ArgumentNullException(nameof(request.Professor)),
                 nome: request.Nome,
                 descricao: request.Descricao,
@@ -58,6 +53,7 @@ public class TurmaCommandHandler : CommandHandler,
 
             _turmaRepository.Adicionar(turma);
             return await PersistirDados(_turmaRepository.UnitOfWork);
+            
         }
         catch (DbException)
         {
@@ -84,12 +80,6 @@ public class TurmaCommandHandler : CommandHandler,
                 return ValidationResult;
             }
 
-            var turmasExistentes = await _turmaQueries.ObterTodasTurmas();
-            if (turmasExistentes.Any(t => t.Nome.Equals(request.Nome, StringComparison.OrdinalIgnoreCase) && t.Id != request.Id))
-            {
-                AdicionarErro("Já existe uma turma com este nome");
-                return ValidationResult;
-            }
 
             turma.AtribuirProfessor(request.Professor ?? throw new ArgumentNullException(nameof(request.Professor)));
             turma.AtribuirNome(request.Nome);

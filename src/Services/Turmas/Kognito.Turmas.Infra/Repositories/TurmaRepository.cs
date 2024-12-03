@@ -1,9 +1,13 @@
+using System;
+using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
+using System.Threading.Tasks;
 using EstartandoDevsCore.Data;
+using Kognito.Turmas.Domain;
 using Kognito.Turmas.Domain.Interfaces;
 using Kognito.Turmas.Infra.Data;
 using Microsoft.EntityFrameworkCore;
-
 
 public class TurmaRepository : ITurmaRepository
 {
@@ -16,7 +20,6 @@ public class TurmaRepository : ITurmaRepository
 
     public IUnitOfWorks UnitOfWork => _context;
 
-    
     public void Adicionar(Turma turma)
     {
         _context.Turmas.Add(turma);
@@ -41,7 +44,6 @@ public class TurmaRepository : ITurmaRepository
             .FirstOrDefaultAsync(t => t.Id == id);
     }
 
-    
     public async Task<DbConnection> ObterConexao()
     {
         return _context.Database.GetDbConnection();
@@ -68,9 +70,10 @@ public class TurmaRepository : ITurmaRepository
         return await _context.Turmas
             .Include(t => t.Professor)
             .Include(t => t.Enturmamentos)
-            .Where(t => t.Professor.Id == professorId)
+            .Where(t => t.Professor != null && t.Professor.Id == professorId)
             .ToListAsync();
     }
+
     public async Task<Turma> ObterPorHashAcesso(string hash)
     {
         return await _context.Turmas
