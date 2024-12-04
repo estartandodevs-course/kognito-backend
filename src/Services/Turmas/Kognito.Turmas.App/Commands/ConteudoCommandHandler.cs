@@ -36,14 +36,14 @@ namespace Kognito.Turmas.App.Commands
         try
         {
             var conteudos = await _conteudoQueries.ObterTodosConteudos();
-            if (conteudos.Any(c => c.Titulo == request.Titulo))
+            if (conteudos.Any(c => c.Title == request.Titulo))
             {
                 AdicionarErro("Já existe um conteúdo com este título");
                 return ValidationResult;
             }
 
             var conteudo = new Conteudo(request.Titulo, request.ConteudoDidatico);
-            _conteudoRepository.Adicionar(conteudo); // Removido await
+            _conteudoRepository.Adicionar(conteudo); 
             
             return await PersistirDados(_conteudoRepository.UnitOfWork);
         }
@@ -68,7 +68,7 @@ namespace Kognito.Turmas.App.Commands
             conteudo.AtribuirTitulo(request.Titulo);
             conteudo.AtribuirConteudoDidatico(request.ConteudoDidatico);
 
-            _conteudoRepository.Atualizar(conteudo); // Removido await
+            _conteudoRepository.Atualizar(conteudo); 
             return await PersistirDados(_conteudoRepository.UnitOfWork);
         }
         catch (Exception ex)
@@ -89,7 +89,7 @@ namespace Kognito.Turmas.App.Commands
                 return ValidationResult;
             }
 
-            _conteudoRepository.Apagar(c => c.Id == request.ConteudoId); // Trocado Remover por Apagar
+            _conteudoRepository.Apagar(c => c.Id == request.ConteudoId); 
             return await PersistirDados(_conteudoRepository.UnitOfWork);
         }
         catch (Exception ex)
@@ -118,7 +118,7 @@ namespace Kognito.Turmas.App.Commands
             }
 
             conteudo.VincularTurma(turma);
-            _conteudoRepository.Atualizar(conteudo); // Removido await
+            _conteudoRepository.Atualizar(conteudo); 
 
             return await PersistirDados(_conteudoRepository.UnitOfWork);
         }

@@ -8,6 +8,7 @@ using Kognito.Turmas.Domain;
 using Kognito.Turmas.Domain.Interfaces;
 using Kognito.Turmas.App.Queries;
 using FluentValidation.Results;
+using Kognito.Turmas.App.ViewModels;
 
 namespace Kognito.Turmas.App.Commands;
 
@@ -34,38 +35,31 @@ public class TurmaCommandHandler : CommandHandler,
         _turmaQueries = turmaQueries ?? throw new ArgumentNullException(nameof(turmaQueries));
     }
 
-    public async Task<ValidationResult> Handle(CriarTurmaCommand request, CancellationToken cancellationToken)
+public async Task<ValidationResult> Handle(CriarTurmaCommand request, CancellationToken cancellationToken)
+{
+    if (request == null) throw new ArgumentNullException(nameof(request));
+
+    try
     {
-        if (request == null) throw new ArgumentNullException(nameof(request));
+        var turma = new Turma(
+            id: Guid.NewGuid(),
+            professor: request.Professor ?? throw new ArgumentNullException(nameof(request.Professor)),
+            nome: request.Nome,
+            descricao: request.Descricao,
+            materia: request.Materia,
+            cor: request.Cor,
+            icones: request.Icone
+        );
 
-        try
-        {
-
-            var turma = new Turma(
-                id:request.Id,
-                professor: request.Professor ?? throw new ArgumentNullException(nameof(request.Professor)),
-                nome: request.Nome,
-                descricao: request.Descricao,
-                materia: request.Materia,
-                cor: request.Cor,
-                icones: request.Icone 
-            );
-
-            _turmaRepository.Adicionar(turma);
-            return await PersistirDados(_turmaRepository.UnitOfWork);
-            
-        }
-        catch (DbException)
-        {
-            AdicionarErro("Erro ao acessar o banco de dados");
-            return ValidationResult;
-        }
-        catch (Exception)
-        {
-            AdicionarErro("Ocorreu um erro interno ao criar a turma");
-            return ValidationResult;
-        }
+        _turmaRepository.Adicionar(turma);
+        return await PersistirDados(_turmaRepository.UnitOfWork);
     }
+    catch (Exception)
+    {
+        AdicionarErro("Ocorreu um erro interno ao criar a turma");
+        return ValidationResult;
+    }
+}
 
     public async Task<ValidationResult> Handle(AtualizarTurmaCommand request, CancellationToken cancellationToken)
     {

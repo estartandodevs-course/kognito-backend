@@ -16,7 +16,7 @@ public class TurmaViewModel
 
     public string AccessHash { get; set; }
     public string AccessLink { get; set; }
-    
+    public UsuarioViewModel Professor { get; set; }
 
     public static TurmaViewModel Mapear(Turma turma)
     {
@@ -34,8 +34,12 @@ public class TurmaViewModel
             RegistrationDate = turma.DataDeCadastro,
             LastModifiedDate = turma.DataDeAlteracao,
             AccessHash = turma.HashAcesso,
-            AccessLink = turma.LinkAcesso
-
+            AccessLink = turma.LinkAcesso,
+            Professor = new UsuarioViewModel 
+            { 
+                Id = turma.Professor.Id,
+                Nome = turma.Professor.Nome
+            }
         };
     }
 }

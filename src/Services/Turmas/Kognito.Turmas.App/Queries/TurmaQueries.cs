@@ -14,22 +14,22 @@ public class TurmaQueries : ITurmaQueries
         _conteudoRepository = conteudoRepository;
     }
 
-    public async Task<IEnumerable<TurmaViewModel>> ObterPorId(Guid id)
+    public async Task<TurmaViewModel> ObterPorId(Guid id)
     {
         if (id == Guid.Empty)
             throw new ArgumentException("Id da turma inválido", nameof(id));
 
         var turma = await _turmaRepository.ObterPorId(id);
-        return turma == null 
-            ? Enumerable.Empty<TurmaViewModel>() 
-            : new List<TurmaViewModel> { TurmaViewModel.Mapear(turma) };
+        return turma == null ? null : TurmaViewModel.Mapear(turma);
     }
 
-    public async Task<IEnumerable<TurmaViewModel>> ObterTodasTurmas()
+    public async Task<TurmaViewModel> ObterPorHashAcesso(string hashAcesso)
     {
-        var turmas = await _turmaRepository.ObterTodos();
-        return turmas?.Select(TurmaViewModel.Mapear) 
-            ?? Enumerable.Empty<TurmaViewModel>();
+        if (string.IsNullOrEmpty(hashAcesso))
+            throw new ArgumentException("Hash de acesso inválido", nameof(hashAcesso));
+
+        var turma = await _turmaRepository.ObterPorHashAcesso(hashAcesso);
+        return turma == null ? null : TurmaViewModel.Mapear(turma);
     }
 
     public async Task<IEnumerable<TurmaViewModel>> ObterTurmasPorProfessor(Guid professorId)
@@ -38,6 +38,16 @@ public class TurmaQueries : ITurmaQueries
             throw new ArgumentException("Id do professor inválido", nameof(professorId));
 
         var turmas = await _turmaRepository.ObterTurmasPorProfessor(professorId);
+        return turmas?.Select(TurmaViewModel.Mapear) 
+            ?? Enumerable.Empty<TurmaViewModel>();
+    }
+
+    public async Task<IEnumerable<TurmaViewModel>> ObterTurmasPorAluno(Guid alunoId)
+    {
+        if (alunoId == Guid.Empty)
+            throw new ArgumentException("Id do aluno inválido", nameof(alunoId));
+
+        var turmas = await _turmaRepository.ObterTurmasPorAluno(alunoId);
         return turmas?.Select(TurmaViewModel.Mapear) 
             ?? Enumerable.Empty<TurmaViewModel>();
     }
@@ -56,10 +66,14 @@ public class TurmaQueries : ITurmaQueries
             throw new ArgumentException("Id da turma inválido", nameof(turmaId));
 
         var turma = await _turmaRepository.ObterPorId(turmaId);
-        return TurmaAcessoViewModel.Mapear(turma);
+        return turma == null ? null : TurmaAcessoViewModel.Mapear(turma);
     }
+
     public async Task<bool> VincularTurma(Guid conteudoId, Guid turmaId)
     {
+        if (conteudoId == Guid.Empty || turmaId == Guid.Empty)
+            return false;
+
         var conteudo = await _conteudoRepository.ObterPorId(conteudoId);
         if (conteudo == null) return false;
 
@@ -70,14 +84,5 @@ public class TurmaQueries : ITurmaQueries
         _conteudoRepository.Atualizar(conteudo);
 
         return true;
-    }
-
-    public async Task<bool> ValidarHashAcesso(Guid turmaId, string hash)
-    {
-        if (turmaId == Guid.Empty || string.IsNullOrEmpty(hash))
-            return false;
-
-        var turma = await _turmaRepository.ObterPorId(turmaId);
-        return turma != null && turma.HashAcesso == hash;
     }
 }

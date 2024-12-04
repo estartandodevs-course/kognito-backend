@@ -55,15 +55,7 @@ public class TurmaRepository : ITurmaRepository
             .Where(t => t.Id == turmaId)
             .SelectMany(t => t.Enturmamentos)
             .CountAsync();
-    }
-
-    public async Task<IEnumerable<Turma>> ObterTodos()
-    {
-        return await _context.Turmas
-            .Include(t => t.Professor)
-            .Include(t => t.Enturmamentos)
-            .ToListAsync();
-    }
+    } 
 
     public async Task<IEnumerable<Turma>> ObterTurmasPorProfessor(Guid professorId)
     {
@@ -78,7 +70,17 @@ public class TurmaRepository : ITurmaRepository
     {
         return await _context.Turmas
             .Include(t => t.Professor)
+            .Include(t => t.Enturmamentos)
             .FirstOrDefaultAsync(t => t.HashAcesso == hash);
+    }
+
+    public async Task<IEnumerable<Turma>> ObterTurmasPorAluno(Guid alunoId)
+    {
+        return await _context.Turmas
+            .Include(t => t.Professor)
+            .Include(t => t.Enturmamentos)
+            .Where(t => t.Enturmamentos.Any(e => e.Aluno.Id == alunoId))
+            .ToListAsync();
     }
 
     public void Dispose()

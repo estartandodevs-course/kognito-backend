@@ -40,6 +40,7 @@ public static class DependencyInjectionConfig
         services.AddScoped<IRequestHandler<CriarTurmaCommand, ValidationResult>, TurmaCommandHandler>();
         services.AddScoped<IRequestHandler<AtualizarTurmaCommand, ValidationResult>, TurmaCommandHandler>();
         services.AddScoped<IRequestHandler<ExcluirTurmaCommand, ValidationResult>, TurmaCommandHandler>();
+        services.AddScoped<IRequestHandler<CriarAlunoNaTurmaCommand, ValidationResult>, TurmaCommandHandler>();
 
         services.AddScoped<IConteudoRepository, ConteudoRepository>();
         services.AddScoped<IConteudoQueries, ConteudoQueries>();

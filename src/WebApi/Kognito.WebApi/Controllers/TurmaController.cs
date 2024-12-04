@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Kognito.Turmas.App.ViewModels;
 
+
 namespace Kognito.WebApi.Controllers;
 // TODO: Será substituído pela obtenção do ID via JWT quando implementado
 // ID fixo para testes
@@ -24,34 +25,32 @@ public class TurmasController : MainController
         _turmaQueries = turmaQueries;
         _mediatorHandler = mediatorHandler;
     }
+    
 
-    private Guid? ObterProfessorId()
+   private async Task<Guid?> ObterUsuarioIdPorIdentityId()
+{
+    #if DEBUG
+        return new Guid("11111111-1111-1111-1111-111111111111"); // Guid fixo para testes
+    #else
+        var identityId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(identityId)) return null;
+
+        var usuario = await _usuarioQueries.ObterPorEmail(User.FindFirst(ClaimTypes.Email)?.Value);
+        return usuario?.Id;
+    #endif
+}
+
+    [HttpGet("professor/{professorId}")]
+    public async Task<IActionResult> ObterTurmasProfessor(Guid professorId)
     {
-        #if DEBUG
-            return Guid.NewGuid(); // ID fixo para testes
-        #else
-            var professorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            return string.IsNullOrEmpty(professorId) ? null : Guid.Parse(professorId);
-        #endif
+        var turmas = await _turmaQueries.ObterTurmasPorProfessor(professorId);
+        return CustomResponse(turmas);
     }
 
-    private Usuario ObterProfessor()
+    [HttpGet("aluno/{alunoId}")]
+    public async Task<IActionResult> ObterTurmasAluno(Guid alunoId)
     {
-        var professorId = ObterProfessorId();
-        if (!professorId.HasValue)
-            throw new ArgumentException("Professor não encontrado");
-
-        #if DEBUG
-            return new Usuario("Professor Teste", professorId.Value);
-        #else
-            return new Usuario("Professor", professorId.Value);
-        #endif
-    }
-
-    [HttpGet]
-    public async Task<IActionResult> ObterTodas()
-    {
-        var turmas = await _turmaQueries.ObterTodasTurmas();
+        var turmas = await _turmaQueries.ObterTurmasPorAluno(alunoId);
         return CustomResponse(turmas);
     }
 
@@ -62,86 +61,18 @@ public class TurmasController : MainController
         return CustomResponse(turma);
     }
 
-    [HttpGet("minhas-turmas")]
-    public async Task<IActionResult> ObterMinhasTurmas()
-    {
-        try
-        {
-            var professorId = ObterProfessorId();
-            if (!professorId.HasValue)
-            {
-                AdicionarErro("Professor não encontrado");
-                return CustomResponse();
-            }
-
-            var turmas = await _turmaQueries.ObterTurmasPorProfessor(professorId.Value);
-
-            if (!turmas.Any())
-            {
-                return CustomResponse(new
-                {
-                    Mensagem = "Nenhuma turma encontrada",
-                    ProfessorId = professorId.Value,
-                    Turmas = new List<TurmaViewModel>()
-                });
-            }
-
-            return CustomResponse(new
-            {
-                ProfessorId = professorId.Value,
-                Turmas = turmas
-            });
-        }
-        catch (Exception ex)
-        {
-            AdicionarErro($"Erro ao obter turmas do professor: {ex.Message}");
-            return CustomResponse();
-        }
-    }
-
     [HttpGet("{turmaId:guid}/alunos/quantidade")]
     public async Task<IActionResult> ObterQuantidadeAlunos(Guid turmaId)
     {
-        try
-        {
-            var quantidade = await _turmaQueries.ObterQuantidadeAlunos(turmaId);
-            return CustomResponse(new { QuantidadeAlunos = quantidade });
-        }
-        catch (Exception ex)
-        {
-            AdicionarErro($"Erro ao obter quantidade de alunos: {ex.Message}");
-            return CustomResponse();
-        }
+        var quantidade = await _turmaQueries.ObterQuantidadeAlunos(turmaId);
+        return CustomResponse(new { QuantidadeAlunos = quantidade });
     }
 
     [HttpGet("{turmaId:guid}/acesso")]
     public async Task<IActionResult> ObterAcessoTurma(Guid turmaId)
     {
-        try
-        {
-            var acesso = await _turmaQueries.ObterAcessoTurma(turmaId);
-            return CustomResponse(acesso);
-        }
-        catch (Exception ex)
-        {
-            AdicionarErro($"Erro ao obter informações de acesso: {ex.Message}");
-            return CustomResponse();
-        }
-    }
-
-    [HttpGet("{turmaId:guid}/validar-hash/{hash}")]
-    public async Task<IActionResult> ValidarHashAcesso(Guid turmaId, string hash)
-    {
-        try
-        {
-            var hashValido = await _turmaQueries.ValidarHashAcesso(turmaId, hash);
-            return CustomResponse(new { HashValido = hashValido });
-        }
-        catch (Exception ex)
-        {
-            AdicionarErro($"Erro ao validar hash de acesso: {ex.Message}");
-            return CustomResponse();
-        }
+        var acesso = await _turmaQueries.ObterAcessoTurma(turmaId);
+        return CustomResponse(acesso);
     }
 
     [HttpPost]
@@ -149,54 +80,53 @@ public class TurmasController : MainController
     {
         if (!ModelState.IsValid) return CustomResponse(ModelState);
 
-        try
+        var usuarioId = await ObterUsuarioIdPorIdentityId();
+        if (!usuarioId.HasValue) return Unauthorized();
+
+        var command = new CriarTurmaCommand(
+            professor: new Usuario("Professor", usuarioId.Value),
+            nome: model.Name,
+            descricao: model.Description,
+            materia: model.Subject,
+            cor: model.Color,
+            icone: model.Icon
+        );
+
+        var result = await _mediatorHandler.EnviarComando(command);
+        if (result.IsValid)
+            return CustomResponse("Turma criada com sucesso!");
+        return CustomResponse(result);
+    }
+
+    [HttpPost("ingressar/{hashAcesso}")]
+    public async Task<IActionResult> IngressarTurma(string hashAcesso, [FromBody] IngressoTurmaInputModel model)
+    {
+        var turma = await _turmaQueries.ObterPorHashAcesso(hashAcesso);
+        if (turma == null)
         {
-            var professor = ObterProfessor();
-            var turmaId = Guid.NewGuid();
-
-            var command = new CriarTurmaCommand(
-                id: turmaId,
-                professor: professor,
-                nome: model.Name,           
-                descricao: model.Description, 
-                materia: model.Subject,     
-                cor: model.Color,           
-                icone: model.Icon           
-            );
-
-            var result = await _mediatorHandler.EnviarComando(command);
-            
-            if (result.IsValid)
-            {
-                var turma = await _turmaQueries.ObterAcessoTurma(turmaId);
-                
-                return CustomResponse(new
-                {
-                    Id = turmaId,
-                    Nome = model.Name,
-                    Descricao = model.Description,
-                    Materia = model.Subject,
-                    Cor = model.Color,
-                    Icones = model.Icon,
-                    DataDeCadastro = DateTime.Now,
-                    Professor = professor.Nome,
-                    HashAcesso = turma?.HashAcesso ?? string.Empty,
-                    LinkAcesso = turma?.LinkAcesso ?? string.Empty
-                });
-            }
-            
-            foreach (var erro in result.Errors)
-            {
-                AdicionarErro(erro.ErrorMessage);
-            }
-            
+            AdicionarErro("Turma não encontrada");
             return CustomResponse();
         }
-        catch (Exception ex)
+
+        if (turma.Professor.Id == model.AlunoId)
         {
-            AdicionarErro($"Erro ao criar turma: {ex.Message}");
+            AdicionarErro("Professor não pode ingressar como aluno em sua própria turma");
             return CustomResponse();
         }
+
+        var command = new CriarAlunoNaTurmaCommand(
+            alunoId: model.AlunoId,
+            alunoNome: model.AlunoNome,
+            turmaId: turma.Id,
+            status: Enturmamento.EnturtamentoStatus.Ativo
+        );
+
+        var result = await _mediatorHandler.EnviarComando(command);
+        
+        if (result.IsValid)
+            return CustomResponse("Ingresso na turma realizado com sucesso!");
+            
+        return CustomResponse(result);
     }
 
     [HttpPut("{id:guid}")]
@@ -204,75 +134,47 @@ public class TurmasController : MainController
     {
         if (!ModelState.IsValid) return CustomResponse(ModelState);
 
-        try
-        {
-            var professor = ObterProfessor();
+        var usuarioId = await ObterUsuarioIdPorIdentityId();
+        if (!usuarioId.HasValue) return Unauthorized();
 
-            var command = new AtualizarTurmaCommand(
-                id: id,
-                professor: professor,
-                nome: model.Name,           
-                descricao: model.Description, 
-                materia: model.Subject
-            );
+        var command = new AtualizarTurmaCommand(
+            id: id,
+            professor: new Usuario("Professor", usuarioId.Value),
+            nome: model.Name,
+            descricao: model.Description,
+            materia: model.Subject
+        );
 
-            var result = await _mediatorHandler.EnviarComando(command);
-            
-            if (result.IsValid)
-            {
-                return CustomResponse(new
-                {
-                    Id = id,
-                    Nome = model.Name,
-                    Descricao = model.Description,
-                    Materia = model.Subject,
-                    Professor = professor.Nome
-                });
-            }
-            
-            foreach (var erro in result.Errors)
-            {
-                AdicionarErro(erro.ErrorMessage);
-            }
-            
-            return CustomResponse();
-        }
-        catch (Exception ex)
+        var result = await _mediatorHandler.EnviarComando(command);
+        if (result.IsValid)
         {
-            AdicionarErro($"Erro ao atualizar turma: {ex.Message}");
-            return CustomResponse();
+            var turmaAtualizada = await _turmaQueries.ObterPorId(id);
+            return CustomResponse(turmaAtualizada);
         }
+        
+        return CustomResponse(result);
     }
 
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Excluir(Guid id)
     {
-        try
-        {
-            var command = new ExcluirTurmaCommand(id);
-            var result = await _mediatorHandler.EnviarComando(command);
+        var command = new ExcluirTurmaCommand(id);
+        var result = await _mediatorHandler.EnviarComando(command);
+        
+        if (result.IsValid)
+            return CustomResponse("Turma excluída com sucesso!");
+            
+        return CustomResponse(result);
+    }
 
-            if (result.IsValid)
-            {
-                return CustomResponse(new
-                {
-                    Mensagem = "Turma excluída com sucesso",
-                    TurmaId = id,
-                    DataExclusao = DateTime.Now
-                });
-            }
-
-            foreach (var erro in result.Errors)
-            {
-                AdicionarErro(erro.ErrorMessage);
-            }
-
-            return CustomResponse();
-        }
-        catch (Exception ex)
-        {
-            AdicionarErro($"Erro ao excluir turma: {ex.Message}");
-            return CustomResponse();
-        }
+    [HttpPost("{turmaId:guid}/vincular-conteudo/{conteudoId:guid}")]
+    public async Task<IActionResult> VincularConteudo(Guid turmaId, Guid conteudoId)
+    {
+        var vinculado = await _turmaQueries.VincularTurma(conteudoId, turmaId);
+        if (vinculado)
+            return CustomResponse("Conteúdo vinculado com sucesso!");
+            
+        AdicionarErro("Não foi possível vincular o conteúdo à turma");
+        return CustomResponse();
     }
 }
