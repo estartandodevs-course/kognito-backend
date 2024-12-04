@@ -48,6 +48,17 @@ public static class ApiConfig
             app.UseSwaggerUI();
         }
 
+        using var serviceScope = app.Services.GetService<IServiceScopeFactory>().CreateScope();
+
+        var contextTarefas = serviceScope.ServiceProvider.GetRequiredService<TarefasContext>();
+        contextTarefas.Database.Migrate();
+
+        var contextUsuarios = serviceScope.ServiceProvider.GetRequiredService<UsuarioContext>();
+        contextUsuarios.Database.Migrate();
+
+        var contextTurmas = serviceScope.ServiceProvider.GetRequiredService<TurmaContext>();
+        contextTurmas.Database.Migrate();
+
         app.UseHttpsRedirection();
         app.UseCors(PermissoesDeOrigem);
         

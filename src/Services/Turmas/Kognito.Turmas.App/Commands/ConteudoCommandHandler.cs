@@ -36,7 +36,7 @@ namespace Kognito.Turmas.App.Commands
         try
         {
             var conteudos = await _conteudoQueries.ObterTodosConteudos();
-            if (conteudos.Any(c => c.Titulo == request.Titulo))
+            if (conteudos.Any(c => c.Title == request.Titulo))
             {
                 AdicionarErro("Já existe um conteúdo com este título");
                 return ValidationResult;

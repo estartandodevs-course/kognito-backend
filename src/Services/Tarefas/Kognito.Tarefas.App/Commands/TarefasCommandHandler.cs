@@ -63,7 +63,9 @@ public class TarefasCommandHandler : CommandHandler,
         }
 
         var entrega = new Entrega(request.Conteudo, request.AlunoId, request.TarefaId);
+
         entrega.VerificarAtraso(tarefa.DataFinalEntrega);
+
         tarefa.AdicionarEntrega(entrega);
 
         var evento = new TarefaEntregueEvent(

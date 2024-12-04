@@ -10,9 +10,15 @@ public class Tarefa : Entity, IAggregateRoot
     public DateTime CriadoEm { get; private set; }
     public Guid TurmaId { get; private set; }
     public DateTime DataDeEntrega { get; private set; }
-    public ICollection<Entrega> Entregas { get; private set; } = new List<Entrega>();
+    //public ICollection<Entrega> Entregas { get; private set; } = new List<Entrega>();
+
+    private List<Entrega> _Entregas;
+    public IReadOnlyCollection<Entrega> Entregas => _Entregas;
     
-    private Tarefa() { }
+    private Tarefa() 
+    {
+        _Entregas = new List<Entrega>();
+    }
     
     public Tarefa(string descricao, string conteudo, DateTime dataFinalEntrega, Guid turmaId) : this()
     {
@@ -27,5 +33,12 @@ public class Tarefa : Entity, IAggregateRoot
     public void AtribuirConteudo(string conteudo) => Conteudo = conteudo;
     public void AtribuirDataFinalEntrega(DateTime dataFinalEntrega) => DataFinalEntrega = dataFinalEntrega;
     public void AtribuirTurmaId(Guid turmaId) => TurmaId = turmaId;
-    public void AdicionarEntrega(Entrega entrega) => Entregas.Add(entrega);
+    public void AdicionarEntrega(Entrega entrega)
+    {
+        //Esse aluno já entregou? se já, o que fazer?
+
+        if (Entregas.Any(c => c.AlunoId == entrega.AlunoId)) return;
+
+        _Entregas.Add(entrega);
+    }
 }

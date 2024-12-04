@@ -7,16 +7,18 @@ public class CriarAlunoNaTurmaCommand : Command
 {
     public Guid Id { get; private set; }
     public Guid AlunoId { get; private set; }
+    public string AlunoNome { get; private set; }
     public Guid TurmaId { get; private set; }
     public EnturtamentoStatus Status { get; private set; }
 
-    public CriarAlunoNaTurmaCommand(Guid id, Guid alunoId, Guid turmaId, EnturtamentoStatus status)
+    public CriarAlunoNaTurmaCommand(Guid id, Guid alunoId, Guid turmaId, EnturtamentoStatus status, string alunoNome)
     {
         ValidarIds(id, alunoId, turmaId);
         Id = id;
         AlunoId = alunoId;
         TurmaId = turmaId;
         Status = status;
+        AlunoNome = alunoNome;
     }
     
     private void ValidarIds(Guid id, Guid alunoId, Guid turmaId)

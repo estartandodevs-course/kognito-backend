@@ -5,7 +5,7 @@ public class Conteudo : Entity, IAggregateRoot
 {
     public string Titulo { get; private set; }
     public string ConteudoDidatico { get; private set; }
-     public Turma Turma { get; private set; }
+    public Turma Turma { get; private set; }
     public Guid TurmaId { get; private set; }
 
 

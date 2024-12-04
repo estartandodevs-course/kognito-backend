@@ -180,8 +180,8 @@ public class TurmasController : MainController
                     Icones = model.Icon,
                     DataDeCadastro = DateTime.Now,
                     Professor = professor.Nome,
-                    HashAcesso = turma?.HashAcesso ?? string.Empty,
-                    LinkAcesso = turma?.LinkAcesso ?? string.Empty
+                    HashAcesso = turma?.AccessHash ?? string.Empty,
+                    LinkAcesso = turma?.AccessHash ?? string.Empty
                 });
             }
             

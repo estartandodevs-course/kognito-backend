@@ -250,7 +250,7 @@ public class TurmaCommandHandler : CommandHandler,
                 return ValidationResult;
             }
 
-            var aluno = new Usuario("Aluno", request.AlunoId);
+            var aluno = new Usuario(request.AlunoNome, request.AlunoId);
             var enturmamento = new Enturmamento(aluno, turma, request.Status);
             
             turma.AdicionarEnturmamento(enturmamento);
