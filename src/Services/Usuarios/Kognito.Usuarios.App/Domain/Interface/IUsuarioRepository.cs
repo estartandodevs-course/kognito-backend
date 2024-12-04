@@ -16,4 +16,7 @@ public interface IUsuariosRepository : IRepository<Usuario>, IDisposable
     void AtualizarMeta(Metas meta);
     void RemoverMeta(Metas meta);
     void Apagar(Func<Usuario, bool> predicate);
+    Task<Usuario> ObterPorCodigoRecuperacao(string codigo);
+    Task<Usuario> ObterPorCodigoPai(Guid codigoPai);
+    Task<IEnumerable<Usuario>> ObterPorResponsavelEmail(string email);
 }

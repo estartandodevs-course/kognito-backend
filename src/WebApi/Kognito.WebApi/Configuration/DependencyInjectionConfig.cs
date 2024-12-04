@@ -21,19 +21,19 @@ public static class DependencyInjectionConfig
     {
 
         services.AddScoped<IMediatorHandler, MediatorHandler>();
-        
 
         services.AddScoped<IUsuariosRepository, UsuarioRepository>();
         services.AddScoped<IUsuarioQueries, UsuarioQueries>();
         services.AddMediatR(typeof(CriarUsuarioCommand));
-
+        services.AddScoped<IRequestHandler<AdicionarNeurodivergenciaCommand, ValidationResult>, UsuariosCommandHandler>();
+        services.AddScoped<IRequestHandler<CriarProfessorCommand, ValidationResult>, UsuariosCommandHandler>();
+        services.AddScoped<IRequestHandler<CriarAlunoCommand, ValidationResult>, UsuariosCommandHandler>();
 
         services.AddScoped<ITarefaRepository, TarefaRepository>();
         services.AddScoped<ITarefaQueries, TarefaQueries>();
         services.AddScoped<IRequestHandler<CriarTarefaCommand, ValidationResult>, TarefasCommandHandler>();
         services.AddScoped<IRequestHandler<AtualizarTarefaCommand, ValidationResult>, TarefasCommandHandler>();
         services.AddScoped<IRequestHandler<EntregarTarefaCommand, ValidationResult>, TarefasCommandHandler>();
-
 
         services.AddScoped<ITurmaQueries, TurmaQueries>();
         services.AddScoped<ITurmaRepository, TurmaRepository>();

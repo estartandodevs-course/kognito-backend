@@ -8,9 +8,12 @@ using MediatR;
 namespace Kognito.Usuarios.App.Commands;
 
 public class UsuariosCommandHandler : CommandHandler,
+    IRequestHandler<CriarProfessorCommand, ValidationResult>,
+    IRequestHandler<CriarAlunoCommand, ValidationResult>,
     IRequestHandler<CriarUsuarioCommand, ValidationResult>,
     IRequestHandler<AtualizarUsuarioCommand, ValidationResult>,
     IRequestHandler<CriarMetaCommand, ValidationResult>,
+    IRequestHandler<AdicionarNeurodivergenciaCommand, ValidationResult>,
     IRequestHandler<AtualizarMetaCommand, ValidationResult>,
     IRequestHandler<RemoverMetaCommand, ValidationResult>,
     IRequestHandler<ConcluirMetaCommand, ValidationResult>,
@@ -162,6 +165,90 @@ public class UsuariosCommandHandler : CommandHandler,
         meta.Concluir();
         _usuarioRepository.AtualizarMeta(meta);
         
+        return await PersistirDados(_usuarioRepository.UnitOfWork);
+    }
+    
+    public async Task<ValidationResult> Handle(CriarProfessorCommand request, CancellationToken cancellationToken)
+    {
+        if (!request.EstaValido()) return request.ValidationResult;
+
+        var cpf = new Cpf(request.Cpf);
+        if (!cpf.EstaValido())
+        {
+            AdicionarErro("CPF inválido");
+            return ValidationResult;
+        }
+
+        var usuarioExistente = await _usuarioRepository.ObterPorCpf(request.Cpf);
+        if (usuarioExistente != null)
+        {
+            AdicionarErro("CPF já está em uso");
+            return ValidationResult;
+        }
+
+        var usuario = new Usuario(request.Nome, cpf);
+        var login = new Login(new Email(request.Email), new Senha(request.Senha));
+        usuario.AtribuirLogin(login);
+
+        _usuarioRepository.Adicionar(usuario);
+
+        return await PersistirDados(_usuarioRepository.UnitOfWork);
+    }
+
+    public async Task<ValidationResult> Handle(CriarAlunoCommand request, CancellationToken cancellationToken)
+    {
+        if (!request.EstaValido()) return request.ValidationResult;
+
+        var cpf = new Cpf(request.Cpf);
+        if (!cpf.EstaValido())
+        {
+            AdicionarErro("CPF inválido");
+            return ValidationResult;
+        }
+
+        var usuarioExistente = await _usuarioRepository.ObterPorCpf(request.Cpf);
+        if (usuarioExistente != null)
+        {
+            AdicionarErro("CPF já está em uso");
+            return ValidationResult;
+        }
+
+        var usuario = new Usuario(request.Nome, cpf);
+        var login = new Login(new Email(request.Email), new Senha(request.Senha));
+        usuario.AtribuirLogin(login);
+        usuario.AtribuirResponsavelEmail(request.EmailResponsavel);
+
+        _usuarioRepository.Adicionar(usuario);
+
+        return await PersistirDados(_usuarioRepository.UnitOfWork);
+    }
+    
+    public async Task<ValidationResult> Handle(AdicionarNeurodivergenciaCommand request, CancellationToken cancellationToken)
+    {
+        if (!request.EstaValido()) return request.ValidationResult;
+
+        var usuario = await _usuarioRepository.ObterPorId(request.UsuarioId);
+        if (usuario is null)
+        {
+            AdicionarErro("Usuário não encontrado!");
+            return ValidationResult;
+        }
+
+        if (usuario.CodigoPai != request.CodigoPai)
+        {
+            AdicionarErro("Código do responsável inválido!");
+            return ValidationResult;
+        }
+
+        if (!Enum.TryParse<Neurodivergencia>(request.Neurodivergencia, out var neurodivergencia))
+        {
+            AdicionarErro("Neurodivergência informada é inválida");
+            return ValidationResult;
+        }
+
+        usuario.AtribuirNeurodivergencia(neurodivergencia);
+        _usuarioRepository.Atualizar(usuario);
+
         return await PersistirDados(_usuarioRepository.UnitOfWork);
     }
 

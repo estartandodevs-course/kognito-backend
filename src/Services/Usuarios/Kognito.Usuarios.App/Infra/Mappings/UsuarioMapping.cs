@@ -53,6 +53,23 @@ public class UsuarioMapping : IEntityTypeConfiguration<Usuario>
             cpf.HasIndex(c => c.Numero)
                 .IsUnique();
         });
+        
+        builder.Property(c => c.ResponsavelEmail)
+            .HasColumnType("nvarchar(256)")
+            .HasMaxLength(256)
+            .HasColumnName("ResponsavelEmail")
+            .IsRequired(false);
+
+        builder.Property(c => c.CodigoPai)
+            .HasColumnType("uniqueidentifier")
+            .HasColumnName("CodigoPai")
+            .IsRequired(false);
+
+        builder.Property(c => c.CodigoRecuperacaoEmail)
+            .HasColumnType("nvarchar(32)")
+            .HasMaxLength(32)
+            .HasColumnName("CodigoRecuperacaoEmail")
+            .IsRequired(false);
 
         builder.OwnsOne(c => c.Login, login =>
         {

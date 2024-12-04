@@ -9,4 +9,7 @@ public interface IUsuarioQueries
     Task<IEnumerable<MetaViewModel>> ObterMetas(Guid usuarioId);
     Task<UsuarioViewModel> ObterPorEmail(string email);
     Task<OfensivaViewModel> ObterOfensiva(Guid usuarioId);
+    Task<string> ObterCodigoRecuperacaoPorEmail(string email);
+    Task<Guid?> ObterCodigoPaiPorEmail(string email);
+    Task<string> ObterResponsavelEmailPorId(Guid id);
 }

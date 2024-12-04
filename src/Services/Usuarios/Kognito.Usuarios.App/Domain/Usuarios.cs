@@ -11,6 +11,9 @@ public class Usuario : Entity, IAggregateRoot
     public Login Login { get; private set; }
     public Neurodivergencia? Neurodivergencia { get; private set; }
     public int Ofensiva { get; private set; }
+    public string? ResponsavelEmail { get; private set; }
+    public Guid? CodigoPai { get; private set; }
+    public string? CodigoRecuperacaoEmail { get; private set; }
     
     private HashSet<Emblemas> _emblemas;
     private HashSet<Metas> _metas;
@@ -25,11 +28,35 @@ public class Usuario : Entity, IAggregateRoot
         Ofensiva = 0;
     }
 
-    public Usuario(string nome, Cpf cpf, Neurodivergencia? neurodivergencia = null) : this()
+    public Usuario(string nome, Cpf cpf, Neurodivergencia? neurodivergencia = null, string? responsavelEmail = null) : this()
     {
         Nome = nome;
         Cpf = cpf;
         Neurodivergencia = neurodivergencia;
+        ResponsavelEmail = responsavelEmail;
+        if (responsavelEmail != null)
+        {
+            CodigoPai = Guid.NewGuid();
+        }
+    }
+
+    public void AtribuirResponsavelEmail(string? email)
+    {
+        ResponsavelEmail = email;
+        if (email != null && CodigoPai == null)
+        {
+            CodigoPai = Guid.NewGuid();
+        }
+    }
+
+    public void GerarCodigoRecuperacao()
+    {
+        CodigoRecuperacaoEmail = Guid.NewGuid().ToString("N");
+    }
+
+    public void LimparCodigoRecuperacao()
+    {
+        CodigoRecuperacaoEmail = null;
     }
 
     public void AtribuirNome(string nome) => Nome = nome;

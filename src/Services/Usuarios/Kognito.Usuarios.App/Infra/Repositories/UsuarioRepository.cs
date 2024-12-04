@@ -50,6 +50,25 @@ public class UsuarioRepository : IUsuariosRepository
             .FirstOrDefaultAsync(u => u.Cpf.Numero == cpf);
     }
     
+    public async Task<Usuario> ObterPorCodigoRecuperacao(string codigo)
+    {
+        return await DbSet
+            .FirstOrDefaultAsync(u => u.CodigoRecuperacaoEmail == codigo);
+    }
+
+    public async Task<Usuario> ObterPorCodigoPai(Guid codigoPai)
+    {
+        return await DbSet
+            .FirstOrDefaultAsync(u => u.CodigoPai == codigoPai);
+    }
+
+    public async Task<IEnumerable<Usuario>> ObterPorResponsavelEmail(string email)
+    {
+        return await DbSet
+            .Where(u => u.ResponsavelEmail == email)
+            .ToListAsync();
+    }
+    
     public async Task<IEnumerable<Emblemas>> ObterEmblemasAsync(Guid usuarioId)
     {
         var usuario = await ObterPorId(usuarioId);

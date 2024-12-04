@@ -42,6 +42,22 @@ public class UsuarioQueries : IUsuarioQueries
         return OfensivaViewModel.Mapear(usuario);
     }
     
-    
+    public async Task<string> ObterCodigoRecuperacaoPorEmail(string email)
+    {
+        var usuario = await _usuarioRepository.ObterPorEmail(email);
+        return usuario?.CodigoRecuperacaoEmail;
+    }
+
+    public async Task<Guid?> ObterCodigoPaiPorEmail(string email)
+    {
+        var usuario = await _usuarioRepository.ObterPorEmail(email);
+        return usuario?.CodigoPai;
+    }
+
+    public async Task<string> ObterResponsavelEmailPorId(Guid id)
+    {
+        var usuario = await _usuarioRepository.ObterPorId(id);
+        return usuario?.ResponsavelEmail;
+    }
 
 }
