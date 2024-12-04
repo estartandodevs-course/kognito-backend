@@ -100,6 +100,15 @@ namespace Kognito.Usuarios.App.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("CodigoPai")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("CodigoPai");
+
+                    b.Property<string>("CodigoRecuperacaoEmail")
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)")
+                        .HasColumnName("CodigoRecuperacaoEmail");
+
                     b.Property<DateTime>("DataDeAlteracao")
                         .HasColumnType("datetime2");
 
@@ -122,6 +131,11 @@ namespace Kognito.Usuarios.App.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasDefaultValue(0);
+
+                    b.Property<string>("ResponsavelEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)")
+                        .HasColumnName("ResponsavelEmail");
 
                     b.HasKey("Id");
 
