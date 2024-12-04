@@ -1,11 +1,14 @@
-﻿using EstartandoDevsWebApiCore.Controllers;
+﻿using System.Security.Claims;
+using EstartandoDevsWebApiCore.Controllers;
 using EstartandoDevsCore.Mediator;
 using EstartandoDevsCore.ValueObjects;
 using Kognito.Usuarios.App.Commands;
 using Kognito.Usuarios.App.Queries;
 using Kognito.WebApi.InputModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace Kognito.Usuarios.App.Controllers;
 
@@ -26,9 +29,48 @@ public class UsuariosController : MainController
         _userManager = userManager;
     }
     
+    private async Task<Guid?> ObterUsuarioIdPorIdentityId()
+    {
+        var identityId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(identityId)) return null;
+
+        var usuario = await _usuarioQueries.ObterPorEmail(User.FindFirst(ClaimTypes.Email)?.Value);
+        return usuario?.Id;
+    }
+    
+    private Guid? ObterUsuarioId()
+    {
+        var userIdClaim = User.FindFirst("userId")?.Value;
+        if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+            return null;
+
+        return userId;
+    }
+
+    
+    [HttpGet]
+    public async Task<IActionResult> ObterPerfil()
+    {
+        if (!ModelState.IsValid) return CustomResponse(ModelState);
+
+        var usuarioId = ObterUsuarioId();
+        if (!usuarioId.HasValue)
+        {
+            AdicionarErro("Usuário não encontrado");
+            return NotFound();
+        }
+        
+        var usuario = await _usuarioQueries.ObterPorId(usuarioId.Value);
+
+        return CustomResponse(usuario);
+    }
+    
     [HttpGet("{id:guid}")]
+
     public async Task<IActionResult> ObterPorId(Guid id)
     {
+        if (!ModelState.IsValid) return CustomResponse(ModelState);
+
         var usuario = await _usuarioQueries.ObterPorId(id);
         
         if (usuario == null)
@@ -40,23 +82,35 @@ public class UsuariosController : MainController
         return CustomResponse(usuario);
     }
 
-    [HttpGet("{usuarioId:guid}/emblemas")]
-    public async Task<IActionResult> ObterEmblemas(Guid usuarioId)
+    [HttpGet("/emblemas")]
+    public async Task<IActionResult> ObterEmblemas()
     {
-        var emblemas = await _usuarioQueries.ObterEmblemas(usuarioId);
+        if (!ModelState.IsValid) return CustomResponse(ModelState);
+
+        var usuarioId = ObterUsuarioId();
+        if (!usuarioId.HasValue)
+        {
+            AdicionarErro("Usuário não encontrado");
+            return NotFound();
+        }
+        
+        var emblemas = await _usuarioQueries.ObterEmblemas(usuarioId.Value);
         return CustomResponse(emblemas);
     }
 
-    [HttpGet("{id:guid}/ofensiva")]
-    public async Task<IActionResult> ObterOfensiva(Guid id)
+    [HttpGet("/ofensiva")]
+    public async Task<IActionResult> ObterOfensiva()
     {
-        var ofensiva = await _usuarioQueries.ObterOfensiva(id);
-    
-        if (ofensiva == null)
+        if (!ModelState.IsValid) return CustomResponse(ModelState);
+
+        var usuarioId = ObterUsuarioId();
+        if (!usuarioId.HasValue)
         {
             AdicionarErro("Usuário não encontrado");
-            return CustomResponse();
+            return NotFound();
         }
+        
+        var ofensiva = await _usuarioQueries.ObterOfensiva(usuarioId.Value);
 
         return CustomResponse(ofensiva);
     }
@@ -106,14 +160,56 @@ public class UsuariosController : MainController
         return CustomResponse(createdUser);
     }
 
-    [HttpPut("{id:guid}")]
-    public async Task<IActionResult> Atualizar(Guid id, [FromBody] AtualizarUsuarioInputModel model)
+    [HttpPut]
+    public async Task<IActionResult> Atualizar([FromBody] AtualizarUsuarioInputModel model)
     {
         if (!ModelState.IsValid) return CustomResponse(ModelState);
 
-        var command = new AtualizarUsuarioCommand(id, model.Nome, model.Neurodivergencia);
+        var usuarioId = ObterUsuarioId();
+        if (!usuarioId.HasValue)
+        {
+            AdicionarErro("Usuário não encontrado");
+            return NotFound();
+        }
+        
+        var command = new AtualizarUsuarioCommand(usuarioId.Value, model.Nome, model.Neurodivergencia);
         var result = await _mediatorHandler.EnviarComando(command);
         
         return CustomResponse(result);
     }
+    
+
+    [Authorize]
+    [HttpPost("mudar-senha")]
+    public async Task<ActionResult> ChangePassword(AlterarSenhaInputModel model)
+    {
+        if (!ModelState.IsValid) return CustomResponse(ModelState);
+
+        var identityId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    
+        if (string.IsNullOrEmpty(identityId))
+        {
+            AdicionarErro("Usuário não encontrado");
+            return CustomResponse();
+        }
+
+        var user = await _userManager.FindByIdAsync(identityId);
+        if (user == null)
+        {
+            AdicionarErro("Usuário não encontrado");
+            return CustomResponse();
+        }
+
+        var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+        if (!result.Succeeded)
+        {
+            foreach (var error in result.Errors)
+                AdicionarErro(error.Description);
+        
+            return CustomResponse();
+        }
+
+        return CustomResponse("Senha alterada com sucesso");
+    }
+   
 }

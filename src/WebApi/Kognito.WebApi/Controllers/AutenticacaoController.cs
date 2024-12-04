@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using EstartandoDevsWebApiCore.Controllers;
 using EstartandoDevsWebApiCore.Identidade;
+using Kognito.Usuarios.App.Domain.Interface;
 using Kognito.WebApi.InputModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -18,16 +19,18 @@ public class AutenticacaoController : MainController
 {
     private readonly SignInManager<IdentityUser> _signInManager;
     private readonly UserManager<IdentityUser> _userManager;
-
+    private readonly IUsuariosRepository _usuariosRepository;
+    
     private readonly AppSettings _apiSetting;
 
     public AutenticacaoController(
         SignInManager<IdentityUser> signInManager,
         UserManager<IdentityUser> userManager,
-        IOptions<AppSettings> apiSetting)
+        IOptions<AppSettings> apiSetting, IUsuariosRepository usuariosRepository)
     {
         _signInManager = signInManager;
         _userManager = userManager;
+        _usuariosRepository = usuariosRepository;
         _apiSetting = apiSetting.Value;
     }
 
@@ -67,13 +70,16 @@ public class AutenticacaoController : MainController
     private async Task<ClaimsIdentity> ObterClaimsUsuario(ICollection<Claim> claims, IdentityUser user)
     {
         var userRoles = await _userManager.GetRolesAsync(user);
+        var domainUser = await _usuariosRepository.ObterPorEmail(user.Email);
 
         claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.Id));
         claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email));
+        claims.Add(new Claim("userId", domainUser.Id.ToString()));
         claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
         claims.Add(new Claim(JwtRegisteredClaimNames.Nbf, ToUnixEpochDate(DateTime.UtcNow).ToString()));
         claims.Add(new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(DateTime.UtcNow).ToString(),
             ClaimValueTypes.Integer64));
+    
         foreach (var userRole in userRoles)
         {
             claims.Add(new Claim("role", userRole));
