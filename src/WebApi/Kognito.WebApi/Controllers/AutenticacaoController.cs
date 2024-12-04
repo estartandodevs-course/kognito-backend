@@ -39,7 +39,7 @@ public class AutenticacaoController : MainController
     {
         if (!ModelState.IsValid) return CustomResponse(ModelState);
 
-        var result = await _signInManager.PasswordSignInAsync(usuarioLogin.Login, usuarioLogin.Senha, false, false);
+        var result = await _signInManager.PasswordSignInAsync(usuarioLogin.Email, usuarioLogin.Password, false, false);
 
         if (!result.Succeeded)
         {
@@ -48,7 +48,7 @@ public class AutenticacaoController : MainController
         }
 
 
-        var userLogin = await GerarJwt(usuarioLogin.Login);
+        var userLogin = await GerarJwt(usuarioLogin.Email);
 
         return CustomResponse(userLogin);
     }
