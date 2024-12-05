@@ -5,16 +5,20 @@ namespace Kognito.Turmas.App.Commands;
 
 public class CriarConteudoCommand : Command
 {
-    public Guid Id { get; set; }
-    public string Titulo { get; set; }
-    public string ConteudoDidatico { get; set; }
-    public CriarConteudoCommand(Guid id, string titulo, string conteudoDidatico)
+
+    public Guid Id { get; private set; }
+    public string Titulo { get; private set; }
+    public string ConteudoDidatico { get; private set; }
+    public Guid TurmaId { get; private set; }
+
+    public CriarConteudoCommand(Guid id, string titulo, string conteudoDidatico, Guid turmaId)
     {
-        ValidarParametros(id, titulo);
         Id = id;
         Titulo = titulo;
         ConteudoDidatico = conteudoDidatico;
+        TurmaId = turmaId;
     }
+
     private void ValidarParametros(Guid id, string titulo)
     {
         if (id == Guid.Empty)

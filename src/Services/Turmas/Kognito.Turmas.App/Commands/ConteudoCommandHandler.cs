@@ -31,28 +31,38 @@ namespace Kognito.Turmas.App.Commands
             _turmaRepository = turmaRepository;
         }
 
-           public async Task<ValidationResult> Handle(CriarConteudoCommand request, CancellationToken cancellationToken)
+public async Task<ValidationResult> Handle(CriarConteudoCommand request, CancellationToken cancellationToken)
+{
+    try
     {
-        try
+        var conteudos = await _conteudoQueries.ObterTodosConteudos();
+        if (conteudos.Any(c => c.Title == request.Titulo))
         {
-            var conteudos = await _conteudoQueries.ObterTodosConteudos();
-            if (conteudos.Any(c => c.Title == request.Titulo))
-            {
-                AdicionarErro("Já existe um conteúdo com este título");
-                return ValidationResult;
-            }
-
-            var conteudo = new Conteudo(request.Titulo, request.ConteudoDidatico);
-            _conteudoRepository.Adicionar(conteudo); 
-            
-            return await PersistirDados(_conteudoRepository.UnitOfWork);
-        }
-        catch (Exception ex)
-        {
-            AdicionarErro($"Erro ao criar conteúdo: {ex.Message}");
+            AdicionarErro("Já existe um conteúdo com este título");
             return ValidationResult;
         }
+
+        var turma = await _turmaRepository.ObterPorId(request.TurmaId);
+        if (turma == null)
+        {
+            AdicionarErro("Turma não encontrada");
+            return ValidationResult;
+        }
+
+        var conteudo = new Conteudo(request.Titulo, request.ConteudoDidatico);
+        conteudo.AtribuirEntidadeId(request.Id); 
+        conteudo.VincularTurma(turma);
+        
+        _conteudoRepository.Adicionar(conteudo);
+        
+        return await PersistirDados(_conteudoRepository.UnitOfWork);
     }
+    catch (Exception ex)
+    {
+        AdicionarErro($"Erro ao criar conteúdo: {ex.Message}");
+        return ValidationResult;
+    }
+}
 
     public async Task<ValidationResult> Handle(AtualizarConteudoCommand request, CancellationToken cancellationToken)
     {

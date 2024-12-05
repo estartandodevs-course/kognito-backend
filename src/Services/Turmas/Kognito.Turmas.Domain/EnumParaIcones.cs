@@ -1,13 +1,11 @@
-using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Kognito.Turmas.Domain;
 
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum Icones
 {
-    [Display(Name = "Primeiro Ícone")]
-    Primeiro = 1,
-    [Display(Name = "Segundo Ícone")]
-    Segundo = 2,
-    [Display(Name = "Terceiro Ícone")]
-    Terceiro = 3
+    primeiro,
+    segundo,
+    terceiro
 }

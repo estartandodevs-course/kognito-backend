@@ -98,36 +98,41 @@ public class TurmasController : MainController
         return CustomResponse(result);
     }
 
-    [HttpPost("ingressar/{hashAcesso}")]
-    public async Task<IActionResult> IngressarTurma(string hashAcesso, [FromBody] IngressoTurmaInputModel model)
+[HttpPost("ingressar/{hashAcesso}")]
+public async Task<IActionResult> IngressarTurma(string hashAcesso, [FromBody] IngressoTurmaInputModel model)
+{
+    var turma = await _turmaQueries.ObterPorHashAcesso(hashAcesso);
+    if (turma == null)
     {
-        var turma = await _turmaQueries.ObterPorHashAcesso(hashAcesso);
-        if (turma == null)
-        {
-            AdicionarErro("Turma não encontrada");
-            return CustomResponse();
-        }
-
-        if (turma.Professor.Id == model.AlunoId)
-        {
-            AdicionarErro("Professor não pode ingressar como aluno em sua própria turma");
-            return CustomResponse();
-        }
-
-        var command = new CriarAlunoNaTurmaCommand(
-            alunoId: model.AlunoId,
-            alunoNome: model.AlunoNome,
-            turmaId: turma.Id,
-            status: Enturmamento.EnturtamentoStatus.Ativo
-        );
-
-        var result = await _mediatorHandler.EnviarComando(command);
-        
-        if (result.IsValid)
-            return CustomResponse("Ingresso na turma realizado com sucesso!");
-            
-        return CustomResponse(result);
+        AdicionarErro("Turma não encontrada");
+        return CustomResponse();
     }
+
+    if (turma.Professor.Id == model.StudentId)
+    {
+        AdicionarErro("Professor não pode ingressar como aluno em sua própria turma");
+        return CustomResponse();
+    }
+
+    var command = new CriarAlunoNaTurmaCommand(
+        id: Guid.NewGuid(),
+        alunoId: model.StudentId,
+        alunoNome: model.StudentName,
+        turmaId: turma.Id,
+        status: Enturmamento.EnturtamentoStatus.Ativo
+    );
+
+    var result = await _mediatorHandler.EnviarComando(command);
+    
+    if (result.IsValid)
+        return CustomResponse(new 
+        { 
+            mensagem = "Ingresso na turma realizado com sucesso!",
+            turma = turma
+        });
+        
+    return CustomResponse(result);
+}
 
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Atualizar(Guid id, [FromBody] TurmaInputModel model)

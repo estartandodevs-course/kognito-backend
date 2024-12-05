@@ -21,35 +21,26 @@ public class ConteudosController : MainController
         _mediatorHandler = mediatorHandler;
     }
 
-    [HttpGet]
-    public async Task<IActionResult> ObterTodos()
-    {
-        try
-        {
-            var conteudos = await _conteudoQueries.ObterTodosConteudos();
-            return CustomResponse(conteudos);
-        }
-        catch (Exception ex)
-        {
-            AdicionarErro($"Erro ao obter conteúdos: {ex.Message}");
-            return CustomResponse();
-        }
-    }
+ 
 
-    [HttpGet("turma/{turmaId:guid}")]
-    public async Task<IActionResult> ObterPorTurma(Guid turmaId)
+  [HttpGet("turma/{turmaId:guid}")]
+public async Task<IActionResult> ObterPorTurma(Guid turmaId)
+{
+    try
     {
-        try
+        var conteudos = await _conteudoQueries.ObterPorTurma(turmaId);
+        return CustomResponse(new
         {
-            var conteudos = await _conteudoQueries.ObterPorTurma(turmaId);
-            return CustomResponse(conteudos);
-        }
-        catch (Exception ex)
-        {
-            AdicionarErro($"Erro ao obter conteúdos da turma: {ex.Message}");
-            return CustomResponse();
-        }
+            mensagem = "Conteúdos obtidos com sucesso",
+            conteudos = conteudos
+        });
     }
+    catch (Exception ex)
+    {
+        AdicionarErro($"Erro ao obter conteúdos da turma: {ex.Message}");
+        return CustomResponse();
+    }
+}
 
     [HttpGet("turma/{turmaId:guid}/quantidade")]
     public async Task<IActionResult> ObterQuantidadeConteudos(Guid turmaId)
@@ -66,67 +57,102 @@ public class ConteudosController : MainController
         }
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Criar([FromBody] ConteudoInputModel model)
+   [HttpPost]
+public async Task<IActionResult> Criar([FromBody] ConteudoInputModel model)
+{
+    try
     {
-        try
+        if (!ModelState.IsValid) return CustomResponse(ModelState);
+
+        var command = new CriarConteudoCommand(
+            id: Guid.NewGuid(),
+            titulo: model.Title,
+            conteudoDidatico: model.Description,
+            turmaId: model.ClassId
+        );
+
+        var result = await _mediatorHandler.EnviarComando(command);
+        if (result.IsValid)
         {
-            if (!ModelState.IsValid) return CustomResponse(ModelState);
-
-            var command = new CriarConteudoCommand(
-                Guid.NewGuid(),
-                model.Title,
-                model.Description
-            );
-
-            var result = await _mediatorHandler.EnviarComando(command);
-            return CustomResponse(result);
+            var conteudoCriado = await _conteudoQueries.ObterPorId(command.Id);
+            return CustomResponse(new 
+            { 
+                mensagem = "Conteúdo criado com sucesso!",
+                conteudo = conteudoCriado 
+            });
         }
-        catch (Exception ex)
+        
+        return CustomResponse(result);
+    }
+    catch (Exception ex)
+    {
+        AdicionarErro($"Erro ao criar conteúdo: {ex.Message}");
+        return CustomResponse();
+    }
+}
+
+[HttpPut("{id:guid}")]
+public async Task<IActionResult> Atualizar(Guid id, [FromBody] ConteudoInputModel model)
+{
+    try
+    {
+        if (!ModelState.IsValid) return CustomResponse(ModelState);
+
+        var command = new AtualizarConteudoCommand(
+            id,
+            model.Title,
+            model.Description,
+            model.ClassId
+        );
+
+        var result = await _mediatorHandler.EnviarComando(command);
+        if (result.IsValid)
         {
-            AdicionarErro($"Erro ao criar conteúdo: {ex.Message}");
+            var conteudoAtualizado = await _conteudoQueries.ObterPorId(id);
+            return CustomResponse(new 
+            { 
+                mensagem = "Conteúdo atualizado com sucesso!",
+                conteudo = conteudoAtualizado 
+            });
+        }
+        
+        return CustomResponse(result);
+    }
+    catch (Exception ex)
+    {
+        AdicionarErro($"Erro ao atualizar conteúdo: {ex.Message}");
+        return CustomResponse();
+    }
+}
+
+[HttpDelete("{id:guid}")]
+public async Task<IActionResult> Excluir(Guid id)
+{
+    try
+    {
+        var conteudo = await _conteudoQueries.ObterPorId(id);
+        if (conteudo == null)
+        {
+            AdicionarErro("Conteúdo não encontrado");
             return CustomResponse();
         }
-    }
 
-    [HttpPut("{id:guid}")]
-    public async Task<IActionResult> Atualizar(Guid id, [FromBody] ConteudoInputModel model)
+        var command = new ExcluirConteudoCommand(id);
+        var result = await _mediatorHandler.EnviarComando(command);
+        
+        if (result.IsValid)
+            return CustomResponse(new 
+            { 
+                mensagem = "Conteúdo excluído com sucesso!",
+                conteudoExcluido = conteudo 
+            });
+            
+        return CustomResponse(result);
+    }
+    catch (Exception ex)
     {
-        try
-        {
-            if (!ModelState.IsValid) return CustomResponse(ModelState);
-
-            var command = new AtualizarConteudoCommand(
-                id,
-                model.Title,
-                model.Description,
-                model.ClassId
-            );
-
-            var result = await _mediatorHandler.EnviarComando(command);
-            return CustomResponse(result);
-        }
-        catch (Exception ex)
-        {
-            AdicionarErro($"Erro ao atualizar conteúdo: {ex.Message}");
-            return CustomResponse();
-        }
+        AdicionarErro($"Erro ao excluir conteúdo: {ex.Message}");
+        return CustomResponse();
     }
-
-    [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> Excluir(Guid id)
-    {
-        try
-        {
-            var command = new ExcluirConteudoCommand(id);
-            var result = await _mediatorHandler.EnviarComando(command);
-            return CustomResponse(result);
-        }
-        catch (Exception ex)
-        {
-            AdicionarErro($"Erro ao excluir conteúdo: {ex.Message}");
-            return CustomResponse();
-        }
-    }
-    
+}
 }
