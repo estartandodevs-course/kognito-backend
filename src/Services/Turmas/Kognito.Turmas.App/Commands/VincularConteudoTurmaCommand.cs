@@ -1,4 +1,6 @@
 using EstartandoDevsCore.Messages;
+using Kognito.Turmas.Domain.Common;
+using FluentValidation.Results;
 
 public class VincularConteudoTurmaCommand : Command
 {
@@ -7,17 +9,34 @@ public class VincularConteudoTurmaCommand : Command
 
     public VincularConteudoTurmaCommand(Guid conteudoId, Guid turmaId)
     {
-        ValidarIds(conteudoId, turmaId);
-        ConteudoId = conteudoId;
-        TurmaId = turmaId;
+        var validationResult = ValidarIds(conteudoId, turmaId);
+        if (validationResult.Success)
+        {
+            ConteudoId = conteudoId;
+            TurmaId = turmaId;
+        }
+        else
+        {
+            foreach (var error in validationResult.Errors)
+                ValidationResult.Errors.Add(new ValidationFailure(string.Empty, error));
+        }
     }
 
-    private void ValidarIds(Guid conteudoId, Guid turmaId)
+    private Result ValidarIds(Guid conteudoId, Guid turmaId)
     {
+        var errors = new List<string>();
+
         if (conteudoId == Guid.Empty)
-            throw new ArgumentException("Id do conteúdo inválido", nameof(conteudoId));
+            errors.Add("Id do conteúdo inválido");
             
         if (turmaId == Guid.Empty)
-            throw new ArgumentException("Id da turma inválido", nameof(turmaId));
+            errors.Add("Id da turma inválido");
+
+        return errors.Any() ? Result.Fail(errors) : Result.Ok();
+    }
+
+    public override bool EstaValido()
+    {
+        return ValidationResult.IsValid;
     }
 }

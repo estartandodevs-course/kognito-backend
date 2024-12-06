@@ -11,14 +11,7 @@ public class Usuario
 
     public Usuario(string nome, Guid id)
     {
-        ValidarNome(nome);
-        Nome = nome;
+        Nome = !string.IsNullOrWhiteSpace(nome) ? nome : "Nome não informado";
         Id = id;
-
-    }
-    private void ValidarNome(string nome)
-    {
-        if (string.IsNullOrWhiteSpace(nome))
-            throw new ArgumentException("Nome não pode ser vazio ou nulo");
     }
 }

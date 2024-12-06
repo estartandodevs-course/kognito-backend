@@ -1,28 +1,47 @@
 using System;
 using EstartandoDevsCore.Messages;
+using Kognito.Turmas.Domain.Common;
+using FluentValidation.Results;
 
 namespace Kognito.Turmas.App.Commands;
 
 public class AtualizarConteudoCommand : Command
 {
-
-    public Guid ConteudoId { get; set; }
-    public string Titulo { get; set; }
-    public string ConteudoDidatico { get; set; }
+    public Guid ConteudoId { get; private set; }
+    public string Titulo { get; private set; }
+    public string ConteudoDidatico { get; private set; }
 
     public AtualizarConteudoCommand(Guid conteudoId, string titulo, string conteudoDidatico, Guid classId)
     {
-        ValidarParametros(conteudoId, titulo);
-        ConteudoId = conteudoId;
-        Titulo = titulo;
-        ConteudoDidatico = conteudoDidatico;
+        var validationResult = ValidarParametros(conteudoId, titulo);
+        if (validationResult.Success)
+        {
+            ConteudoId = conteudoId;
+            Titulo = titulo;
+            ConteudoDidatico = conteudoDidatico;
+        }
+        else
+        {
+            foreach (var error in validationResult.Errors)
+                ValidationResult.Errors.Add(new ValidationFailure(string.Empty, error));
+        }
     }
-    private void ValidarParametros(Guid id, string titulo)
+
+    private Result ValidarParametros(Guid id, string titulo)
     {
+        var errors = new List<string>();
+
         if (id == Guid.Empty)
-            throw new ArgumentException("Id do conteúdo inválido", nameof(id));
+            errors.Add("Id do conteúdo inválido");
             
         if (string.IsNullOrWhiteSpace(titulo))
-            throw new ArgumentException("Título não pode ser vazio", nameof(titulo));
+            errors.Add("Título não pode ser vazio");
+
+        return errors.Any() ? Result.Fail(errors) : Result.Ok();
+    }
+
+    public override bool EstaValido()
+    {
+        return ValidationResult.IsValid;
     }
 }

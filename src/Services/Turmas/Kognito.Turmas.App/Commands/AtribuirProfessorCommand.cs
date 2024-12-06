@@ -1,28 +1,47 @@
 using System;
 using EstartandoDevsCore.Messages;
 using EstartandoDevsCore.ValueObjects;
+using FluentValidation.Results;
 using Kognito.Turmas.Domain;
+using Kognito.Turmas.Domain.Common;
 
 namespace Kognito.Turmas.App.Commands;
 
 public class AtribuirProfessorCommand : Command
 {
-    public Guid TurmaId { get; set; }
-    public Guid ProfessorId { get; set; }
+    public Guid TurmaId { get; private set; }
+    public Guid ProfessorId { get; private set; }
     
     public AtribuirProfessorCommand(Guid turmaId, Guid professorId)
     {
-        ValidarIds(turmaId, professorId);
-
-        TurmaId = turmaId;
-        ProfessorId = professorId;
+        var validationResult = ValidarIds(turmaId, professorId);
+        if (validationResult.Success)
+        {
+            TurmaId = turmaId;
+            ProfessorId = professorId;
+        }
+        else
+        {
+            foreach (var error in validationResult.Errors)
+                ValidationResult.Errors.Add(new ValidationFailure(string.Empty, error));
+        }
     }
-    private void ValidarIds(Guid turmaId, Guid professorId)
+
+    private Result ValidarIds(Guid turmaId, Guid professorId)
     {
+        var errors = new List<string>();
+
         if (turmaId == Guid.Empty)
-            throw new ArgumentException("Id da turma inválido", nameof(turmaId));
+            errors.Add("Id da turma inválido");
             
         if (professorId == Guid.Empty)
-            throw new ArgumentException("Id do professor inválido", nameof(professorId));
+            errors.Add("Id do professor inválido");
+
+        return errors.Any() ? Result.Fail(errors) : Result.Ok();
+    }
+
+    public override bool EstaValido()
+    {
+        return ValidationResult.IsValid;
     }
 }

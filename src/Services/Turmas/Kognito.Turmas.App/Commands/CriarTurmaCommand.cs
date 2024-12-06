@@ -1,6 +1,7 @@
 using EstartandoDevsCore.Messages;
 using FluentValidation.Results;
 using Kognito.Turmas.Domain;
+using Kognito.Turmas.Domain.Common;
 
 public class CriarTurmaCommand : Command
 {
@@ -21,24 +22,41 @@ public class CriarTurmaCommand : Command
         Icones icone)
     {
         Id = Guid.NewGuid();
-        ValidarParametros(professor, nome, materia);
-        Professor = professor;
-        Nome = nome;
-        Descricao = descricao;
-        Materia = materia;
-        Cor = cor;
-        Icone = icone;
+        var validationResult = ValidarParametros(professor, nome, materia);
+        if (validationResult.Success)
+        {
+            Professor = professor;
+            Nome = nome;
+            Descricao = descricao;
+            Materia = materia;
+            Cor = cor;
+            Icone = icone;
+        }
+        else
+        {
+            foreach (var error in validationResult.Errors)
+                ValidationResult.Errors.Add(new ValidationFailure(string.Empty, error));
+        }
     }
 
-    private void ValidarParametros(Usuario professor, string nome, string materia)
+    private Result ValidarParametros(Usuario professor, string nome, string materia)
     {
+        var errors = new List<string>();
+
         if (professor == null)
-            throw new ArgumentException("Professor não pode ser nulo", nameof(professor));
+            errors.Add("Professor não pode ser vazio");
             
         if (string.IsNullOrWhiteSpace(nome))
-            throw new ArgumentException("Nome não pode ser vazio", nameof(nome));
+            errors.Add("Nome não pode ser vazio");
             
         if (string.IsNullOrWhiteSpace(materia))
-            throw new ArgumentException("Matéria não pode ser vazia", nameof(materia));
+            errors.Add("Matéria não pode ser vazia");
+
+        return errors.Any() ? Result.Fail(errors) : Result.Ok();
+    }
+
+    public override bool EstaValido()
+    {
+        return ValidationResult.IsValid;
     }
 }

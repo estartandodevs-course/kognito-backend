@@ -31,39 +31,53 @@ public class TurmaCommandHandler : CommandHandler,
         ITurmaRepository turmaRepository,
         ITurmaQueries turmaQueries)
     {
-        _turmaRepository = turmaRepository ?? throw new ArgumentNullException(nameof(turmaRepository));
-        _turmaQueries = turmaQueries ?? throw new ArgumentNullException(nameof(turmaQueries));
+        if (turmaRepository == null)
+            AdicionarErro("Repositório de turmas não pode ser nulo");
+        if (turmaQueries == null)
+            AdicionarErro("Queries de turmas não pode ser nulo");
+
+        _turmaRepository = turmaRepository;
+        _turmaQueries = turmaQueries;
     }
 
-public async Task<ValidationResult> Handle(CriarTurmaCommand request, CancellationToken cancellationToken)
-{
-    if (request == null) throw new ArgumentNullException(nameof(request));
-
-    try
+    public async Task<ValidationResult> Handle(CriarTurmaCommand request, CancellationToken cancellationToken)
     {
-        var turma = new Turma(
-            id: Guid.NewGuid(),
-            professor: request.Professor ?? throw new ArgumentNullException(nameof(request.Professor)),
-            nome: request.Nome,
-            descricao: request.Descricao,
-            materia: request.Materia,
-            cor: request.Cor,
-            icones: request.Icone
-        );
+        if (!request.EstaValido())
+            return request.ValidationResult;
 
-        _turmaRepository.Adicionar(turma);
-        return await PersistirDados(_turmaRepository.UnitOfWork);
+        try
+        {
+            var turmaResult = Turma.Criar(
+                request.Id,
+                request.Professor,
+                request.Nome,
+                request.Descricao,
+                request.Materia,
+                request.Cor,
+                request.Icone
+            );
+
+            if (!turmaResult.Success)
+            {
+                foreach (var erro in turmaResult.Errors)
+                    AdicionarErro(erro);
+                return ValidationResult;
+            }
+
+            _turmaRepository.Adicionar(turmaResult.Data);
+            return await PersistirDados(_turmaRepository.UnitOfWork);
+        }
+        catch (Exception ex)
+        {
+            AdicionarErro($"Erro ao criar turma: {ex.Message}");
+            return ValidationResult;
+        }
     }
-    catch (Exception)
-    {
-        AdicionarErro("Ocorreu um erro interno ao criar a turma");
-        return ValidationResult;
-    }
-}
 
     public async Task<ValidationResult> Handle(AtualizarTurmaCommand request, CancellationToken cancellationToken)
     {
-        if (request == null) throw new ArgumentNullException(nameof(request));
+        if (!request.EstaValido())
+            return request.ValidationResult;
 
         try
         {
@@ -74,8 +88,13 @@ public async Task<ValidationResult> Handle(CriarTurmaCommand request, Cancellati
                 return ValidationResult;
             }
 
+            if (request.Professor == null)
+            {
+                AdicionarErro("Professor não pode ser nulo");
+                return ValidationResult;
+            }
 
-            turma.AtribuirProfessor(request.Professor ?? throw new ArgumentNullException(nameof(request.Professor)));
+            turma.AtribuirProfessor(request.Professor);
             turma.AtribuirNome(request.Nome);
             turma.AtribuirDescricao(request.Descricao);
             turma.AtribuirMateria(request.Materia);
@@ -97,7 +116,8 @@ public async Task<ValidationResult> Handle(CriarTurmaCommand request, Cancellati
 
     public async Task<ValidationResult> Handle(ExcluirTurmaCommand request, CancellationToken cancellationToken)
     {
-        if (request == null) throw new ArgumentNullException(nameof(request));
+        if (!request.EstaValido())
+            return request.ValidationResult;
 
         try
         {
@@ -128,9 +148,11 @@ public async Task<ValidationResult> Handle(CriarTurmaCommand request, Cancellati
             return ValidationResult;
         }
     }
-        public async Task<ValidationResult> Handle(AtribuirProfessorCommand request, CancellationToken cancellationToken)
+
+    public async Task<ValidationResult> Handle(AtribuirProfessorCommand request, CancellationToken cancellationToken)
     {
-        if (request == null) throw new ArgumentNullException(nameof(request));
+        if (!request.EstaValido())
+            return request.ValidationResult;
 
         try
         {
@@ -138,12 +160,6 @@ public async Task<ValidationResult> Handle(CriarTurmaCommand request, Cancellati
             if (turma == null)
             {
                 AdicionarErro("Turma não encontrada");
-                return ValidationResult;
-            }
-
-            if (request.ProfessorId == Guid.Empty)
-            {
-                AdicionarErro("ID do professor inválido");
                 return ValidationResult;
             }
 
@@ -167,7 +183,8 @@ public async Task<ValidationResult> Handle(CriarTurmaCommand request, Cancellati
 
     public async Task<ValidationResult> Handle(SelecionarCorCommand request, CancellationToken cancellationToken)
     {
-        if (request == null) throw new ArgumentNullException(nameof(request));
+        if (!request.EstaValido())
+            return request.ValidationResult;
 
         try
         {
@@ -197,7 +214,8 @@ public async Task<ValidationResult> Handle(CriarTurmaCommand request, Cancellati
 
     public async Task<ValidationResult> Handle(SelecionarIconesCommand request, CancellationToken cancellationToken)
     {
-        if (request == null) throw new ArgumentNullException(nameof(request));
+        if (!request.EstaValido())
+            return request.ValidationResult;
 
         try
         {
@@ -227,7 +245,8 @@ public async Task<ValidationResult> Handle(CriarTurmaCommand request, Cancellati
 
     public async Task<ValidationResult> Handle(CriarAlunoNaTurmaCommand request, CancellationToken cancellationToken)
     {
-        if (request == null) throw new ArgumentNullException(nameof(request));
+        if (!request.EstaValido())
+            return request.ValidationResult;
 
         try
         {
@@ -238,16 +257,17 @@ public async Task<ValidationResult> Handle(CriarTurmaCommand request, Cancellati
                 return ValidationResult;
             }
 
-            if (request.AlunoId == Guid.Empty)
+            var aluno = new Usuario(request.AlunoNome, request.AlunoId);
+            var enturmamentoResult = Enturmamento.Criar(aluno, turma, request.Status);
+            
+            if (!enturmamentoResult.Success)
             {
-                AdicionarErro("ID do aluno inválido");
+                foreach (var erro in enturmamentoResult.Errors)
+                    AdicionarErro(erro);
                 return ValidationResult;
             }
 
-            var aluno = new Usuario("Aluno", request.AlunoId);
-            var enturmamento = new Enturmamento(aluno, turma, request.Status);
-            
-            turma.AdicionarEnturmamento(enturmamento);
+            turma.AdicionarEnturmamento(enturmamentoResult.Data);
             _turmaRepository.Atualizar(turma);
             
             return await PersistirDados(_turmaRepository.UnitOfWork);
@@ -257,52 +277,61 @@ public async Task<ValidationResult> Handle(CriarTurmaCommand request, Cancellati
             AdicionarErro("Erro ao acessar o banco de dados");
             return ValidationResult;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            AdicionarErro("Ocorreu um erro interno ao criar enturmamento");
+            AdicionarErro($"Ocorreu um erro interno ao criar enturmamento: {ex.Message}");
             return ValidationResult;
         }
     }
 
     public async Task<ValidationResult> Handle(ExcluirAlunoDaTurmaCommand request, CancellationToken cancellationToken)
+{
+    if (!request.EstaValido())
+        return request.ValidationResult;
+
+    try
     {
-        if (request == null) throw new ArgumentNullException(nameof(request));
-
-        try
+        var turma = await _turmaRepository.ObterPorId(request.TurmaId);
+        if (turma == null)
         {
-            var turma = await _turmaRepository.ObterPorId(request.TurmaId);
-            if (turma == null)
-            {
-                AdicionarErro("Turma não encontrada");
-                return ValidationResult;
-            }
-
-            if (request.AlunoId == Guid.Empty)
-            {
-                AdicionarErro("ID do aluno inválido");
-                return ValidationResult;
-            }
-
-            turma.RemoverEnturmamento(request.AlunoId);
-            _turmaRepository.Atualizar(turma);
-            
-            return await PersistirDados(_turmaRepository.UnitOfWork);
-        }
-        catch (DbException)
-        {
-            AdicionarErro("Erro ao acessar o banco de dados");
+            AdicionarErro("Turma não encontrada");
             return ValidationResult;
         }
-        catch (Exception)
+
+        var enturmamento = turma.Enturmamentos.FirstOrDefault(e => e.Aluno.Id == request.AlunoId);
+        if (enturmamento == null)
         {
-            AdicionarErro("Ocorreu um erro interno ao excluir aluno da turma");
+            AdicionarErro("Aluno não encontrado na turma especificada");
             return ValidationResult;
         }
+
+        var result = turma.RemoverEnturmamento(request.AlunoId);
+        if (!result.Success)
+        {
+            foreach (var erro in result.Errors)
+                AdicionarErro(erro);
+            return ValidationResult;
+        }
+
+        _turmaRepository.Atualizar(turma);
+        return await PersistirDados(_turmaRepository.UnitOfWork);
     }
+    catch (DbException)
+    {
+        AdicionarErro("Erro ao acessar o banco de dados");
+        return ValidationResult;
+    }
+    catch (Exception)
+    {
+        AdicionarErro("Ocorreu um erro interno ao excluir aluno da turma");
+        return ValidationResult;
+    }
+}
 
     public async Task<ValidationResult> Handle(AtualizarStatusEnturmamentoCommand request, CancellationToken cancellationToken)
     {
-        if (request == null) throw new ArgumentNullException(nameof(request));
+        if (!request.EstaValido())
+            return request.ValidationResult;
 
         try
         {
@@ -310,12 +339,6 @@ public async Task<ValidationResult> Handle(CriarTurmaCommand request, Cancellati
             if (turma == null)
             {
                 AdicionarErro("Turma não encontrada");
-                return ValidationResult;
-            }
-
-            if (request.AlunoId == Guid.Empty)
-            {
-                AdicionarErro("ID do aluno inválido");
                 return ValidationResult;
             }
 
@@ -326,7 +349,14 @@ public async Task<ValidationResult> Handle(CriarTurmaCommand request, Cancellati
                 return ValidationResult;
             }
 
-            enturmamento.AtualizarStatus(request.Status);
+            var statusResult = enturmamento.AtualizarStatus(request.Status);
+            if (!statusResult.Success)
+            {
+                foreach (var erro in statusResult.Errors)
+                    AdicionarErro(erro);
+                return ValidationResult;
+            }
+
             _turmaRepository.Atualizar(turma);
             
             return await PersistirDados(_turmaRepository.UnitOfWork);

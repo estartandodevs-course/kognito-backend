@@ -1,5 +1,7 @@
 using EstartandoDevsCore.Messages;
 using Kognito.Turmas.Domain;
+using Kognito.Turmas.Domain.Common;
+using FluentValidation.Results;
 
 public class SelecionarCorCommand : Command
 {
@@ -8,14 +10,29 @@ public class SelecionarCorCommand : Command
 
     public SelecionarCorCommand(Guid turmaId, Cor cor)
     {
-        ValidarTurmaId(turmaId);
-        TurmaId = turmaId;
-        SelecionarCor = cor;
+        var validationResult = ValidarTurmaId(turmaId);
+        if (validationResult.Success)
+        {
+            TurmaId = turmaId;
+            SelecionarCor = cor;
+        }
+        else
+        {
+            foreach (var error in validationResult.Errors)
+                ValidationResult.Errors.Add(new ValidationFailure(string.Empty, error));
+        }
     }
 
-    private void ValidarTurmaId(Guid turmaId)
+    private Result ValidarTurmaId(Guid turmaId)
     {
         if (turmaId == Guid.Empty)
-            throw new ArgumentException("Id da turma inválido", nameof(turmaId));
+            return Result.Fail("Id da turma inválido");
+
+        return Result.Ok();
+    }
+
+    public override bool EstaValido()
+    {
+        return ValidationResult.IsValid;
     }
 }

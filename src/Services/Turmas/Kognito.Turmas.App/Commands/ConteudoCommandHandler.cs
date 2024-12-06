@@ -26,6 +26,13 @@ namespace Kognito.Turmas.App.Commands
             IConteudoQueries conteudoQueries,
             ITurmaRepository turmaRepository)
         {
+            if (conteudoRepository == null)
+                AdicionarErro("Repositório de conteúdo não pode ser nulo");
+            if (conteudoQueries == null)
+                AdicionarErro("Queries de conteúdo não pode ser nulo");
+            if (turmaRepository == null)
+                AdicionarErro("Repositório de turma não pode ser nulo");
+
             _conteudoRepository = conteudoRepository;
             _conteudoQueries = conteudoQueries;
             _turmaRepository = turmaRepository;
@@ -33,15 +40,11 @@ namespace Kognito.Turmas.App.Commands
 
 public async Task<ValidationResult> Handle(CriarConteudoCommand request, CancellationToken cancellationToken)
 {
+    if (!request.EstaValido())
+        return request.ValidationResult;
+
     try
     {
-        var conteudos = await _conteudoQueries.ObterTodosConteudos();
-        if (conteudos.Any(c => c.Title == request.Titulo))
-        {
-            AdicionarErro("Já existe um conteúdo com este título");
-            return ValidationResult;
-        }
-
         var turma = await _turmaRepository.ObterPorId(request.TurmaId);
         if (turma == null)
         {
@@ -49,9 +52,23 @@ public async Task<ValidationResult> Handle(CriarConteudoCommand request, Cancell
             return ValidationResult;
         }
 
-        var conteudo = new Conteudo(request.Titulo, request.ConteudoDidatico);
-        conteudo.AtribuirEntidadeId(request.Id); 
-        conteudo.VincularTurma(turma);
+        var conteudoResult = Conteudo.Criar(request.Titulo, request.ConteudoDidatico);
+        if (!conteudoResult.Success)
+        {
+            foreach (var erro in conteudoResult.Errors)
+                AdicionarErro(erro);
+            return ValidationResult;
+        }
+
+        var conteudo = conteudoResult.Data;
+        conteudo.AtribuirEntidadeId(request.Id);
+
+        var vincularResult = conteudo.VincularTurma(turma);
+        if (!vincularResult.Success)
+        {
+            AdicionarErro(vincularResult.Errors.First());
+            return ValidationResult;
+        }
         
         _conteudoRepository.Adicionar(conteudo);
         
@@ -64,80 +81,89 @@ public async Task<ValidationResult> Handle(CriarConteudoCommand request, Cancell
     }
 }
 
-    public async Task<ValidationResult> Handle(AtualizarConteudoCommand request, CancellationToken cancellationToken)
-    {
-        try
+        public async Task<ValidationResult> Handle(AtualizarConteudoCommand request, CancellationToken cancellationToken)
         {
-            var conteudo = await _conteudoRepository.ObterPorId(request.ConteudoId);
-            if (conteudo == null)
+            if (!request.EstaValido())
+                return request.ValidationResult;
+
+            try
             {
-                AdicionarErro("Conteúdo não encontrado");
+                var conteudo = await _conteudoRepository.ObterPorId(request.ConteudoId);
+                if (conteudo == null)
+                {
+                    AdicionarErro("Conteúdo não encontrado");
+                    return ValidationResult;
+                }
+
+                conteudo.AtribuirTitulo(request.Titulo);
+                conteudo.AtribuirConteudoDidatico(request.ConteudoDidatico);
+
+                _conteudoRepository.Atualizar(conteudo); 
+                return await PersistirDados(_conteudoRepository.UnitOfWork);
+            }
+            catch (Exception ex)
+            {
+                AdicionarErro($"Erro ao atualizar conteúdo: {ex.Message}");
                 return ValidationResult;
             }
-
-            conteudo.AtribuirTitulo(request.Titulo);
-            conteudo.AtribuirConteudoDidatico(request.ConteudoDidatico);
-
-            _conteudoRepository.Atualizar(conteudo); 
-            return await PersistirDados(_conteudoRepository.UnitOfWork);
         }
-        catch (Exception ex)
-        {
-            AdicionarErro($"Erro ao atualizar conteúdo: {ex.Message}");
-            return ValidationResult;
-        }
-    }
 
-    public async Task<ValidationResult> Handle(ExcluirConteudoCommand request, CancellationToken cancellationToken)
-    {
-        try
+        public async Task<ValidationResult> Handle(ExcluirConteudoCommand request, CancellationToken cancellationToken)
         {
-            var conteudo = await _conteudoRepository.ObterPorId(request.ConteudoId);
-            if (conteudo == null)
+            if (!request.EstaValido())
+                return request.ValidationResult;
+
+            try
             {
-                AdicionarErro("Conteúdo não encontrado");
+                var conteudo = await _conteudoRepository.ObterPorId(request.ConteudoId);
+                if (conteudo == null)
+                {
+                    AdicionarErro("Conteúdo não encontrado");
+                    return ValidationResult;
+                }
+
+                _conteudoRepository.Apagar(c => c.Id == request.ConteudoId); 
+                return await PersistirDados(_conteudoRepository.UnitOfWork);
+            }
+            catch (Exception ex)
+            {
+                AdicionarErro($"Erro ao excluir conteúdo: {ex.Message}");
                 return ValidationResult;
             }
-
-            _conteudoRepository.Apagar(c => c.Id == request.ConteudoId); 
-            return await PersistirDados(_conteudoRepository.UnitOfWork);
         }
-        catch (Exception ex)
-        {
-            AdicionarErro($"Erro ao excluir conteúdo: {ex.Message}");
-            return ValidationResult;
-        }
-    }
 
-    public async Task<ValidationResult> Handle(VincularConteudoTurmaCommand request, CancellationToken cancellationToken)
-    {
-        try
+        public async Task<ValidationResult> Handle(VincularConteudoTurmaCommand request, CancellationToken cancellationToken)
         {
-            var conteudo = await _conteudoRepository.ObterPorId(request.ConteudoId);
-            if (conteudo == null)
+            if (!request.EstaValido())
+                return request.ValidationResult;
+
+            try
             {
-                AdicionarErro("Conteúdo não encontrado");
+                var conteudo = await _conteudoRepository.ObterPorId(request.ConteudoId);
+                if (conteudo == null)
+                {
+                    AdicionarErro("Conteúdo não encontrado");
+                    return ValidationResult;
+                }
+
+                var turma = await _turmaRepository.ObterPorId(request.TurmaId);
+                if (turma == null)
+                {
+                    AdicionarErro("Turma não encontrada");
+                    return ValidationResult;
+                }
+
+                conteudo.VincularTurma(turma);
+                _conteudoRepository.Atualizar(conteudo); 
+
+                return await PersistirDados(_conteudoRepository.UnitOfWork);
+            }
+            catch (Exception ex)
+            {
+                AdicionarErro($"Erro ao vincular conteúdo à turma: {ex.Message}");
                 return ValidationResult;
             }
-
-            var turma = await _turmaRepository.ObterPorId(request.TurmaId);
-            if (turma == null)
-            {
-                AdicionarErro("Turma não encontrada");
-                return ValidationResult;
-            }
-
-            conteudo.VincularTurma(turma);
-            _conteudoRepository.Atualizar(conteudo); 
-
-            return await PersistirDados(_conteudoRepository.UnitOfWork);
         }
-        catch (Exception ex)
-        {
-            AdicionarErro($"Erro ao vincular conteúdo à turma: {ex.Message}");
-            return ValidationResult;
-        }
-    }
 
         public void Dispose()
         {

@@ -1,31 +1,52 @@
 using EstartandoDevsCore.Messages;
+using Kognito.Turmas.Domain.Common;
+using FluentValidation.Results;
 using static Enturmamento;
+
 namespace Kognito.Turmas.App.Commands;
 
 public class AtualizarStatusEnturmamentoCommand : Command
 {
-    public Guid Id { get; set; }
-    public Guid AlunoId { get; set; }
-    public Guid TurmaId { get; set; }
-    public EnturtamentoStatus Status { get; set; }
+    public Guid Id { get; private set; }
+    public Guid AlunoId { get; private set; }
+    public Guid TurmaId { get; private set; }
+    public EnturtamentoStatus Status { get; private set; }
 
     public AtualizarStatusEnturmamentoCommand(Guid id, Guid alunoId, Guid turmaId, EnturtamentoStatus status)
     {
-        ValidarIds(id, alunoId, turmaId);
-        Id = id;
-        AlunoId = alunoId;
-        TurmaId = turmaId;
-        Status = status;
+        var validationResult = ValidarIds(id, alunoId, turmaId);
+        if (validationResult.Success)
+        {
+            Id = id;
+            AlunoId = alunoId;
+            TurmaId = turmaId;
+            Status = status;
+        }
+        else
+        {
+            foreach (var error in validationResult.Errors)
+                ValidationResult.Errors.Add(new ValidationFailure(string.Empty, error));
+        }
     }
-     private void ValidarIds(Guid id, Guid alunoId, Guid turmaId)
+
+    private Result ValidarIds(Guid id, Guid alunoId, Guid turmaId)
     {
+        var errors = new List<string>();
+
         if (id == Guid.Empty)
-            throw new ArgumentException("Id inválido", nameof(id));
+            errors.Add("Id inválido");
             
         if (alunoId == Guid.Empty)
-            throw new ArgumentException("Id do aluno inválido", nameof(alunoId));
+            errors.Add("Id do aluno inválido");
             
         if (turmaId == Guid.Empty)
-            throw new ArgumentException("Id da turma inválido", nameof(turmaId));
+            errors.Add("Id da turma inválido");
+
+        return errors.Any() ? Result.Fail(errors) : Result.Ok();
+    }
+
+    public override bool EstaValido()
+    {
+        return ValidationResult.IsValid;
     }
 }
