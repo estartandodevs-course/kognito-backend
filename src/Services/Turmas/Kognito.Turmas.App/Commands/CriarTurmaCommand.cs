@@ -5,8 +5,7 @@ using Kognito.Turmas.Domain.Common;
 
 public class CriarTurmaCommand : Command
 {
-    public Guid Id { get; private set; }
-    public Usuario Professor { get; private set; }
+    public Guid ProfessorId { get; private set; }
     public string Nome { get; private set; }
     public string Descricao { get; private set; }
     public string Materia { get; private set; }
@@ -14,18 +13,17 @@ public class CriarTurmaCommand : Command
     public Icones Icone { get; private set; }
 
     public CriarTurmaCommand(
-        Usuario professor, 
+        Guid professorId, 
         string nome, 
         string descricao, 
         string materia, 
         Cor cor,
         Icones icone)
     {
-        Id = Guid.NewGuid();
-        var validationResult = ValidarParametros(professor, nome, materia);
+        var validationResult = ValidarParametros(professorId, nome, materia);
         if (validationResult.Success)
         {
-            Professor = professor;
+            ProfessorId = professorId;
             Nome = nome;
             Descricao = descricao;
             Materia = materia;
@@ -39,12 +37,12 @@ public class CriarTurmaCommand : Command
         }
     }
 
-    private Result ValidarParametros(Usuario professor, string nome, string materia)
+    private Result ValidarParametros(Guid professorId, string nome, string materia)
     {
         var errors = new List<string>();
 
-        if (professor == null)
-            errors.Add("Professor não pode ser vazio");
+        if (professorId == Guid.Empty)
+            errors.Add("Id do professor não pode ser vazio");
             
         if (string.IsNullOrWhiteSpace(nome))
             errors.Add("Nome não pode ser vazio");

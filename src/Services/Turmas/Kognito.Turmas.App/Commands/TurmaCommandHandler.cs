@@ -1,14 +1,12 @@
 using System;
 using System.Data.Common;
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
 using EstartandoDevsCore.Messages;
 using Kognito.Turmas.Domain;
 using Kognito.Turmas.Domain.Interfaces;
 using Kognito.Turmas.App.Queries;
 using FluentValidation.Results;
-using Kognito.Turmas.App.ViewModels;
+using Kognito.Usuarios.App.Queries;
 
 namespace Kognito.Turmas.App.Commands;
 
@@ -26,18 +24,17 @@ public class TurmaCommandHandler : CommandHandler,
 {
     private readonly ITurmaRepository _turmaRepository;
     private readonly ITurmaQueries _turmaQueries;
+    private readonly IUsuarioQueries _usuarioQueries;
 
     public TurmaCommandHandler(
         ITurmaRepository turmaRepository,
+        IUsuarioQueries usuarioQueries,
         ITurmaQueries turmaQueries)
+    
     {
-        if (turmaRepository == null)
-            AdicionarErro("Repositório de turmas não pode ser nulo");
-        if (turmaQueries == null)
-            AdicionarErro("Queries de turmas não pode ser nulo");
-
         _turmaRepository = turmaRepository;
         _turmaQueries = turmaQueries;
+        _usuarioQueries = usuarioQueries;
     }
 
     public async Task<ValidationResult> Handle(CriarTurmaCommand request, CancellationToken cancellationToken)
@@ -47,9 +44,17 @@ public class TurmaCommandHandler : CommandHandler,
 
         try
         {
-            var turmaResult = Turma.Criar(
-                request.Id,
-                request.Professor,
+            var professorData = await _usuarioQueries.ObterPorId(request.ProfessorId);
+            if (professorData == null)
+            {
+                AdicionarErro("Professor não encontrado");
+                return ValidationResult;
+            }
+
+            var professor = new Usuario(professorData.Name, request.ProfessorId);
+            
+            var turma = new Turma(
+                professor,
                 request.Nome,
                 request.Descricao,
                 request.Materia,
@@ -57,14 +62,7 @@ public class TurmaCommandHandler : CommandHandler,
                 request.Icone
             );
 
-            if (!turmaResult.Success)
-            {
-                foreach (var erro in turmaResult.Errors)
-                    AdicionarErro(erro);
-                return ValidationResult;
-            }
-
-            _turmaRepository.Adicionar(turmaResult.Data);
+            _turmaRepository.Adicionar(turma);
             return await PersistirDados(_turmaRepository.UnitOfWork);
         }
         catch (Exception ex)
@@ -88,13 +86,6 @@ public class TurmaCommandHandler : CommandHandler,
                 return ValidationResult;
             }
 
-            if (request.Professor == null)
-            {
-                AdicionarErro("Professor não pode ser nulo");
-                return ValidationResult;
-            }
-
-            turma.AtribuirProfessor(request.Professor);
             turma.AtribuirNome(request.Nome);
             turma.AtribuirDescricao(request.Descricao);
             turma.AtribuirMateria(request.Materia);
@@ -257,9 +248,16 @@ public class TurmaCommandHandler : CommandHandler,
                 return ValidationResult;
             }
 
-            var aluno = new Usuario(request.AlunoNome, request.AlunoId);
+            var alunoData = await _usuarioQueries.ObterPorId(request.AlunoId);
+            if (alunoData == null)
+            {
+                AdicionarErro("Aluno não encontrado");
+                return ValidationResult;
+            }
+
+            var aluno = new Usuario(alunoData.Name, request.AlunoId);
             var enturmamentoResult = Enturmamento.Criar(aluno, turma, request.Status);
-            
+        
             if (!enturmamentoResult.Success)
             {
                 foreach (var erro in enturmamentoResult.Errors)
@@ -267,9 +265,17 @@ public class TurmaCommandHandler : CommandHandler,
                 return ValidationResult;
             }
 
-            turma.AdicionarEnturmamento(enturmamentoResult.Data);
+            var resultado = turma.AdicionarEnturmamento(enturmamentoResult.Data);
+
+            if (!resultado.Success)
+            {
+                foreach (var resultadoError in resultado.Errors)
+                {
+                    AdicionarErro(resultadoError);
+                }
+            }
             _turmaRepository.Atualizar(turma);
-            
+        
             return await PersistirDados(_turmaRepository.UnitOfWork);
         }
         catch (DbException)

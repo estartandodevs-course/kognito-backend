@@ -10,18 +10,16 @@ namespace Kognito.Turmas.App.Commands;
 public class AtualizarTurmaCommand : Command
 {
     public Guid Id { get; private set; }
-    public Usuario Professor { get; private set; }
     public string Nome { get; private set; }
     public string Descricao { get; private set; }
     public string Materia { get; private set; }
 
-    public AtualizarTurmaCommand(Guid id, Usuario professor, string nome, string descricao, string materia)
+    public AtualizarTurmaCommand(Guid id, string nome, string descricao, string materia)
     {
-        var validationResult = ValidarParametros(id, professor, nome, materia);
+        var validationResult = ValidarParametros(id, nome, materia);
         if (validationResult.Success)
         {
             Id = id;
-            Professor = professor;
             Nome = nome;
             Descricao = descricao;
             Materia = materia;
@@ -33,15 +31,12 @@ public class AtualizarTurmaCommand : Command
         }
     }
 
-    private Result ValidarParametros(Guid id, Usuario professor, string nome, string materia)
+    private Result ValidarParametros(Guid id, string nome, string materia)
     {
         var errors = new List<string>();
 
         if (id == Guid.Empty)
             errors.Add("Id da turma inválido");
-            
-        if (professor == null)
-            errors.Add("Professor não pode ser nulo");
             
         if (string.IsNullOrWhiteSpace(nome))
             errors.Add("Nome não pode ser vazio");
