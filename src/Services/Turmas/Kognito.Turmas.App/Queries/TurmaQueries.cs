@@ -69,6 +69,15 @@ public class TurmaQueries : ITurmaQueries
         return turma == null ? null : TurmaAcessoViewModel.Mapear(turma);
     }
 
+    public async Task<bool> VerificarProfessorTurma(Guid turmaId, Guid professorId)
+    {
+        if (turmaId == Guid.Empty || professorId == Guid.Empty)
+            return false;
+
+        var turma = await _turmaRepository.ObterPorId(turmaId);
+        return turma?.Professor?.Id == professorId;
+    }
+    
     public async Task<bool> VincularTurma(Guid conteudoId, Guid turmaId)
     {
         if (conteudoId == Guid.Empty || turmaId == Guid.Empty)
@@ -84,5 +93,18 @@ public class TurmaQueries : ITurmaQueries
         _conteudoRepository.Atualizar(conteudo);
 
         return true;
+    }
+    
+    public async Task<IEnumerable<AlunoTurmaViewModel>> ObterAlunosTurma(Guid turmaId)
+    {
+        if (turmaId == Guid.Empty)
+            throw new ArgumentException("Id da turma inválido", nameof(turmaId));
+
+        var turma = await _turmaRepository.ObterPorId(turmaId);
+        if (turma == null) return Enumerable.Empty<AlunoTurmaViewModel>();
+
+        return turma.Enturmamentos
+            .Select(AlunoTurmaViewModel.Mapear)
+            .OrderBy(a => a.Name);
     }
 }

@@ -38,4 +38,14 @@ public interface ITurmaQueries
     /// Vincula um conteúdo a uma turma
     /// </summary>
     Task<bool> VincularTurma(Guid conteudoId, Guid turmaId);
+    
+    /// <summary>
+    /// Verifica se um usuário é o professor de uma turma específica
+    /// </summary>
+    Task<bool> VerificarProfessorTurma(Guid turmaId, Guid professorId);
+    
+    /// <summary>
+    /// Obtém a lista de alunos de uma turma
+    /// </summary>
+    Task<IEnumerable<AlunoTurmaViewModel>> ObterAlunosTurma(Guid turmaId);
 }
