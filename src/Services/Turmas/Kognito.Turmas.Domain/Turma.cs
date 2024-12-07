@@ -21,32 +21,25 @@ public class Turma : Entity, IAggregateRoot
         _enturmamentos = new List<Enturmamento>();
     }
 
-    public static Result<Turma> Criar(Guid id, Usuario professor, string nome, string descricao, 
-        string materia, Cor cor, Icones icones)
+    public Turma(Usuario professor, string nome, string descricao, string materia, Cor cor, Icones icones) : this()
     {
-        var turma = new Turma();
-        
-        var validationResult = turma.ValidarCampos(nome, materia);
-        if (!validationResult.Success)
-            return Result<Turma>.Fail(validationResult.Errors);
-
         if (professor == null)
-            return Result<Turma>.Fail("Professor não pode ser nulo");
+            throw new DomainException("Professor não pode ser nulo");
 
-        turma.AtribuirEntidadeId(id);
-        turma.Professor = professor;
-        turma.Nome = nome;
-        turma.Descricao = descricao;
-        turma.Materia = materia;
-        turma.Cor = cor;
-        turma.Icones = icones;
+        var validationResult = ValidarCampos(nome, materia);
+        if (!validationResult.Success)
+            throw new DomainException(string.Join(", ", validationResult.Errors));
 
-        turma.GerarHashAcesso();
-        turma.GerarLinkAcesso();
+        Professor = professor;
+        Nome = nome;
+        Descricao = descricao;
+        Materia = materia;
+        Cor = cor;
+        Icones = icones;
 
-        return Result<Turma>.Ok(turma, "Turma criada com sucesso");
+        GerarHashAcesso();
+        GerarLinkAcesso();
     }
-
     private void GerarHashAcesso()
     {
         HashAcesso = Convert.ToBase64String(Guid.NewGuid().ToByteArray())
@@ -57,7 +50,7 @@ public class Turma : Entity, IAggregateRoot
 
     private void GerarLinkAcesso()
     {
-        LinkAcesso = $"/turma/{Id}/{HashAcesso}";
+        LinkAcesso = $"/turmas/convites/{HashAcesso}";
     }
 
     public Result<Enturmamento> AdicionarEnturmamento(Enturmamento enturmamento)
