@@ -9,13 +9,15 @@ public class AtribuirNotaCommand : Command
     public Guid AlunoId { get; private set; }
     public Guid TurmaId { get; private set; }
     public Guid EntregaId { get; private set; }
+    public Guid TarefaId { get; private set; }
 
-    public AtribuirNotaCommand(double valorNota, Guid alunoId, Guid turmaId, Guid entregaId)
+    public AtribuirNotaCommand(double valorNota, Guid alunoId, Guid turmaId, Guid entregaId, Guid tarefaId)
     {
         ValorNota = valorNota;
         AlunoId = alunoId;
         TurmaId = turmaId;
         EntregaId = entregaId;
+        TarefaId = tarefaId;
     }
 
     public override bool EstaValido()
@@ -40,6 +42,9 @@ public class AtribuirNotaCommand : Command
 
             RuleFor(x => x.EntregaId)
                 .NotEqual(Guid.Empty).WithMessage("O ID da entrega é inválido");
+                
+            RuleFor(x => x.TarefaId)
+                .NotEqual(Guid.Empty).WithMessage("O ID da tarefa é inválido");
         }
     }
 }

@@ -9,13 +9,22 @@ public class Tarefa : Entity, IAggregateRoot
     public DateTime DataFinalEntrega { get; private set; }
     public DateTime CriadoEm { get; private set; }
     public Guid TurmaId { get; private set; }
-    public DateTime DataDeEntrega { get; private set; }
     public ICollection<Entrega> Entregas { get; private set; } = new List<Entrega>();
     
     private Tarefa() { }
     
     public Tarefa(string descricao, string conteudo, DateTime dataFinalEntrega, Guid turmaId) : this()
     {
+        Descricao = descricao;
+        Conteudo = conteudo;
+        DataFinalEntrega = dataFinalEntrega;
+        TurmaId = turmaId;
+        CriadoEm = DateTime.Now;
+    }
+
+    public Tarefa(Guid id, string descricao, string conteudo, DateTime dataFinalEntrega, Guid turmaId) : this()
+    {
+        Id = id;
         Descricao = descricao;
         Conteudo = conteudo;
         DataFinalEntrega = dataFinalEntrega;

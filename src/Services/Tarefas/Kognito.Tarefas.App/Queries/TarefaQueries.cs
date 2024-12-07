@@ -35,4 +35,9 @@ public class TarefaQueries : ITarefaQueries
         var tarefas = await _tarefaRepository.ObterTarefasComNotasPorTurmaAsync(turmaId);
         return tarefas.Select(TarefaViewModel.Mapear);
     }
+     public async Task<EntregaViewModel> ObterEntregaPorId(Guid entregaId)
+    {
+        var entrega = await _tarefaRepository.ObterEntregaPorIdAsync(entregaId);
+        return entrega != null ? EntregaViewModel.Mapear(entrega) : null;
+    }
 } 

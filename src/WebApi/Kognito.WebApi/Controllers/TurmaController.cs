@@ -1,14 +1,10 @@
-using System;
-using System.Security.Claims;
 using EstartandoDevsCore.Mediator;
 using EstartandoDevsWebApiCore.Controllers;
 using Kognito.Turmas.App.Commands;
 using Kognito.Turmas.App.Queries;
 using Kognito.Turmas.Domain;
 using Kognito.WebApi.InputModels;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Kognito.Turmas.App.ViewModels;
 using static Enturmamento;
 
 

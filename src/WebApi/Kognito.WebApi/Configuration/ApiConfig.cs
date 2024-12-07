@@ -25,6 +25,9 @@ public static class ApiConfig
         services.AddDbContext<TurmaContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString(ConexaoBancoDeDados)));
 
+        services.AddDbContext<TarefasContext>(options =>
+            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));   
+
         services.Configure<ApiBehaviorOptions>(options => { options.SuppressModelStateInvalidFilter = true; });
 
         services.AddCors(options =>

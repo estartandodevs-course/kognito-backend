@@ -61,6 +61,12 @@ public class TarefaRepository : ITarefaRepository
             .Where(t => t.TurmaId == turmaId && t.Entregas.Any(e => e.Notas.Any()))
             .ToListAsync();
     }
+    public async Task<Entrega> ObterEntregaPorIdAsync(Guid entregaId)
+    {
+        return await _context.Entregas
+            .Include(e => e.Notas)
+            .FirstOrDefaultAsync(e => e.Id == entregaId);
+    }
 
     public void Adicionar(Tarefa tarefa)
     {

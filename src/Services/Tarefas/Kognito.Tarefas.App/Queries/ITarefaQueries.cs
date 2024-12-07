@@ -8,4 +8,5 @@ public interface ITarefaQueries
     Task<IEnumerable<TarefaViewModel>> ObterPorTurma(Guid turmaId);
     Task<IEnumerable<TarefaViewModel>> ObterPorAluno(Guid alunoId);
     Task<IEnumerable<TarefaViewModel>> ObterTarefasComNotasPorTurma(Guid turmaId);
+    Task<EntregaViewModel> ObterEntregaPorId(Guid entregaId);
 }

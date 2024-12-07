@@ -49,5 +49,13 @@ public static class DependencyInjectionConfig
         services.AddScoped<IRequestHandler<AtualizarConteudoCommand, ValidationResult>, ConteudoCommandHandler>();
         services.AddScoped<IRequestHandler<ExcluirConteudoCommand, ValidationResult>, ConteudoCommandHandler>();
         services.AddScoped<IRequestHandler<VincularConteudoTurmaCommand, ValidationResult>, ConteudoCommandHandler>();
+
+        services.AddScoped<ITarefaRepository, TarefaRepository>();
+        services.AddScoped<ITarefaQueries, TarefaQueries>();
+        services.AddScoped<IRequestHandler<CriarTarefaCommand, ValidationResult>, TarefasCommandHandler>();
+        services.AddScoped<IRequestHandler<AtualizarTarefaCommand, ValidationResult>, TarefasCommandHandler>();
+        services.AddScoped<IRequestHandler<EntregarTarefaCommand, ValidationResult>, TarefasCommandHandler>();
+        services.AddScoped<IRequestHandler<AtribuirNotaCommand, ValidationResult>, TarefasCommandHandler>();
+        services.AddScoped<IRequestHandler<RemoverTarefaCommand, ValidationResult>, TarefasCommandHandler>();
     }
 }
