@@ -11,12 +11,8 @@ public class TurmaViewModel
     public string Subject { get; set; }
     public Cor Color { get; set; }
     public Icones Icons { get; set; }
-    public DateTime RegistrationDate { get; set; }
-    public DateTime? LastModifiedDate { get; set; }
 
-    public string AccessHash { get; set; }
-    public string AccessLink { get; set; }
-    public UsuarioViewModel Professor { get; set; }
+    public UsuarioViewModel Teacher { get; set; }
 
     public static TurmaViewModel Mapear(Turma turma)
     {
@@ -31,14 +27,10 @@ public class TurmaViewModel
             Subject = turma.Materia,
             Color = turma.Cor,
             Icons = turma.Icones,
-            RegistrationDate = turma.DataDeCadastro,
-            LastModifiedDate = turma.DataDeAlteracao,
-            AccessHash = turma.HashAcesso,
-            AccessLink = turma.LinkAcesso,
-            Professor = new UsuarioViewModel 
+            Teacher = new UsuarioViewModel 
             { 
                 Id = turma.Professor.Id,
-                Nome = turma.Professor.Nome
+                Name = turma.Professor.Nome
             }
         };
     }
