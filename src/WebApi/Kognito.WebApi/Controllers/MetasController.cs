@@ -166,4 +166,25 @@ public class MetasController : MainController
 
         return CustomResponse("Meta concluída com sucesso!");
     }
+    
+    /// <summary>
+    /// Obtém todas as metas concluídas hoje pelo usuário autenticado
+    /// </summary>
+    /// <returns>Lista de metas concluídas hoje</returns>
+    /// <response code="200">Retorna a lista de metas concluídas hoje</response>
+    /// <response code="401">Quando o usuário não está autenticado</response>
+    /// <response code="404">Quando o usuário não é encontrado</response>
+    [HttpGet("concluidas-hoje")]
+    public async Task<IActionResult> ObterMetasConcluidasHoje()
+    {
+        var usuarioId = ObterUsuarioId();
+        if (!usuarioId.HasValue)
+        {
+            AdicionarErro("Usuário não encontrado");
+            return NotFound();
+        }
+
+        var metas = await _usuarioQueries.ObterMetasConcluidasHoje(usuarioId.Value);
+        return CustomResponse(metas);
+    }
 }
