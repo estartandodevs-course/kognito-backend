@@ -47,7 +47,12 @@ public class UsuariosController : MainController
         return userId;
     }
 
-
+    /// <summary>
+    /// Obtém o perfil do usuário autenticado
+    /// </summary>
+    /// <returns>Dados do perfil do usuário</returns>
+    /// <response code="200">Retorna os dados do usuário</response>
+    /// <response code="404">Quando o usuário não é encontrado</response>
     [HttpGet]
     public async Task<IActionResult> ObterPerfil()
     {
@@ -64,7 +69,14 @@ public class UsuariosController : MainController
 
         return CustomResponse(usuario);
     }
-
+    
+    /// <summary>
+    /// Obtém os dados de um usuário específico por ID
+    /// </summary>
+    /// <param name="id">ID do usuário</param>
+    /// <returns>Dados do usuário solicitado</returns>
+    /// <response code="200">Retorna os dados do usuário</response>
+    /// <response code="404">Quando o usuário não é encontrado</response>
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> ObterPorId(Guid id)
     {
@@ -81,6 +93,12 @@ public class UsuariosController : MainController
         return CustomResponse(usuario);
     }
 
+    /// <summary>
+    /// Obtém os emblemas conquistados pelo usuário
+    /// </summary>
+    /// <returns>Lista de emblemas do usuário</returns>
+    /// <response code="200">Retorna a lista de emblemas</response>
+    /// <response code="404">Quando o usuário não é encontrado</response>
     [HttpGet("/emblemas")]
     public async Task<IActionResult> ObterEmblemas()
     {
@@ -97,6 +115,12 @@ public class UsuariosController : MainController
         return CustomResponse(emblemas);
     }
 
+    /// <summary>
+    /// Obtém a ofensiva atual do usuário
+    /// </summary>
+    /// <returns>Dados da ofensiva do usuário</returns>
+    /// <response code="200">Retorna os dados da ofensiva</response>
+    /// <response code="404">Quando o usuário não é encontrado</response>
     [HttpGet("/ofensiva")]
     public async Task<IActionResult> ObterOfensiva()
     {
@@ -177,6 +201,14 @@ public class UsuariosController : MainController
     //     return CustomResponse(result);
     // }
 
+    /// <summary>
+    /// Altera a senha do usuário autenticado
+    /// </summary>
+    /// <param name="model">Dados contendo senha atual e nova senha</param>
+    /// <returns>Confirmação da alteração de senha</returns>
+    /// <response code="200">Senha alterada com sucesso</response>
+    /// <response code="400">Quando os dados são inválidos</response>
+    /// <response code="404">Quando o usuário não é encontrado</response>
 
     [Authorize]
     [HttpPost("mudar-senha")]
@@ -211,6 +243,13 @@ public class UsuariosController : MainController
         return CustomResponse("Senha alterada com sucesso");
     }
 
+    /// <summary>
+    /// Cria um novo usuário professor
+    /// </summary>
+    /// <param name="model">Dados do professor</param>
+    /// <returns>Dados do professor criado</returns>
+    /// <response code="200">Professor criado com sucesso</response>
+    /// <response code="400">Quando os dados são inválidos</response>
     [HttpPost("professores")]
     public async Task<IActionResult> CriarProfessor([FromBody] ProfessorInputModel model)
     {
@@ -255,6 +294,13 @@ public class UsuariosController : MainController
         return CustomResponse(createdUser);
     }
 
+    /// <summary>
+    /// Cria um novo usuário aluno
+    /// </summary>
+    /// <param name="model">Dados do aluno</param>
+    /// <returns>Dados do aluno criado</returns>
+    /// <response code="200">Aluno criado com sucesso</response>
+    /// <response code="400">Quando os dados são inválidos</response>
     [HttpPost("alunos")]
     public async Task<IActionResult> CriarAluno([FromBody] AlunoInputModel model)
     {
@@ -299,7 +345,15 @@ public class UsuariosController : MainController
         var createdUser = await _usuarioQueries.ObterPorEmail(model.Email);
         return CustomResponse(createdUser);
     }
-
+    
+    /// <summary>
+    /// Adiciona uma neurodivergência ao perfil do usuário
+    /// </summary>
+    /// <param name="model">Dados da neurodivergência</param>
+    /// <returns>Confirmação da adição</returns>
+    /// <response code="200">Neurodivergência adicionada com sucesso</response>
+    /// <response code="400">Quando os dados são inválidos</response>
+    /// <response code="404">Quando o usuário não é encontrado</response>
     [Authorize]
     [HttpPost("adicionar-neurodivergencia")]
     public async Task<IActionResult> AdicionarNeurodivergencia([FromBody] AdicionarNeurodivergenciaInputModel model)
