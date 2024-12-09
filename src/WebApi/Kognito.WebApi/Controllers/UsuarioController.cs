@@ -54,6 +54,7 @@ public class UsuariosController : MainController
     /// <response code="200">Retorna os dados do usuário</response>
     /// <response code="404">Quando o usuário não é encontrado</response>
     [HttpGet]
+    [Authorize]
     public async Task<IActionResult> ObterPerfil()
     {
         if (!ModelState.IsValid) return CustomResponse(ModelState);
@@ -77,6 +78,7 @@ public class UsuariosController : MainController
     /// <returns>Dados do usuário solicitado</returns>
     /// <response code="200">Retorna os dados do usuário</response>
     /// <response code="404">Quando o usuário não é encontrado</response>
+    [Authorize]
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> ObterPorId(Guid id)
     {
@@ -99,6 +101,7 @@ public class UsuariosController : MainController
     /// <returns>Lista de emblemas do usuário</returns>
     /// <response code="200">Retorna a lista de emblemas</response>
     /// <response code="404">Quando o usuário não é encontrado</response>
+    [Authorize]
     [HttpGet("/emblemas")]
     public async Task<IActionResult> ObterEmblemas()
     {
@@ -121,6 +124,7 @@ public class UsuariosController : MainController
     /// <returns>Dados da ofensiva do usuário</returns>
     /// <response code="200">Retorna os dados da ofensiva</response>
     /// <response code="404">Quando o usuário não é encontrado</response>
+    [Authorize]
     [HttpGet("/ofensiva")]
     public async Task<IActionResult> ObterOfensiva()
     {
