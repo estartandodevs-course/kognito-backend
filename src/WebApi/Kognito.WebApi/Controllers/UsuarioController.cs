@@ -142,69 +142,6 @@ public class UsuariosController : MainController
         return CustomResponse(ofensiva);
     }
 
-    // [HttpPost]
-    // public async Task<IActionResult> CriarUsuario([FromBody] UsuarioInputModel model)
-    // {
-    //     if (!ModelState.IsValid) return CustomResponse(ModelState);
-    //
-    //     var user = new IdentityUser()
-    //     {
-    //         Id = Guid.NewGuid().ToString(),
-    //         UserName = model.Email,
-    //         NormalizedUserName = model.Email.ToUpper(),
-    //         Email = model.Email,
-    //         NormalizedEmail = model.Email.ToUpper(),
-    //         EmailConfirmed = true
-    //     };
-    //
-    //     var identidadeCriada = await _userManager.CreateAsync(user, model.Senha);
-    //
-    //     if (!identidadeCriada.Succeeded)
-    //     {
-    //         foreach (var erro in identidadeCriada.Errors)
-    //             AdicionarErro(erro.Description);
-    //
-    //         return CustomResponse();
-    //     }
-    //
-    //     var command = new CriarUsuarioCommand(
-    //         model.Nome,
-    //         model.Cpf,
-    //         model.Neurodivergencia,
-    //         model.Email,
-    //         model.Senha
-    //     );
-    //
-    //     var result = await _mediatorHandler.EnviarComando(command);
-    //
-    //     if (!result.IsValid)
-    //     {
-    //         await _userManager.DeleteAsync(user);
-    //         return CustomResponse(result);
-    //     }
-    //
-    //     var createdUser = await _usuarioQueries.ObterPorEmail(model.Email);
-    //     return CustomResponse(createdUser);
-    // }
-
-    // [HttpPut]
-    // public async Task<IActionResult> Atualizar([FromBody] AtualizarUsuarioInputModel model)
-    // {
-    //     if (!ModelState.IsValid) return CustomResponse(ModelState);
-    //
-    //     var usuarioId = ObterUsuarioId();
-    //     if (!usuarioId.HasValue)
-    //     {
-    //         AdicionarErro("Usuário não encontrado");
-    //         return NotFound();
-    //     }
-    //
-    //     var command = new AtualizarUsuarioCommand(usuarioId.Value, model.Nome, model.Neurodivergencia);
-    //     var result = await _mediatorHandler.EnviarComando(command);
-    //
-    //     return CustomResponse(result);
-    // }
-
     /// <summary>
     /// Altera a senha do usuário autenticado
     /// </summary>
