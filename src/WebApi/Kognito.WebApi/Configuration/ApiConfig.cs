@@ -1,4 +1,5 @@
 ﻿using EstartandoDevsWebApiCore.Identidade;
+using Kognito.Autenticacao.App.Data;
 using Kognito.Tarefas.Infra.Data;
 using Kognito.Turmas.Infra.Data;
 using Kognito.Usuarios.App.Infra.Data;
@@ -25,7 +26,6 @@ public static class ApiConfig
         services.AddDbContext<TurmaContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString(ConexaoBancoDeDados)));
 
-
         services.Configure<ApiBehaviorOptions>(options => { options.SuppressModelStateInvalidFilter = true; });
 
         services.AddCors(options =>
@@ -48,6 +48,20 @@ public static class ApiConfig
             app.UseSwagger();
             app.UseSwaggerUI();
         }
+        
+        using var serviceScope = app.Services.GetService<IServiceScopeFactory>().CreateScope();
+
+        var contextTarefas = serviceScope.ServiceProvider.GetRequiredService<TarefasContext>();
+        contextTarefas.Database.Migrate();
+
+        var contextUsuarios = serviceScope.ServiceProvider.GetRequiredService<UsuarioContext>();
+        contextUsuarios.Database.Migrate();
+
+        var contextTurmas = serviceScope.ServiceProvider.GetRequiredService<TurmaContext>();
+        contextTurmas.Database.Migrate();
+        
+        var contextAutenticacao = serviceScope.ServiceProvider.GetRequiredService<AutenticacaoDbContext>();
+        contextAutenticacao.Database.Migrate();
 
         app.UseHttpsRedirection();
         app.UseCors(PermissoesDeOrigem);
