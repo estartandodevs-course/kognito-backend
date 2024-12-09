@@ -7,24 +7,31 @@ namespace Kognito.Usuarios.App.Domain;
 {
     public string Nome { get; private set; }
     public string Descricao { get; private set; }
+    public bool Desbloqueado { get; private set; }
+    public int OrdemDesbloqueio { get; private set; }
     public DateTime? DesbloqueadoEm { get; private set; }
+    
+    public Guid UsuarioID { get; private set; }
 
     private Emblemas() { }
 
-    public Emblemas(string nome, string descricao)
+    public Emblemas(string nome, string descricao, Guid usuarioId, int ordemDesbloqueio)
     {
         Nome = nome;
         Descricao = descricao;
-        DesbloqueadoEm = null; //Emblema bloqueado.
+        UsuarioId = usuarioId;
+        OrdemDesbloqueio = ordemDesbloqueio;
+        Desbloqueado = false;
     }
+
+    public Guid UsuarioId { get; set; }
 
     public void Desbloquear()
     {
-        if (DesbloqueadoEm == null)
-        {
-            DesbloqueadoEm = DateTime.Now; //Desbloqueado.
-        }
+        Desbloqueado = true;
+        DataDesbloqueio = DateTime.Now;
     }
 
+    public DateTime DataDesbloqueio { get; set; }
 }
 

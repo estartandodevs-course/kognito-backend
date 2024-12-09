@@ -1,10 +1,13 @@
 using EstartandoDevsCore.Data;
 
-namespace Kognito.Usuarios.App.Domain.Interface;
-
-public interface IEmblemaRepository : IRepository<Emblemas>, IDisposable
+namespace Kognito.Usuarios.App.Domain.Interface
 {
-    Task<IEnumerable<Emblemas>> ObterPorAlunoAsync(Guid alunoId);
+    public interface IEmblemaRepository : IRepository<Emblemas>
+    {
+        Task AdicionarAsync(Emblemas emblema);
     
-    Task AdicionarAsync(Emblemas emblema);
+        Task<IEnumerable<Emblemas>> ObterEmblemasUsuario(Guid usuarioId);
+        Task<int> ObterQuantidadeEntregasUsuario(Guid usuarioId);
+        Task<Emblemas> ObterProximoEmblemaDisponivel(Guid usuarioId);
+    }
 }
