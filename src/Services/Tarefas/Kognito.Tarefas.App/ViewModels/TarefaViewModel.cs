@@ -10,7 +10,6 @@ public class TarefaViewModel
     public DateTime FinalDeliveryDate { get; set; }
     public DateTime CreatedOn { get; set; }
     public Guid ClassId { get; set; }
-    public ICollection<EntregaViewModel> Deliveries { get; set; } = new List<EntregaViewModel>();
 
     public static TarefaViewModel Mapear(Tarefa tarefa)
     {
@@ -22,7 +21,6 @@ public class TarefaViewModel
             FinalDeliveryDate = tarefa.DataFinalEntrega,
             CreatedOn = tarefa.CriadoEm,
             ClassId = tarefa.TurmaId,
-            Deliveries = tarefa.Entregas?.Select(EntregaViewModel.Mapear).ToList() ?? new List<EntregaViewModel>()
         };
     }
 }

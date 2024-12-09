@@ -53,12 +53,12 @@ public class TarefaRepository : ITarefaRepository
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<Tarefa>> ObterTarefasComNotasPorTurmaAsync(Guid turmaId)
+    public async Task<IEnumerable<Tarefa>> ObterTarefasPorTurma(Guid turmaId)
     {
         return await DbSet
             .Include(t => t.Entregas)
-                .ThenInclude(e => e.Notas)
-            .Where(t => t.TurmaId == turmaId && t.Entregas.Any(e => e.Notas.Any()))
+            .ThenInclude(e => e.Notas)
+            .Where(t => t.TurmaId == turmaId)
             .ToListAsync();
     }
     public async Task<Entrega> ObterEntregaPorIdAsync(Guid entregaId)
