@@ -372,4 +372,34 @@ public class UsuariosController : MainController
 
         return CustomResponse(result);
     }
+    
+    /// <summary>
+    /// Atualiza o perfil do usuário autenticado
+    /// </summary>
+    /// <param name="model">Dados do perfil a serem atualizados</param>
+    /// <returns>Dados do perfil atualizado</returns>
+    /// <response code="200">Perfil atualizado com sucesso</response>
+    /// <response code="400">Quando os dados são inválidos</response>
+    /// <response code="404">Quando o usuário não é encontrado</response>
+    [Authorize]
+    [HttpPut("perfil")]
+    public async Task<IActionResult> AtualizarPerfil([FromBody] AtualizarPerfilInputModel model)
+    {
+        if (!ModelState.IsValid) return CustomResponse(ModelState);
+
+        var usuarioId = ObterUsuarioId();
+        if (!usuarioId.HasValue)
+        {
+            AdicionarErro("Usuário não encontrado");
+            return NotFound();
+        }
+
+        var command = new AtualizarUsuarioCommand(usuarioId.Value, model.Nome, model.Email);
+        var result = await _mediatorHandler.EnviarComando(command);
+
+        if (!result.IsValid) return CustomResponse(result);
+
+        var usuarioAtualizado = await _usuarioQueries.ObterPorId(usuarioId.Value);
+        return CustomResponse(usuarioAtualizado);
+    }
 }

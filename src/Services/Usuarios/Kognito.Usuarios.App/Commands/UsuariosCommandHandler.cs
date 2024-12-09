@@ -3,6 +3,7 @@ using Kognito.Usuarios.App.Domain;
 using Kognito.Usuarios.App.Domain.Interface;
 using EstartandoDevsCore.ValueObjects;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.Identity;
 using MediatR;
 
 namespace Kognito.Usuarios.App.Commands;
@@ -17,13 +18,18 @@ public class UsuariosCommandHandler : CommandHandler,
     IRequestHandler<AtualizarMetaCommand, ValidationResult>,
     IRequestHandler<RemoverMetaCommand, ValidationResult>,
     IRequestHandler<ConcluirMetaCommand, ValidationResult>,
+    
     IDisposable
 {
     private readonly IUsuariosRepository _usuarioRepository;
+    private readonly UserManager<IdentityUser> _userManager;
 
-    public UsuariosCommandHandler(IUsuariosRepository usuarioRepository)
+    public UsuariosCommandHandler(
+        IUsuariosRepository usuarioRepository,
+        UserManager<IdentityUser> userManager)
     {
         _usuarioRepository = usuarioRepository;
+        _userManager = userManager;
     }
 
     public async Task<ValidationResult> Handle(CriarUsuarioCommand request, CancellationToken cancellationToken)
@@ -72,8 +78,6 @@ public class UsuariosCommandHandler : CommandHandler,
 
     public async Task<ValidationResult> Handle(AtualizarUsuarioCommand request, CancellationToken cancellationToken)
     {
-        if (!request.EstaValido()) return request.ValidationResult;
-
         var usuario = await _usuarioRepository.ObterPorId(request.UsuarioId);
         if (usuario is null)
         {
@@ -81,20 +85,32 @@ public class UsuariosCommandHandler : CommandHandler,
             return ValidationResult;
         }
 
-        usuario.AtribuirNome(request.Nome);
-
-        if (!string.IsNullOrEmpty(request.Neurodivergencia))
+        var identityUser = await _userManager.FindByEmailAsync(usuario.Login.Email.Endereco);
+        if (identityUser is null)
         {
-            if (!Enum.TryParse<Neurodivergencia>(request.Neurodivergencia, out var neurodivergencia))
-            {
-                AdicionarErro("Neurodivergência informada é inválida");
-                return ValidationResult;
-            }
-            usuario.AtribuirNeurodivergencia(neurodivergencia);
+            AdicionarErro("Usuário de identidade não encontrado!");
+            return ValidationResult;
         }
-    
+
+        usuario.AtribuirNome(request.Nome);
+        var login = new Login(new Email(request.Email), usuario.Login.Senha);
+        usuario.AtribuirLogin(login);
+
+        identityUser.Email = request.Email;
+        identityUser.NormalizedEmail = request.Email.ToUpper();
+        identityUser.UserName = request.Email;
+        identityUser.NormalizedUserName = request.Email.ToUpper();
+
+        var identityResult = await _userManager.UpdateAsync(identityUser);
+        if (!identityResult.Succeeded)
+        {
+            foreach (var erro in identityResult.Errors)
+                AdicionarErro(erro.Description);
+            return ValidationResult;
+        }
+
         _usuarioRepository.Atualizar(usuario);
-    
+
         return await PersistirDados(_usuarioRepository.UnitOfWork);
     }
 
