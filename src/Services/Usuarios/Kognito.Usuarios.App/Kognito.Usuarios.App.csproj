@@ -19,11 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Events\" />
     <Folder Include="Infra/Mappings/" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\Tarefas\Kognito.Tarefas.App\Kognito.Tarefas.App.csproj" />
   </ItemGroup>
 
 </Project>

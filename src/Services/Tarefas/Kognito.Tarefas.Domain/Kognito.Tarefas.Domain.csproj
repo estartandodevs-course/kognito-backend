@@ -18,4 +18,8 @@
     <Compile Remove="interfaces\INotaRepository.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Usuarios\Kognito.Usuarios.App\Kognito.Usuarios.App.csproj" />
+  </ItemGroup>
+
 </Project>

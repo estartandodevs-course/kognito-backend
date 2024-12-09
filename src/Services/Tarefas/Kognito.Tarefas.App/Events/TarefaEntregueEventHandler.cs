@@ -1,10 +1,8 @@
-﻿using EstartandoDevsCore.Messages;
-using Kognito.Tarefas.App.Events;
-using Kognito.Usuarios.App.Domain.Interface;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using Kognito.Usuarios.App.Domain.Interface;
 
-namespace Kognito.Usuarios.App.Events;
+namespace Kognito.Tarefas.App.Events;
 
 public class TarefaEntregueEventHandler : INotificationHandler<TarefaEntregueEvent>
 {
