@@ -394,12 +394,52 @@ public class UsuariosController : MainController
             return NotFound();
         }
 
-        var command = new AtualizarUsuarioCommand(usuarioId.Value, model.Nome, model.Email);
+        var command = new AtualizarUsuarioCommand(usuarioId.Value, model.Name, model.Email);
         var result = await _mediatorHandler.EnviarComando(command);
 
         if (!result.IsValid) return CustomResponse(result);
 
         var usuarioAtualizado = await _usuarioQueries.ObterPorId(usuarioId.Value);
         return CustomResponse(usuarioAtualizado);
+    }
+    
+    /// <summary>
+    /// Solicita recuperação de senha
+    /// </summary>
+    /// <param name="model">Email do usuário</param>
+    /// <returns>Resultado da solicitação</returns>
+    /// <response code="200">Email de recuperação enviado com sucesso</response>
+    /// <response code="400">Quando os dados são inválidos</response>
+    /// <response code="404">Quando o usuário não é encontrado</response>
+    [HttpPost("esqueceu-senha")]
+    public async Task<IActionResult> EsqueceuSenha([FromBody] EsqueceuSenhaInputModel model)
+    {
+        if (!ModelState.IsValid) return CustomResponse(ModelState);
+
+        var command = new EsqueceuSenhaCommand(model.Email);
+        var result = await _mediatorHandler.EnviarComando(command);
+
+        if (!result.IsValid) return CustomResponse(result);
+
+        return CustomResponse("Email de recuperação enviado com sucesso!");
+    }
+    
+    /// <summary>
+    /// Redefine a senha do usuário usando o código de recuperação
+    /// </summary>
+    /// <param name="model">Dados para redefinição de senha</param>
+    /// <returns>Resultado da operação</returns>
+    /// <response code="200">Senha redefinida com sucesso</response>
+    /// <response code="400">Quando os dados são inválidos</response>
+    /// <response code="404">Quando o usuário não é encontrado</response>
+    [HttpPost("redefinir-senha")]
+    public async Task<IActionResult> RedefinirSenha([FromBody] RedefinirSenhaInputModel model)
+    {
+        if (!ModelState.IsValid) return CustomResponse(ModelState);
+
+        var command = new RedefinirSenhaCommand(model.Email, model.RecoveryCode, model.NewPassword);
+        var result = await _mediatorHandler.EnviarComando(command);
+
+        return CustomResponse(result);
     }
 }

@@ -14,6 +14,8 @@ public class UsuariosCommandHandler : CommandHandler,
     IRequestHandler<CriarUsuarioCommand, ValidationResult>,
     IRequestHandler<AtualizarUsuarioCommand, ValidationResult>,
     IRequestHandler<CriarMetaCommand, ValidationResult>,
+    IRequestHandler<EsqueceuSenhaCommand, ValidationResult>,
+    IRequestHandler<RedefinirSenhaCommand, ValidationResult>,
     IRequestHandler<AdicionarNeurodivergenciaCommand, ValidationResult>,
     IRequestHandler<AtualizarMetaCommand, ValidationResult>,
     IRequestHandler<RemoverMetaCommand, ValidationResult>,
@@ -267,7 +269,71 @@ public class UsuariosCommandHandler : CommandHandler,
 
         return await PersistirDados(_usuarioRepository.UnitOfWork);
     }
+    public async Task<ValidationResult> Handle(EsqueceuSenhaCommand request, CancellationToken cancellationToken)
+    {
+        if (!request.EstaValido()) return request.ValidationResult;
 
+        var usuario = await _usuarioRepository.ObterPorEmail(request.Email);
+        if (usuario is null)
+        {
+            AdicionarErro("Usuário não encontrado");
+            return ValidationResult;
+        }
+
+        var identityUser = await _userManager.FindByEmailAsync(request.Email);
+        if (identityUser is null)
+        {
+            AdicionarErro("Usuário de identidade não encontrado");
+            return ValidationResult;
+        }
+
+        usuario.GerarCodigoRecuperacao();
+        
+        _usuarioRepository.Atualizar(usuario);
+
+        return await PersistirDados(_usuarioRepository.UnitOfWork);
+    }
+
+    public async Task<ValidationResult> Handle(RedefinirSenhaCommand request, CancellationToken cancellationToken)
+    {
+        if (!request.EstaValido()) return request.ValidationResult;
+
+        var usuario = await _usuarioRepository.ObterPorEmail(request.Email);
+        if (usuario is null)
+        {
+            AdicionarErro("Usuário não encontrado");
+            return ValidationResult;
+        }
+
+        var identityUser = await _userManager.FindByEmailAsync(request.Email);
+        if (identityUser is null)
+        {
+            AdicionarErro("Usuário de identidade não encontrado");
+            return ValidationResult;
+        }
+
+        if (usuario.CodigoRecuperacaoEmail != request.CodigoRecuperacao)
+        {
+            AdicionarErro("Código de recuperação inválido");
+            return ValidationResult;
+        }
+
+        var token = await _userManager.GeneratePasswordResetTokenAsync(identityUser);
+        var result = await _userManager.ResetPasswordAsync(identityUser, token, request.NovaSenha);
+
+        if (!result.Succeeded)
+        {
+            foreach (var erro in result.Errors)
+                AdicionarErro(erro.Description);
+            return ValidationResult;
+        }
+
+        usuario.LimparCodigoRecuperacao();
+        _usuarioRepository.Atualizar(usuario);
+
+        return await PersistirDados(_usuarioRepository.UnitOfWork);
+    }
+    
     public void Dispose()
     {
         _usuarioRepository?.Dispose();
