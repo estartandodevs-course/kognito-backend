@@ -59,5 +59,15 @@ public class UsuarioQueries : IUsuarioQueries
         var usuario = await _usuarioRepository.ObterPorId(id);
         return usuario?.ResponsavelEmail;
     }
+    
+    public async Task<IEnumerable<MetaViewModel>> ObterMetasConcluidasHoje(Guid usuarioId)
+    {
+        var hoje = DateTime.Today;
+        var metas = await _usuarioRepository.ObterMetasAsync(usuarioId);
+        
+        return metas
+            .Where(m => m.Concluida && m.ConcluidaEm?.Date == hoje)
+            .Select(MetaViewModel.Mapear);
+    }
 
 }

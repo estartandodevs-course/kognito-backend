@@ -20,9 +20,7 @@ public class ConteudosController : MainController
         _conteudoQueries = conteudoQueries;
         _mediatorHandler = mediatorHandler;
     }
-
- 
-
+    
     /// <summary>
     /// Obtém todos os conteúdos associados a uma turma específica
     /// </summary>

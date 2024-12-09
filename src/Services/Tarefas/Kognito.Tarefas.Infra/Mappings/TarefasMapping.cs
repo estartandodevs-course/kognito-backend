@@ -1,4 +1,5 @@
 ﻿using Kognito.Tarefas.Domain;
+using Kognito.Usuarios.App.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -27,7 +28,16 @@ public class TarefaMapping : IEntityTypeConfiguration<Tarefa>
 
         builder.Property(c => c.TurmaId)
             .IsRequired();
-
+        
+        builder.Property<List<Neurodivergencia>>("NeurodivergenciasAlvo")
+            .HasConversion(
+                v => string.Join(',', v.Select(e => (int)e)),
+                v => v.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(e => (Neurodivergencia)int.Parse(e))
+                    .ToList()
+            )
+            .HasColumnType("varchar(200)");
+        
         builder.HasMany(c => c.Entregas)
             .WithOne(e => e.Tarefa)
             .HasForeignKey(e => e.TarefaId)

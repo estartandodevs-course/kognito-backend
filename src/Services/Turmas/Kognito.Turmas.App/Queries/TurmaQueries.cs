@@ -107,4 +107,15 @@ public class TurmaQueries : ITurmaQueries
             .Select(AlunoTurmaViewModel.Mapear)
             .OrderBy(a => a.Name);
     }
+    
+    public async Task<bool> VerificarAlunoTurma(Guid turmaId, Guid alunoId)
+    {
+        if (turmaId == Guid.Empty || alunoId == Guid.Empty)
+            return false;
+
+        var turma = await _turmaRepository.ObterPorId(turmaId);
+        if (turma == null) return false;
+
+        return turma.Enturmamentos.Any(e => e.Aluno.Id == alunoId);
+    }
 }

@@ -3,6 +3,7 @@ using Kognito.Tarefas.Domain;
 using Kognito.Tarefas.Domain.interfaces;
 using Microsoft.EntityFrameworkCore;
 using Kognito.Tarefas.Infra.Data;
+using Kognito.Usuarios.App.Domain;
 
 namespace Kognito.Tarefas.Domain.Repositories;
 
@@ -53,12 +54,12 @@ public class TarefaRepository : ITarefaRepository
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<Tarefa>> ObterTarefasComNotasPorTurmaAsync(Guid turmaId)
+    public async Task<IEnumerable<Tarefa>> ObterTarefasPorTurma(Guid turmaId)
     {
         return await DbSet
             .Include(t => t.Entregas)
-                .ThenInclude(e => e.Notas)
-            .Where(t => t.TurmaId == turmaId && t.Entregas.Any(e => e.Notas.Any()))
+            .ThenInclude(e => e.Notas)
+            .Where(t => t.TurmaId == turmaId)
             .ToListAsync();
     }
     public async Task<Entrega> ObterEntregaPorIdAsync(Guid entregaId)
@@ -67,6 +68,26 @@ public class TarefaRepository : ITarefaRepository
             .Include(e => e.Notas)
             .FirstOrDefaultAsync(e => e.Id == entregaId);
     }
+    public async Task<IEnumerable<Tarefa>> ObterTarefasFiltradas(Guid turmaId, Neurodivergencia? neurodivergenciaAluno)
+    {
+        var query = DbSet
+            .Include(t => t.Entregas)
+            .ThenInclude(e => e.Notas)
+            .Where(t => t.TurmaId == turmaId);
+
+        if (neurodivergenciaAluno.HasValue)
+        {
+            var tasks = await query.ToListAsync();
+            return tasks.Where(t => !t.NeurodivergenciasAlvo.Any() || 
+                                    t.NeurodivergenciasAlvo.Contains(neurodivergenciaAluno.Value))
+                .OrderByDescending(t => t.CriadoEm);
+        }
+        else
+        {
+            var tasks = await query.ToListAsync();
+            return tasks.Where(t => !t.NeurodivergenciasAlvo.Any())
+                .OrderByDescending(t => t.CriadoEm);
+        }    }
 
     public void Adicionar(Tarefa tarefa)
     {

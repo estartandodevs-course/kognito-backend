@@ -1,4 +1,5 @@
 ﻿using Kognito.Usuarios.App.ViewModels;
+using Kognito.Usuarios.App.Domain;
 
 namespace Kognito.Usuarios.App.Queries;
 
@@ -11,5 +12,6 @@ public interface IUsuarioQueries
     Task<OfensivaViewModel> ObterOfensiva(Guid usuarioId);
     Task<string> ObterCodigoRecuperacaoPorEmail(string email);
     Task<Guid?> ObterCodigoPaiPorEmail(string email);
-    Task<string> ObterResponsavelEmailPorId(Guid id);
+    Task<IEnumerable<MetaViewModel>> ObterMetasConcluidasHoje(Guid usuarioId);
+
 }

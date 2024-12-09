@@ -1,6 +1,7 @@
 ﻿using EstartandoDevsCore.Mediator;
 using FluentValidation.Results;
 using Kognito.Tarefas.App.Commands;
+using Kognito.Tarefas.App.Events;
 using Kognito.Tarefas.App.Queries;
 using Kognito.Tarefas.Domain.interfaces;
 using Kognito.Tarefas.Domain.Repositories;
@@ -21,7 +22,8 @@ public static class DependencyInjectionConfig
     {
 
         services.AddScoped<IMediatorHandler, MediatorHandler>();
-
+        services.AddScoped<INotificationHandler<TarefaEntregueEvent>, TarefaEntregueEventHandler>();
+        
         services.AddScoped<IUsuariosRepository, UsuarioRepository>();
         services.AddScoped<IUsuarioQueries, UsuarioQueries>();
         services.AddMediatR(typeof(CriarUsuarioCommand));

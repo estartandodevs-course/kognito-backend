@@ -6,14 +6,14 @@ namespace Kognito.Usuarios.App.Commands;
 
 public class AtualizarUsuarioCommand : Command
 {
-    public Guid UsuarioId { get; set; }
-    public string Nome { get; set; }
-    public string Neurodivergencia { get; set; }
+    public Guid UsuarioId { get; private set; }
+    public string Nome { get; private set; }
+    public string Email { get; private set; }
 
-    public AtualizarUsuarioCommand(Guid usuarioId, string nome, string neurodivergencia)
+    public AtualizarUsuarioCommand(Guid usuarioId, string nome, string email)
     {
         UsuarioId = usuarioId;
         Nome = nome;
-        Neurodivergencia = neurodivergencia;
+        Email = email;
     }
 }

@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Usuarios\Kognito.Usuarios.App\Kognito.Usuarios.App.csproj" />
     <ProjectReference Include="..\Kognito.Tarefas.Domain\Kognito.Tarefas.Domain.csproj" />
   </ItemGroup>
 

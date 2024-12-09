@@ -3,6 +3,7 @@ using Kognito.Usuarios.App.Domain;
 using Kognito.Usuarios.App.Domain.Interface;
 using EstartandoDevsCore.ValueObjects;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.Identity;
 using MediatR;
 
 namespace Kognito.Usuarios.App.Commands;
@@ -13,17 +14,24 @@ public class UsuariosCommandHandler : CommandHandler,
     IRequestHandler<CriarUsuarioCommand, ValidationResult>,
     IRequestHandler<AtualizarUsuarioCommand, ValidationResult>,
     IRequestHandler<CriarMetaCommand, ValidationResult>,
+    IRequestHandler<EsqueceuSenhaCommand, ValidationResult>,
+    IRequestHandler<RedefinirSenhaCommand, ValidationResult>,
     IRequestHandler<AdicionarNeurodivergenciaCommand, ValidationResult>,
     IRequestHandler<AtualizarMetaCommand, ValidationResult>,
     IRequestHandler<RemoverMetaCommand, ValidationResult>,
     IRequestHandler<ConcluirMetaCommand, ValidationResult>,
+    
     IDisposable
 {
     private readonly IUsuariosRepository _usuarioRepository;
+    private readonly UserManager<IdentityUser> _userManager;
 
-    public UsuariosCommandHandler(IUsuariosRepository usuarioRepository)
+    public UsuariosCommandHandler(
+        IUsuariosRepository usuarioRepository,
+        UserManager<IdentityUser> userManager)
     {
         _usuarioRepository = usuarioRepository;
+        _userManager = userManager;
     }
 
     public async Task<ValidationResult> Handle(CriarUsuarioCommand request, CancellationToken cancellationToken)
@@ -72,8 +80,6 @@ public class UsuariosCommandHandler : CommandHandler,
 
     public async Task<ValidationResult> Handle(AtualizarUsuarioCommand request, CancellationToken cancellationToken)
     {
-        if (!request.EstaValido()) return request.ValidationResult;
-
         var usuario = await _usuarioRepository.ObterPorId(request.UsuarioId);
         if (usuario is null)
         {
@@ -81,20 +87,32 @@ public class UsuariosCommandHandler : CommandHandler,
             return ValidationResult;
         }
 
-        usuario.AtribuirNome(request.Nome);
-
-        if (!string.IsNullOrEmpty(request.Neurodivergencia))
+        var identityUser = await _userManager.FindByEmailAsync(usuario.Login.Email.Endereco);
+        if (identityUser is null)
         {
-            if (!Enum.TryParse<Neurodivergencia>(request.Neurodivergencia, out var neurodivergencia))
-            {
-                AdicionarErro("Neurodivergência informada é inválida");
-                return ValidationResult;
-            }
-            usuario.AtribuirNeurodivergencia(neurodivergencia);
+            AdicionarErro("Usuário de identidade não encontrado!");
+            return ValidationResult;
         }
-    
+
+        usuario.AtribuirNome(request.Nome);
+        var login = new Login(new Email(request.Email), usuario.Login.Senha);
+        usuario.AtribuirLogin(login);
+
+        identityUser.Email = request.Email;
+        identityUser.NormalizedEmail = request.Email.ToUpper();
+        identityUser.UserName = request.Email;
+        identityUser.NormalizedUserName = request.Email.ToUpper();
+
+        var identityResult = await _userManager.UpdateAsync(identityUser);
+        if (!identityResult.Succeeded)
+        {
+            foreach (var erro in identityResult.Errors)
+                AdicionarErro(erro.Description);
+            return ValidationResult;
+        }
+
         _usuarioRepository.Atualizar(usuario);
-    
+
         return await PersistirDados(_usuarioRepository.UnitOfWork);
     }
 
@@ -187,6 +205,7 @@ public class UsuariosCommandHandler : CommandHandler,
         }
 
         var usuario = new Usuario(request.Nome, cpf);
+        usuario.AtribuirTipoUsuario(TipoUsuario.Professor);
         var login = new Login(new Email(request.Email), new Senha(request.Senha));
         usuario.AtribuirLogin(login);
 
@@ -214,6 +233,7 @@ public class UsuariosCommandHandler : CommandHandler,
         }
 
         var usuario = new Usuario(request.Nome, cpf);
+        usuario.AtribuirTipoUsuario(TipoUsuario.Aluno);
         var login = new Login(new Email(request.Email), new Senha(request.Senha));
         usuario.AtribuirLogin(login);
         usuario.AtribuirResponsavelEmail(request.EmailResponsavel);
@@ -251,7 +271,71 @@ public class UsuariosCommandHandler : CommandHandler,
 
         return await PersistirDados(_usuarioRepository.UnitOfWork);
     }
+    public async Task<ValidationResult> Handle(EsqueceuSenhaCommand request, CancellationToken cancellationToken)
+    {
+        if (!request.EstaValido()) return request.ValidationResult;
 
+        var usuario = await _usuarioRepository.ObterPorEmail(request.Email);
+        if (usuario is null)
+        {
+            AdicionarErro("Usuário não encontrado");
+            return ValidationResult;
+        }
+
+        var identityUser = await _userManager.FindByEmailAsync(request.Email);
+        if (identityUser is null)
+        {
+            AdicionarErro("Usuário de identidade não encontrado");
+            return ValidationResult;
+        }
+
+        usuario.GerarCodigoRecuperacao();
+        
+        _usuarioRepository.Atualizar(usuario);
+
+        return await PersistirDados(_usuarioRepository.UnitOfWork);
+    }
+
+    public async Task<ValidationResult> Handle(RedefinirSenhaCommand request, CancellationToken cancellationToken)
+    {
+        if (!request.EstaValido()) return request.ValidationResult;
+
+        var usuario = await _usuarioRepository.ObterPorEmail(request.Email);
+        if (usuario is null)
+        {
+            AdicionarErro("Usuário não encontrado");
+            return ValidationResult;
+        }
+
+        var identityUser = await _userManager.FindByEmailAsync(request.Email);
+        if (identityUser is null)
+        {
+            AdicionarErro("Usuário de identidade não encontrado");
+            return ValidationResult;
+        }
+
+        if (usuario.CodigoRecuperacaoEmail != request.CodigoRecuperacao)
+        {
+            AdicionarErro("Código de recuperação inválido");
+            return ValidationResult;
+        }
+
+        var token = await _userManager.GeneratePasswordResetTokenAsync(identityUser);
+        var result = await _userManager.ResetPasswordAsync(identityUser, token, request.NovaSenha);
+
+        if (!result.Succeeded)
+        {
+            foreach (var erro in result.Errors)
+                AdicionarErro(erro.Description);
+            return ValidationResult;
+        }
+
+        usuario.LimparCodigoRecuperacao();
+        _usuarioRepository.Atualizar(usuario);
+
+        return await PersistirDados(_usuarioRepository.UnitOfWork);
+    }
+    
     public void Dispose()
     {
         _usuarioRepository?.Dispose();

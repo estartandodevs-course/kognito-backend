@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Kognito.Usuarios.App.Domain;
 
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum Neurodivergencia
 {
     [Display(Name = "TDAH")]

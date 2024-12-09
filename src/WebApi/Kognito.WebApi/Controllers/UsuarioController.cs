@@ -54,6 +54,7 @@ public class UsuariosController : MainController
     /// <response code="200">Retorna os dados do usuário</response>
     /// <response code="404">Quando o usuário não é encontrado</response>
     [HttpGet]
+    [Authorize]
     public async Task<IActionResult> ObterPerfil()
     {
         if (!ModelState.IsValid) return CustomResponse(ModelState);
@@ -77,6 +78,7 @@ public class UsuariosController : MainController
     /// <returns>Dados do usuário solicitado</returns>
     /// <response code="200">Retorna os dados do usuário</response>
     /// <response code="404">Quando o usuário não é encontrado</response>
+    [Authorize]
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> ObterPorId(Guid id)
     {
@@ -99,6 +101,7 @@ public class UsuariosController : MainController
     /// <returns>Lista de emblemas do usuário</returns>
     /// <response code="200">Retorna a lista de emblemas</response>
     /// <response code="404">Quando o usuário não é encontrado</response>
+    [Authorize]
     [HttpGet("/emblemas")]
     public async Task<IActionResult> ObterEmblemas()
     {
@@ -121,6 +124,7 @@ public class UsuariosController : MainController
     /// <returns>Dados da ofensiva do usuário</returns>
     /// <response code="200">Retorna os dados da ofensiva</response>
     /// <response code="404">Quando o usuário não é encontrado</response>
+    [Authorize]
     [HttpGet("/ofensiva")]
     public async Task<IActionResult> ObterOfensiva()
     {
@@ -137,69 +141,6 @@ public class UsuariosController : MainController
 
         return CustomResponse(ofensiva);
     }
-
-    // [HttpPost]
-    // public async Task<IActionResult> CriarUsuario([FromBody] UsuarioInputModel model)
-    // {
-    //     if (!ModelState.IsValid) return CustomResponse(ModelState);
-    //
-    //     var user = new IdentityUser()
-    //     {
-    //         Id = Guid.NewGuid().ToString(),
-    //         UserName = model.Email,
-    //         NormalizedUserName = model.Email.ToUpper(),
-    //         Email = model.Email,
-    //         NormalizedEmail = model.Email.ToUpper(),
-    //         EmailConfirmed = true
-    //     };
-    //
-    //     var identidadeCriada = await _userManager.CreateAsync(user, model.Senha);
-    //
-    //     if (!identidadeCriada.Succeeded)
-    //     {
-    //         foreach (var erro in identidadeCriada.Errors)
-    //             AdicionarErro(erro.Description);
-    //
-    //         return CustomResponse();
-    //     }
-    //
-    //     var command = new CriarUsuarioCommand(
-    //         model.Nome,
-    //         model.Cpf,
-    //         model.Neurodivergencia,
-    //         model.Email,
-    //         model.Senha
-    //     );
-    //
-    //     var result = await _mediatorHandler.EnviarComando(command);
-    //
-    //     if (!result.IsValid)
-    //     {
-    //         await _userManager.DeleteAsync(user);
-    //         return CustomResponse(result);
-    //     }
-    //
-    //     var createdUser = await _usuarioQueries.ObterPorEmail(model.Email);
-    //     return CustomResponse(createdUser);
-    // }
-
-    // [HttpPut]
-    // public async Task<IActionResult> Atualizar([FromBody] AtualizarUsuarioInputModel model)
-    // {
-    //     if (!ModelState.IsValid) return CustomResponse(ModelState);
-    //
-    //     var usuarioId = ObterUsuarioId();
-    //     if (!usuarioId.HasValue)
-    //     {
-    //         AdicionarErro("Usuário não encontrado");
-    //         return NotFound();
-    //     }
-    //
-    //     var command = new AtualizarUsuarioCommand(usuarioId.Value, model.Nome, model.Neurodivergencia);
-    //     var result = await _mediatorHandler.EnviarComando(command);
-    //
-    //     return CustomResponse(result);
-    // }
 
     /// <summary>
     /// Altera a senha do usuário autenticado
@@ -368,6 +309,76 @@ public class UsuariosController : MainController
         }
 
         var command = new AdicionarNeurodivergenciaCommand(usuarioId.Value, model.CodigoPai, model.Neurodivergencia);
+        var result = await _mediatorHandler.EnviarComando(command);
+
+        return CustomResponse(result);
+    }
+    
+    /// <summary>
+    /// Atualiza o perfil do usuário autenticado
+    /// </summary>
+    /// <param name="model">Dados do perfil a serem atualizados</param>
+    /// <returns>Dados do perfil atualizado</returns>
+    /// <response code="200">Perfil atualizado com sucesso</response>
+    /// <response code="400">Quando os dados são inválidos</response>
+    /// <response code="404">Quando o usuário não é encontrado</response>
+    [Authorize]
+    [HttpPut("perfil")]
+    public async Task<IActionResult> AtualizarPerfil([FromBody] AtualizarPerfilInputModel model)
+    {
+        if (!ModelState.IsValid) return CustomResponse(ModelState);
+
+        var usuarioId = ObterUsuarioId();
+        if (!usuarioId.HasValue)
+        {
+            AdicionarErro("Usuário não encontrado");
+            return NotFound();
+        }
+
+        var command = new AtualizarUsuarioCommand(usuarioId.Value, model.Name, model.Email);
+        var result = await _mediatorHandler.EnviarComando(command);
+
+        if (!result.IsValid) return CustomResponse(result);
+
+        var usuarioAtualizado = await _usuarioQueries.ObterPorId(usuarioId.Value);
+        return CustomResponse(usuarioAtualizado);
+    }
+    
+    /// <summary>
+    /// Solicita recuperação de senha
+    /// </summary>
+    /// <param name="model">Email do usuário</param>
+    /// <returns>Resultado da solicitação</returns>
+    /// <response code="200">Email de recuperação enviado com sucesso</response>
+    /// <response code="400">Quando os dados são inválidos</response>
+    /// <response code="404">Quando o usuário não é encontrado</response>
+    [HttpPost("esqueceu-senha")]
+    public async Task<IActionResult> EsqueceuSenha([FromBody] EsqueceuSenhaInputModel model)
+    {
+        if (!ModelState.IsValid) return CustomResponse(ModelState);
+
+        var command = new EsqueceuSenhaCommand(model.Email);
+        var result = await _mediatorHandler.EnviarComando(command);
+
+        if (!result.IsValid) return CustomResponse(result);
+
+        return CustomResponse("Email de recuperação enviado com sucesso!");
+    }
+    
+    /// <summary>
+    /// Redefine a senha do usuário usando o código de recuperação
+    /// </summary>
+    /// <param name="model">Dados para redefinição de senha</param>
+    /// <returns>Resultado da operação</returns>
+    /// <response code="200">Senha redefinida com sucesso</response>
+    /// <response code="400">Quando os dados são inválidos</response>
+    /// <response code="404">Quando o usuário não é encontrado</response>
+    [HttpPost("redefinir-senha")]
+    public async Task<IActionResult> RedefinirSenha([FromBody] RedefinirSenhaInputModel model)
+    {
+        if (!ModelState.IsValid) return CustomResponse(ModelState);
+
+        var command = new RedefinirSenhaCommand(model.Email, model.RecoveryCode, model.NewPassword);
         var result = await _mediatorHandler.EnviarComando(command);
 
         return CustomResponse(result);

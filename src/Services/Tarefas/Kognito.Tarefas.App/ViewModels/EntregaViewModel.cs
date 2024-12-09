@@ -11,7 +11,6 @@ public class EntregaViewModel
     public Guid StudentId { get; set; }
     public Guid TaskId { get; set; }
     public bool IsLate { get; set; }
-    public ICollection<NotaViewModel> Grades { get; set; } = new List<NotaViewModel>();
 
     public static EntregaViewModel Mapear(Entrega entrega)
     {
@@ -23,7 +22,6 @@ public class EntregaViewModel
             StudentId = entrega.AlunoId,
             TaskId = entrega.TarefaId,
             IsLate = entrega.Atrasada,
-            Grades = entrega.Notas?.Select(NotaViewModel.Mapear).ToList() ?? new List<NotaViewModel>()
         };
     }
 }

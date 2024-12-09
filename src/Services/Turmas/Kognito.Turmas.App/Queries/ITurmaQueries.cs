@@ -48,4 +48,9 @@ public interface ITurmaQueries
     /// Obtém a lista de alunos de uma turma
     /// </summary>
     Task<IEnumerable<AlunoTurmaViewModel>> ObterAlunosTurma(Guid turmaId);
+    
+    /// <summary>
+    /// Verifica se um aluno está matriculado em uma turma específica
+    /// </summary>
+    Task<bool> VerificarAlunoTurma(Guid turmaId, Guid alunoId);
 }

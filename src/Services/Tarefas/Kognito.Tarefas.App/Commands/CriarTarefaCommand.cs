@@ -1,5 +1,6 @@
 ﻿using EstartandoDevsCore.Messages;
 using FluentValidation;
+using Kognito.Usuarios.App.Domain;
 
 namespace Kognito.Tarefas.App.Commands;
 
@@ -10,14 +11,16 @@ public class CriarTarefaCommand : Command
     public string Conteudo { get; private set; }
     public DateTime DataFinalEntrega { get; private set; }
     public Guid TurmaId { get; private set; }
+    public List<Neurodivergencia> NeurodivergenciasAlvo { get; private set; }
 
-    public CriarTarefaCommand(Guid id, string descricao, string conteudo, DateTime dataFinalEntrega, Guid turmaId)
+    public CriarTarefaCommand(Guid id, string descricao, string conteudo, DateTime dataFinalEntrega, Guid turmaId, List<Neurodivergencia>? neurodivergenciasAlvo = null)
     {
-        Id = Guid.NewGuid();
+        Id = id;
         Descricao = descricao;
         Conteudo = conteudo;
         DataFinalEntrega = dataFinalEntrega;
         TurmaId = turmaId;
+        NeurodivergenciasAlvo = neurodivergenciasAlvo ?? new List<Neurodivergencia>();
     }
 
     public override bool EstaValido()
