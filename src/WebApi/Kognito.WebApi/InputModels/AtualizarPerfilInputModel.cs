@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 public class AtualizarPerfilInputModel
 {
     [Required(ErrorMessage = "Informe um nome!")]
-    public string Nome { get; set; }
+    public string Name { get; set; }
 
     [Required(AllowEmptyStrings = true)]
     [RegularExpression(".+\\@.+\\..+", ErrorMessage = "Informe um email válido...")]
