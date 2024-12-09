@@ -6,6 +6,8 @@ using Kognito.WebApi.InputModels;
 using Microsoft.AspNetCore.Mvc;
 using Kognito.Turmas.App;
 using Kognito.Turmas.App.Queries;
+using Kognito.Usuarios.App.Domain;
+using Kognito.Usuarios.App.Queries;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Kognito.WebApi.Controllers;
@@ -18,12 +20,17 @@ public class TarefasController : MainController
     private readonly ITarefaQueries _tarefaQueries;
     private readonly IMediatorHandler _mediatorHandler;
     private readonly ITurmaQueries _turmaQueries;
+    private readonly IUsuarioQueries _usuarioQueries;
 
-    public TarefasController(ITarefaQueries tarefaQueries, IMediatorHandler mediatorHandler, ITurmaQueries turmaQueries)
+
+    public TarefasController(ITarefaQueries tarefaQueries, IMediatorHandler mediatorHandler,
+        IUsuarioQueries usuarioQueries,
+        ITurmaQueries turmaQueries)
     {
         _tarefaQueries = tarefaQueries;
         _mediatorHandler = mediatorHandler;
         _turmaQueries = turmaQueries;
+        _usuarioQueries = usuarioQueries;
     }
     
     private Guid? ObterUsuarioId()
@@ -66,11 +73,12 @@ public class TarefasController : MainController
         }
 
         var command = new CriarTarefaCommand(
-            id: Guid.NewGuid(),
-            descricao: model.Description,
-            conteudo: model.Content,
-            dataFinalEntrega: model.FinalDeliveryDate,
-            turmaId: model.ClassId
+            Guid.NewGuid(),
+            model.Description,
+            model.Content,
+            model.FinalDeliveryDate,
+            model.ClassId,
+            model.NeurodivergenceTargets
         );
 
         var result = await _mediatorHandler.EnviarComando(command);
@@ -361,13 +369,52 @@ public async Task<IActionResult> EntregarTarefa(Guid id, [FromBody] DeliveryInpu
     }
     
     /// <summary>
+    /// Obtém todas as tarefas de uma turma específica na pespectiva do professor
+    /// </summary>
+    /// <param name="turmaId">ID da turma</param>
+    /// <returns>Lista de tarefas</returns>
+    /// <response code="200">Retorna a lista de tarefas </response>
+    /// <response code="400">Quando o ID da turma é inválido</response>
+
+    [HttpGet("professores/turmas/{turmaId:guid}")]
+    public async Task<IActionResult> ObterTarefasPorTurmaProfessor(Guid turmaId)
+    {
+        if (turmaId == Guid.Empty)
+        {
+            AdicionarErro("Id da turma inválido");
+            return CustomResponse();
+        }
+
+        var usuarioId = ObterUsuarioId();
+        if (!usuarioId.HasValue)
+        {
+            AdicionarErro("Usuário não encontrado");
+            return CustomResponse();
+        }
+
+        var isProfessor = await _turmaQueries.VerificarProfessorTurma(turmaId, usuarioId.Value);
+
+        if (!isProfessor)
+        {
+            return BadRequest(new
+            {
+                success = false,
+                message = "Você não tem permissão para acessar as tarefas desta turma"
+            });
+        }
+
+        var tarefas = await _tarefaQueries.ObterTarefasPorTurma(turmaId);
+        return CustomResponse(tarefas);
+    }
+    
+    /// <summary>
     /// Obtém todas as notas de uma tarefa específica
     /// </summary>
     /// <param name="id">ID da tarefa</param>
     /// <returns>Lista de notas da tarefa</returns>
     /// <response code="200">Retorna a lista de notas da tarefa</response>
     /// <response code="404">Quando a tarefa não é encontrada</response>
-    [HttpGet("{id:guid}/notas")]
+    [HttpGet("professores/notas/{id:guid}")]
     public async Task<IActionResult> ObterNotasPorTarefa(Guid id)
     {
         var usuarioId = ObterUsuarioId();
@@ -406,7 +453,7 @@ public async Task<IActionResult> EntregarTarefa(Guid id, [FromBody] DeliveryInpu
     /// <returns>Lista de entregas da tarefa</returns>
     /// <response code="200">Retorna a lista de entregas da tarefa</response>
     /// <response code="404">Quando a tarefa não é encontrada</response>
-    [HttpGet("{id:guid}/entregas")]
+    [HttpGet("professores/entregas/{id:guid}")]
     public async Task<IActionResult> ObterEntregasPorTarefa(Guid id)
     {
         var usuarioId = ObterUsuarioId();
@@ -435,5 +482,36 @@ public async Task<IActionResult> EntregarTarefa(Guid id, [FromBody] DeliveryInpu
 
         var entregas = await _tarefaQueries.ObterEntregasPorTarefa(id);
         return CustomResponse(entregas);
+    }
+    
+    [HttpGet("aluno/turma/{turmaId:guid}")]
+    public async Task<IActionResult> ObterTarefasParaAluno(Guid turmaId)
+    {
+        var usuarioId = ObterUsuarioId();
+        if (!usuarioId.HasValue)
+        {
+            AdicionarErro("Usuário não encontrado");
+            return CustomResponse();
+        }
+
+        var isAluno = await _turmaQueries.VerificarAlunoTurma(turmaId, usuarioId.Value);
+        if (!isAluno)
+        {
+            return BadRequest(new
+            {
+                success = false,
+                message = "Você não está matriculado nesta turma"
+            });
+        }
+
+        var usuario = await _usuarioQueries.ObterPorId(usuarioId.Value);
+        if (usuario == null)
+        {
+            AdicionarErro("Usuário não encontrado");
+            return CustomResponse();
+        }
+
+        var tarefas = await _tarefaQueries.ObterTarefasFiltradas(turmaId, usuario.Neurodivergencia);
+        return CustomResponse(tarefas);
     }
 }

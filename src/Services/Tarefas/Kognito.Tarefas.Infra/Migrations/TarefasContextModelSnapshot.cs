@@ -118,6 +118,10 @@ namespace Kognito.Tarefas.Infra.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("varchar(100)");
 
+                    b.Property<string>("NeurodivergenciasAlvo")
+                        .IsRequired()
+                        .HasColumnType("varchar(200)");
+
                     b.Property<Guid>("TurmaId")
                         .HasColumnType("uniqueidentifier");
 

@@ -10,7 +10,6 @@ using Kognito.Turmas.App.Queries;
 using Kognito.Turmas.Domain.Interfaces;
 using Kognito.Usuarios.App.Commands;
 using Kognito.Usuarios.App.Domain.Interface;
-using Kognito.Usuarios.App.Events;
 using Kognito.Usuarios.App.Infra.Repositories;
 using Kognito.Usuarios.App.Queries;
 using MediatR;

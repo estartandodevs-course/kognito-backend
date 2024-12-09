@@ -25,8 +25,16 @@ public class TarefasCommandHandler : CommandHandler,
     public async Task<ValidationResult> Handle(CriarTarefaCommand request, CancellationToken cancellationToken)
     {
         if (!request.EstaValido()) return request.ValidationResult;
+
+        var tarefa = new Tarefa(
+            request.Id,
+            request.Descricao,
+            request.Conteudo,
+            request.DataFinalEntrega,
+            request.TurmaId,
+            request.NeurodivergenciasAlvo
+        );
         
-        var tarefa = new Tarefa(request.Id, request.Descricao, request.Conteudo, request.DataFinalEntrega, request.TurmaId);
         tarefaRepository.Adicionar(tarefa);
         
         return await PersistirDados(tarefaRepository.UnitOfWork);

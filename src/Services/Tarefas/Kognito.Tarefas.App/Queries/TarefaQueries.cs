@@ -1,5 +1,6 @@
 using Kognito.Tarefas.App.ViewModels;
 using Kognito.Tarefas.Domain.interfaces;
+using Kognito.Usuarios.App.Domain;
 
 namespace Kognito.Tarefas.App.Queries;
 
@@ -56,5 +57,11 @@ public class TarefaQueries : ITarefaQueries
         if (tarefa == null) return Enumerable.Empty<EntregaViewModel>();
 
         return tarefa.Entregas.Select(EntregaViewModel.Mapear);
+    }
+    
+    public async Task<IEnumerable<TarefaViewModel>> ObterTarefasFiltradas(Guid turmaId, Neurodivergencia? neurodivergenciaAluno)
+    {
+        var tarefas = await _tarefaRepository.ObterTarefasFiltradas(turmaId, neurodivergenciaAluno);
+        return tarefas.Select(TarefaViewModel.Mapear);
     }
 } 

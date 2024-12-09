@@ -23,11 +23,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Autenticacao", "Autenticaca
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kognito.Autenticacao.App", "src\Services\Autenticacao\Kognito.Autenticacao.App\Kognito.Autenticacao.App.csproj", "{8921B9BC-E63D-40A4-B592-1E82E081275B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebApi", "WebApi", "{DFCF5959-F76E-450F-AACF-F5529EFE9626}"
-	ProjectSection(SolutionItems) = preProject
-		src\WebApi\Docker-compose.yml = src\WebApi\Docker-compose.yml
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kognito.WebApi", "src\WebApi\Kognito.WebApi\Kognito.WebApi.csproj", "{F6CCF203-C4D4-4FD2-A6EE-7DCC63852EF6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kognito.Tarefas.Domain", "src\Services\Tarefas\Kognito.Tarefas.Domain\Kognito.Tarefas.Domain.csproj", "{46F03FA8-F1E6-4D94-B354-B406E19AAD88}"
