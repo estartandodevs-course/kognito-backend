@@ -205,6 +205,7 @@ public class UsuariosCommandHandler : CommandHandler,
         }
 
         var usuario = new Usuario(request.Nome, cpf);
+        usuario.AtribuirTipoUsuario(TipoUsuario.Professor);
         var login = new Login(new Email(request.Email), new Senha(request.Senha));
         usuario.AtribuirLogin(login);
 
@@ -232,6 +233,7 @@ public class UsuariosCommandHandler : CommandHandler,
         }
 
         var usuario = new Usuario(request.Nome, cpf);
+        usuario.AtribuirTipoUsuario(TipoUsuario.Aluno);
         var login = new Login(new Email(request.Email), new Senha(request.Senha));
         usuario.AtribuirLogin(login);
         usuario.AtribuirResponsavelEmail(request.EmailResponsavel);

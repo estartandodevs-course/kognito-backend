@@ -1,4 +1,5 @@
 using System;
+using System.Text.Json.Serialization;
 using EstartandoDevsCore.DomainObjects;
 using EstartandoDevsCore.ValueObjects;
 
@@ -14,6 +15,8 @@ public class Usuario : Entity, IAggregateRoot
     public string? ResponsavelEmail { get; private set; }
     public Guid? CodigoPai { get; private set; }
     public string? CodigoRecuperacaoEmail { get; private set; }
+    public TipoUsuario TipoUsuario { get; private set; }
+
     
     private HashSet<Emblemas> _emblemas;
     private HashSet<Metas> _metas;
@@ -63,6 +66,10 @@ public class Usuario : Entity, IAggregateRoot
     public void AtribuirLogin(Login login) => Login = login;
     public void AtribuirNeurodivergencia(Neurodivergencia? neurodivergencia) => Neurodivergencia = neurodivergencia;
     
+    public void AtribuirTipoUsuario(TipoUsuario tipo)
+    {
+        TipoUsuario = tipo;
+    }
     public void AcrescentarOfensiva() => Ofensiva++;
     public void ResetarOfensiva() => Ofensiva = 0;
     
@@ -71,4 +78,11 @@ public class Usuario : Entity, IAggregateRoot
     
     public void AdicionarMeta(Metas meta) => _metas.Add(meta);
     public void RemoverMeta(Metas meta) => _metas.Remove(meta);
+}
+
+[JsonConverter(typeof(JsonStringEnumConverter))]
+public enum TipoUsuario
+{
+    Aluno,
+    Professor
 }

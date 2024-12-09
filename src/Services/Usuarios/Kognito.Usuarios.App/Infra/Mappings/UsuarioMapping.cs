@@ -70,6 +70,11 @@ public class UsuarioMapping : IEntityTypeConfiguration<Usuario>
             .HasMaxLength(32)
             .HasColumnName("CodigoRecuperacaoEmail")
             .IsRequired(false);
+        
+        builder.Property(u => u.TipoUsuario)
+            .HasColumnType("int")
+            .HasColumnName("TipoUsuario")
+            .IsRequired();
 
         builder.OwnsOne(c => c.Login, login =>
         {
