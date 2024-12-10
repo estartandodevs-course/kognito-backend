@@ -22,7 +22,7 @@ public static class ApiConfig
 
         services.AddDbContext<UsuarioContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString(ConexaoBancoDeDados)));
-        
+
         services.AddDbContext<TurmaContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString(ConexaoBancoDeDados)));
 
@@ -42,12 +42,9 @@ public static class ApiConfig
 
     public static void UseApiConfiguration(this WebApplication app)
     {
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwaggerConfiguration();
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
+        app.UseSwaggerConfiguration();
+        app.UseSwagger();
+        app.UseSwaggerUI();
         
         using var serviceScope = app.Services.GetService<IServiceScopeFactory>().CreateScope();
 
@@ -59,13 +56,13 @@ public static class ApiConfig
 
         var contextTurmas = serviceScope.ServiceProvider.GetRequiredService<TurmaContext>();
         contextTurmas.Database.Migrate();
-        
+
         var contextAutenticacao = serviceScope.ServiceProvider.GetRequiredService<AutenticacaoDbContext>();
         contextAutenticacao.Database.Migrate();
 
         app.UseHttpsRedirection();
         app.UseCors(PermissoesDeOrigem);
-        
+
         app.MapControllers();
         app.UseAuthConfiguration();
     }

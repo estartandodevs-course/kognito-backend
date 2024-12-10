@@ -1,0 +1,10 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: kognitoconfiguration
+  namespace: estartandodevs
+data:
+  ASPNETCORE_ENVIRONMENT: "Production"
+  ASPNETCORE_URLS: "http://+:5225;http://+5225"
+  CUSTOMCONNSTR_KognitoConnection: "Data Source=10.100.47.131;Initial Catalog=KognitoDB;User ID=sa;Password=Mail@#$xbaybxdb!;MultipleActiveResultSets=False;Connection Timeout=3500"
+  CUSTOMCONNSTR_IdentityConnection: "Data Source=10.100.47.131;Initial Catalog=KognitoIdentityDB;User ID=sa;Password=Mail@#$xbaybxdb!;MultipleActiveResultSets=False;Connection Timeout=3500"
