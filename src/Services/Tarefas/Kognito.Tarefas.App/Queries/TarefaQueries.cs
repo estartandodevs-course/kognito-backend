@@ -43,11 +43,13 @@ public class TarefaQueries : ITarefaQueries
         var tarefas = await _tarefaRepository.ObterTarefasPorTurma(turmaId);
         return tarefas.Select(TarefaViewModel.Mapear);
     }
-     public async Task<EntregaViewModel> ObterEntregaPorId(Guid entregaId)
+
+    public async Task<EntregaViewModel> ObterEntregaPorId(Guid entregaId)
     {
         var entrega = await _tarefaRepository.ObterEntregaPorIdAsync(entregaId);
         return entrega != null ? EntregaViewModel.Mapear(entrega) : null;
     }
+
     public async Task<IEnumerable<NotaViewModel>> ObterNotasPorTarefa(Guid tarefaId)
     {
         var tarefa = await _tarefaRepository.ObterPorIdAsync(tarefaId);
@@ -57,7 +59,7 @@ public class TarefaQueries : ITarefaQueries
             .SelectMany(e => e.Notas)
             .Select(NotaViewModel.Mapear);
     }
-    
+
     public async Task<IEnumerable<EntregaViewModel>> ObterEntregasPorTarefa(Guid tarefaId)
     {
         var tarefa = await _tarefaRepository.ObterPorIdAsync(tarefaId);
@@ -65,13 +67,14 @@ public class TarefaQueries : ITarefaQueries
 
         return tarefa.Entregas.Select(EntregaViewModel.Mapear);
     }
-    
-    public async Task<IEnumerable<TarefaViewModel>> ObterTarefasFiltradas(Guid turmaId, Neurodivergencia? neurodivergenciaAluno)
+
+    public async Task<IEnumerable<TarefaViewModel>> ObterTarefasFiltradas(Guid turmaId,
+        Neurodivergencia? neurodivergenciaAluno)
     {
         var tarefas = await _tarefaRepository.ObterTarefasFiltradas(turmaId, neurodivergenciaAluno);
         return tarefas.Select(TarefaViewModel.Mapear);
     }
-    
+
     public async Task<DesempenhoViewModel> ObterDesempenhoAluno(Guid alunoId)
     {
         var usuario = await _usuarioQueries.ObterPorId(alunoId);
@@ -81,21 +84,22 @@ public class TarefaQueries : ITarefaQueries
         foreach (var turma in turmas)
         {
             var tarefasTurma = await _tarefaRepository.ObterTarefasPorTurma(turma.Id);
-            var tarefasFiltradas = tarefasTurma.Where(t => 
-                !t.NeurodivergenciasAlvo.Any() || 
-                (usuario.Neurodivergencia.HasValue && t.NeurodivergenciasAlvo.Contains(usuario.Neurodivergencia.Value)));
-            
+            var tarefasFiltradas = tarefasTurma.Where(t =>
+                !t.NeurodivergenciasAlvo.Any() ||
+                (usuario.Neurodivergencia.HasValue &&
+                 t.NeurodivergenciasAlvo.Contains(usuario.Neurodivergencia.Value)));
+
             todasTarefas.AddRange(tarefasFiltradas);
         }
 
         var totalTarefas = todasTarefas.Count;
-        var entregasNoTempo = todasTarefas.Count(t => 
+        var entregasNoTempo = todasTarefas.Count(t =>
             t.Entregas.Any(e => e.AlunoId == alunoId && !e.Atrasada));
-        
-        var entregasAtrasadas = todasTarefas.Count(t => 
+
+        var entregasAtrasadas = todasTarefas.Count(t =>
             t.Entregas.Any(e => e.AlunoId == alunoId && e.Atrasada));
-        
-        var tarefasPendentes = todasTarefas.Count(t => 
+
+        var tarefasPendentes = todasTarefas.Count(t =>
             !t.Entregas.Any(e => e.AlunoId == alunoId));
 
         return new DesempenhoViewModel
@@ -112,20 +116,28 @@ public class TarefaQueries : ITarefaQueries
         var tarefas = await _tarefaRepository.ObterTarefasPorTurma(turmaId);
         var hoje = DateTime.Now;
         var usuario = await _usuarioQueries.ObterPorId(alunoId);
-        
-        var tarefasDisponiveis = tarefas.Where(t => 
-            !t.NeurodivergenciasAlvo.Any() || 
+
+        var tarefasDisponiveis = tarefas.Where(t =>
+            !t.NeurodivergenciasAlvo.Any() ||
             t.NeurodivergenciasAlvo.Contains(usuario.Neurodivergencia.Value));
 
         return new DesempenhoViewModel
         {
             TotalAssignments = tarefasDisponiveis.Count(),
-            SubmitedAssignments = tarefasDisponiveis.Count(t => 
+            SubmitedAssignments = tarefasDisponiveis.Count(t =>
                 t.Entregas.Any(e => e.AlunoId == alunoId && !e.Atrasada)),
-            lateAssignments = tarefasDisponiveis.Count(t => 
+            lateAssignments = tarefasDisponiveis.Count(t =>
                 t.Entregas.Any(e => e.AlunoId == alunoId && e.Atrasada)),
-            PendingAssignments = tarefasDisponiveis.Count(t => 
+            PendingAssignments = tarefasDisponiveis.Count(t =>
                 !t.Entregas.Any(e => e.AlunoId == alunoId))
         };
     }
-} 
+
+    public async Task<NotaViewModel> ObterNotaPorEntrega(Guid entregaId)
+    {
+        var entrega = await _tarefaRepository.ObterEntregaPorIdAsync(entregaId);
+        if (entrega == null || !entrega.Notas.Any()) return null;
+
+        return NotaViewModel.Mapear(entrega.Notas.First());
+    }
+}

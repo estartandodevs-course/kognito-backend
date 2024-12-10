@@ -566,4 +566,51 @@ public class TarefasController : MainController
         var desempenho = await _tarefaQueries.ObterDesempenhoTurma(turmaId, alunoId);
         return CustomResponse(desempenho);
     }
+    
+    /// <summary>
+    /// Obtém a nota de uma entrega específica
+    /// </summary>
+    /// <param name="entregaId">ID da entrega</param>
+    /// <returns>Nota da entrega</returns>
+    /// <response code="200">Retorna a nota da entrega</response>
+    /// <response code="404">Quando a entrega não é encontrada</response>
+    [HttpGet("entregas/{entregaId:guid}/nota")]
+    public async Task<IActionResult> ObterNotaPorEntrega(Guid entregaId)
+    {
+        var usuarioId = ObterUsuarioId();
+        if (!usuarioId.HasValue)
+        {
+            AdicionarErro("Usuário não encontrado");
+            return CustomResponse();
+        }
+
+        var entrega = await _tarefaQueries.ObterEntregaPorId(entregaId);
+        if (entrega == null)
+        {
+            AdicionarErro("Entrega não encontrada");
+            return CustomResponse();
+        }
+
+        var tarefa = await _tarefaQueries.ObterPorId(entrega.TaskId);
+        if (tarefa == null)
+        {
+            AdicionarErro("Tarefa não encontrada");
+            return CustomResponse();
+        }
+
+        var isProfessor = await _turmaQueries.VerificarProfessorTurma(tarefa.ClassId, usuarioId.Value);
+        var isOwner = entrega.StudentId == usuarioId.Value;
+
+        if (!isProfessor && !isOwner)
+        {
+            return BadRequest(new
+            {
+                success = false,
+                message = "Você não tem permissão para visualizar esta nota"
+            });
+        }
+
+        var nota = await _tarefaQueries.ObterNotaPorEntrega(entregaId);
+        return CustomResponse(nota);
+    }
 }
