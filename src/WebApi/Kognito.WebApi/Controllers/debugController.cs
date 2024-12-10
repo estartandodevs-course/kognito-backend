@@ -6,6 +6,9 @@ using EstartandoDevsWebApiCore.Controllers;
 using Kognito.Usuarios.App.Queries;
 using Microsoft.AspNetCore.Mvc;
 
+/// <summary>
+/// Controller de testes
+/// </summary>
 [Route("api/debug")]
 public class DebugController : MainController
 {
@@ -16,7 +19,10 @@ public class DebugController : MainController
         _usuarioQueries = usuarioQueries;
     }
 
-    [HttpGet("codes/{email}")]
+    /// <summary>
+    /// Controller de testes para debug. Retorna códigos de recuperação e códigos pai de um email
+    /// </summary>
+    [HttpGet("codigos/{email}")]
     public async Task<IActionResult> ObterCodigos(string email)
     {
         if (string.IsNullOrEmpty(email))
