@@ -2,8 +2,8 @@
 
 public class OfensivaViewModel
 {
-    public Guid UsuarioId { get; set; }
-    public int Ofensiva { get; set; }
+    public Guid UserId { get; set; }
+    public int Streak { get; set; }
 
     public static OfensivaViewModel Mapear(Usuario usuario)
     {
@@ -11,8 +11,8 @@ public class OfensivaViewModel
         
         return new OfensivaViewModel
         {
-            UsuarioId = usuario.Id,
-            Ofensiva = usuario.Ofensiva
+            UserId = usuario.Id,
+            Streak = usuario.Ofensiva
         };
     }
 }
