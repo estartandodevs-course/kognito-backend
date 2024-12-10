@@ -10,11 +10,11 @@ COPY ["./Services/Autenticacao/Kognito.Autenticacao.App/Kognito.Autenticacao.App
 
 COPY ["./Services/Tarefas/Kognito.Tarefas.App/Kognito.Tarefas.App.csproj", "Services/Tarefas/Kognito.Tarefas.App/Kognito.Tarefas.App.csproj"]
 COPY ["./Services/Tarefas/Kognito.Tarefas.Domain/Kognito.Tarefas.Domain.csproj", "Services/Tarefas/Kognito.Tarefas.Domain/Kognito.Tarefas.Domain.csproj"]
-COPY ["./Services/Tarefas/Kognito.Tarefas.App/Kognito.Tarefas.Infra.csproj", "Services/Tarefas/Kognito.Tarefas.Infra/Kognito.Tarefas.Infra.csproj"]
+COPY ["./Services/Tarefas/Kognito.Tarefas.Infra/Kognito.Tarefas.Infra.csproj", "Services/Tarefas/Kognito.Tarefas.Infra/Kognito.Tarefas.Infra.csproj"]
 
 COPY ["./Services/Turmas/Kognito.Turmas.App/Kognito.Turmas.App.csproj", "Services/Turmas/Kognito.Turmas.App/Kognito.Turmas.App.csproj"]
 COPY ["./Services/Turmas/Kognito.Turmas.Domain/Kognito.Turmas.Domain.csproj", "Services/Turmas/Kognito.Turmas.Domain/Kognito.Turmas.Domain.csproj"]
-COPY ["./Services/Turmas/Kognito.Turmas.App/Kognito.Turmas.Infra.csproj", "Services/Turmas/Kognito.Turmas.Infra/Kognito.Turmas.Infra.csproj"]
+COPY ["./Services/Turmas/Kognito.Turmas.Infra/Kognito.Turmas.Infra.csproj", "Services/Turmas/Kognito.Turmas.Infra/Kognito.Turmas.Infra.csproj"]
 
 COPY ["./Services/Usuarios/Kognito.Usuarios.App/Kognito.Usuarios.App.csproj", "Services/Usuarios/Kognito.Usuarios.App/Kognito.Usuarios.App.csproj"]
 
