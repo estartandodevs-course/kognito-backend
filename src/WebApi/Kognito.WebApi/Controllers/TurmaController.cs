@@ -251,7 +251,8 @@ public class TurmasController : MainController
         if (result.IsValid)
             return CustomResponse(new
             {
-                mensagem = "Ingresso na turma realizado com sucesso!",
+                message = "Ingresso na turma realizado com sucesso!",
+                classId = turma.Id
             });
 
         return CustomResponse(result);
