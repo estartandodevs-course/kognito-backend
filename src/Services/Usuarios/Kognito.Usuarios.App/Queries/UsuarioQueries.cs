@@ -1,4 +1,5 @@
-﻿using Kognito.Usuarios.App.ViewModels;
+﻿using Kognito.Usuarios.App.Domain;
+using Kognito.Usuarios.App.ViewModels;
 using Kognito.Usuarios.App.Domain.Interface;
 
 namespace Kognito.Usuarios.App.Queries;
@@ -54,6 +55,14 @@ public class UsuarioQueries : IUsuarioQueries
         return usuario?.CodigoPai;
     }
 
+    public async Task<bool> VerificarTipoUsuario(Guid usuarioId)
+    {
+        var usuario = await _usuarioRepository.ObterPorId(usuarioId);
+        if (usuario == null) return false;
+
+        return usuario.TipoUsuario == TipoUsuario.Aluno;
+    }
+    
     public async Task<string> ObterResponsavelEmailPorId(Guid id)
     {
         var usuario = await _usuarioRepository.ObterPorId(id);

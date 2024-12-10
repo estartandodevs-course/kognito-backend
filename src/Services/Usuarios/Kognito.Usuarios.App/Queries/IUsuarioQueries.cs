@@ -13,5 +13,6 @@ public interface IUsuarioQueries
     Task<string> ObterCodigoRecuperacaoPorEmail(string email);
     Task<Guid?> ObterCodigoPaiPorEmail(string email);
     Task<IEnumerable<MetaViewModel>> ObterMetasConcluidasHoje(Guid usuarioId);
+    Task<bool> VerificarTipoUsuario(Guid usuarioId);
 
 }

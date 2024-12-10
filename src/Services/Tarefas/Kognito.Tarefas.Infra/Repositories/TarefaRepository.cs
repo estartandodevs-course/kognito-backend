@@ -110,6 +110,21 @@ public class TarefaRepository : ITarefaRepository
         return await ObterPorIdAsync(id);
     }
 
+    public async Task<IEnumerable<Tarefa>> ObterTodasTarefasDoAluno(Guid alunoId)
+    {
+        return await DbSet
+            .Include(t => t.Entregas)
+            .Where(t => t.Entregas.Any(e => e.AlunoId == alunoId))
+            .ToListAsync();
+    }
+
+    public async Task<IEnumerable<Tarefa>> ObterTodasTarefasDaTurma(Guid turmaId)
+    {
+        return await DbSet
+            .Include(t => t.Entregas)
+            .Where(t => t.TurmaId == turmaId)
+            .ToListAsync();
+    }
     public void Dispose()
     {
         _context?.Dispose();

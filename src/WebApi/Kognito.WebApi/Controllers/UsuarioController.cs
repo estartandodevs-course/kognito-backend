@@ -2,6 +2,7 @@
 using EstartandoDevsWebApiCore.Controllers;
 using EstartandoDevsCore.Mediator;
 using EstartandoDevsCore.ValueObjects;
+using Kognito.Tarefas.App.Queries;
 using Kognito.Usuarios.App.Commands;
 using Kognito.Usuarios.App.Queries;
 using Kognito.WebApi.InputModels;
@@ -17,16 +18,20 @@ public class UsuariosController : MainController
 {
     private readonly IUsuarioQueries _usuarioQueries;
     private readonly IMediatorHandler _mediatorHandler;
+    private readonly ITarefaQueries _tarefaQueries;
     private readonly UserManager<IdentityUser> _userManager;
 
     public UsuariosController(
         IUsuarioQueries usuarioQueries,
+        ITarefaQueries tarefaQueries,
         IMediatorHandler mediatorHandler,
         UserManager<IdentityUser> userManager)
     {
         _usuarioQueries = usuarioQueries;
         _mediatorHandler = mediatorHandler;
         _userManager = userManager;
+        _tarefaQueries = tarefaQueries;
+
     }
 
     private async Task<Guid?> ObterUsuarioIdPorIdentityId()
@@ -206,7 +211,7 @@ public class UsuariosController : MainController
             EmailConfirmed = true
         };
 
-        var identidadeCriada = await _userManager.CreateAsync(user, model.Senha);
+        var identidadeCriada = await _userManager.CreateAsync(user, model.Password);
 
         if (!identidadeCriada.Succeeded)
         {
@@ -220,7 +225,7 @@ public class UsuariosController : MainController
             model.Nome,
             model.Cpf,
             model.Email,
-            model.Senha
+            model.Password
         );
 
         var result = await _mediatorHandler.EnviarComando(command);
@@ -272,7 +277,7 @@ public class UsuariosController : MainController
             model.Cpf,
             model.Email,
             model.Password,
-            model.EmailResponsavel
+            model.parentEmail
         );
 
         var result = await _mediatorHandler.EnviarComando(command);
@@ -308,7 +313,7 @@ public class UsuariosController : MainController
             return NotFound();
         }
 
-        var command = new AdicionarNeurodivergenciaCommand(usuarioId.Value, model.CodigoPai, model.Neurodivergencia);
+        var command = new AdicionarNeurodivergenciaCommand(usuarioId.Value, model.parentCode, model.Neurodivergence.ToString());
         var result = await _mediatorHandler.EnviarComando(command);
 
         return CustomResponse(result);
@@ -383,4 +388,35 @@ public class UsuariosController : MainController
 
         return CustomResponse(result);
     }
+    
+    /// <summary>
+    /// Obtém o gráfico de desempenho do aluno em todas as suas turmas
+    /// </summary>
+    /// <returns>Dados de desempenho do aluno</returns>
+    /// <response code="200">Retorna os dados de desempenho</response>
+    /// <response code="401">Quando o usuário não está autenticado</response>
+    [HttpGet("desempenho/aluno")]
+    public async Task<IActionResult> ObterDesempenhoAluno()
+    {
+        var usuarioId = ObterUsuarioId();
+        if (!usuarioId.HasValue)
+        {
+            AdicionarErro("Usuário não encontrado");
+            return CustomResponse();
+        }
+
+        var isAluno = await _usuarioQueries.VerificarTipoUsuario(usuarioId.Value);
+        if (!isAluno)
+        {
+            return BadRequest(new
+            {
+                success = false,
+                message = "Apenas alunos podem acessar esta rota"
+            });
+        }
+
+        var desempenho = await _tarefaQueries.ObterDesempenhoAluno(usuarioId.Value);
+        return CustomResponse(desempenho);
+    }
+
 }

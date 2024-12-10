@@ -32,7 +32,7 @@ public class TarefasController : MainController
         _turmaQueries = turmaQueries;
         _usuarioQueries = usuarioQueries;
     }
-    
+
     private Guid? ObterUsuarioId()
     {
         var userIdClaim = User.FindFirst("userId")?.Value;
@@ -54,14 +54,14 @@ public class TarefasController : MainController
     public async Task<IActionResult> Criar([FromBody] TaskInputModel model)
     {
         if (!ModelState.IsValid) return CustomResponse(ModelState);
-        
+
         var usuarioId = ObterUsuarioId();
         if (!usuarioId.HasValue)
         {
             AdicionarErro("Usuário não encontrado");
             return CustomResponse();
         }
-        
+
         var isProfessor = await _turmaQueries.VerificarProfessorTurma(model.ClassId, usuarioId.Value);
         if (!isProfessor)
         {
@@ -173,56 +173,54 @@ public class TarefasController : MainController
     /// <response code="400">Quando os dados da requisição são inválidos</response>
     /// <response code="404">Quando a tarefa não é encontrada</response>
     [HttpPost("{id:guid}/entregas")]
-public async Task<IActionResult> EntregarTarefa(Guid id, [FromBody] DeliveryInputModel model)
-{
-    if (!ModelState.IsValid) return CustomResponse(ModelState);
-
-    var usuarioId = ObterUsuarioId();
-    if (!usuarioId.HasValue)
+    public async Task<IActionResult> EntregarTarefa(Guid id, [FromBody] DeliveryInputModel model)
     {
-        AdicionarErro("Usuário não encontrado");
-        return CustomResponse();
-    }
+        if (!ModelState.IsValid) return CustomResponse(ModelState);
 
-    var tarefa = await _tarefaQueries.ObterPorId(id);
-    if (tarefa == null)
-    {
-        AdicionarErro("Tarefa não encontrada");
-        return CustomResponse();
-    }
-
-    var isEnrolledStudent = await _turmaQueries.VerificarAlunoTurma(tarefa.ClassId, usuarioId.Value);
-    if (!isEnrolledStudent)
-    {
-        return BadRequest(new
+        var usuarioId = ObterUsuarioId();
+        if (!usuarioId.HasValue)
         {
-            success = false,
-            message = "Você não está matriculado nesta turma"
-        });
-    }
-    
+            AdicionarErro("Usuário não encontrado");
+            return CustomResponse();
+        }
 
-    var entregas = await _tarefaQueries.ObterEntregasPorTarefa(id);
-    if (entregas.Any(e => e.StudentId == usuarioId.Value))
-    {
-        return BadRequest(new
+        var tarefa = await _tarefaQueries.ObterPorId(id);
+        if (tarefa == null)
         {
-            success = false,
-            message = "Você já entregou esta tarefa"
-        });
+            AdicionarErro("Tarefa não encontrada");
+            return CustomResponse();
+        }
+
+        var isEnrolledStudent = await _turmaQueries.VerificarAlunoTurma(tarefa.ClassId, usuarioId.Value);
+        if (!isEnrolledStudent)
+        {
+            return BadRequest(new
+            {
+                success = false,
+                message = "Você não está matriculado nesta turma"
+            });
+        }
+
+
+        var entregas = await _tarefaQueries.ObterEntregasPorTarefa(id);
+        if (entregas.Any(e => e.StudentId == usuarioId.Value))
+        {
+            return BadRequest(new
+            {
+                success = false,
+                message = "Você já entregou esta tarefa"
+            });
+        }
+
+        var command = new EntregarTarefaCommand(
+            conteudo: model.Content,
+            alunoId: usuarioId.Value,
+            tarefaId: id
+        );
+
+        var result = await _mediatorHandler.EnviarComando(command);
+        return result.IsValid ? CustomResponse("Entrega realizada com sucesso!") : CustomResponse(result);
     }
-
-    var command = new EntregarTarefaCommand(
-        conteudo: model.Content,
-        alunoId: usuarioId.Value,
-        tarefaId: id
-    );
-
-    var result = await _mediatorHandler.EnviarComando(command);
-    return result.IsValid ? 
-        CustomResponse("Entrega realizada com sucesso!") : 
-        CustomResponse(result);
-}
 
     /// <summary>
     /// Atribui uma nota a uma entrega específica
@@ -278,9 +276,7 @@ public async Task<IActionResult> EntregarTarefa(Guid id, [FromBody] DeliveryInpu
         );
 
         var result = await _mediatorHandler.EnviarComando(command);
-        return result.IsValid ? 
-            CustomResponse("Nota atribuída com sucesso!") : 
-            CustomResponse(result);
+        return result.IsValid ? CustomResponse("Nota atribuída com sucesso!") : CustomResponse(result);
     }
 
     /// <summary>
@@ -301,7 +297,7 @@ public async Task<IActionResult> EntregarTarefa(Guid id, [FromBody] DeliveryInpu
             AdicionarErro("Tarefa não encontrada");
             return CustomResponse();
         }
-        
+
         var isProfessor = await _turmaQueries.VerificarProfessorTurma(tarefa.ClassId, usuarioId.Value);
         if (!isProfessor)
         {
@@ -335,7 +331,6 @@ public async Task<IActionResult> EntregarTarefa(Guid id, [FromBody] DeliveryInpu
     /// <returns>Lista de tarefas com suas notas</returns>
     /// <response code="200">Retorna a lista de tarefas </response>
     /// <response code="400">Quando o ID da turma é inválido</response>
-
     [HttpGet("turma/{turmaId:guid}")]
     public async Task<IActionResult> ObterTarefasPorTurma(Guid turmaId)
     {
@@ -367,7 +362,7 @@ public async Task<IActionResult> EntregarTarefa(Guid id, [FromBody] DeliveryInpu
         var tarefas = await _tarefaQueries.ObterTarefasPorTurma(turmaId);
         return CustomResponse(tarefas);
     }
-    
+
     /// <summary>
     /// Obtém todas as tarefas de uma turma específica na pespectiva do professor
     /// </summary>
@@ -375,7 +370,6 @@ public async Task<IActionResult> EntregarTarefa(Guid id, [FromBody] DeliveryInpu
     /// <returns>Lista de tarefas</returns>
     /// <response code="200">Retorna a lista de tarefas </response>
     /// <response code="400">Quando o ID da turma é inválido</response>
-
     [HttpGet("professores/turmas/{turmaId:guid}")]
     public async Task<IActionResult> ObterTarefasPorTurmaProfessor(Guid turmaId)
     {
@@ -406,7 +400,7 @@ public async Task<IActionResult> EntregarTarefa(Guid id, [FromBody] DeliveryInpu
         var tarefas = await _tarefaQueries.ObterTarefasPorTurma(turmaId);
         return CustomResponse(tarefas);
     }
-    
+
     /// <summary>
     /// Obtém todas as notas de uma tarefa específica
     /// </summary>
@@ -430,7 +424,7 @@ public async Task<IActionResult> EntregarTarefa(Guid id, [FromBody] DeliveryInpu
             AdicionarErro("Tarefa não encontrada");
             return CustomResponse();
         }
-        
+
         var isProfessor = await _turmaQueries.VerificarProfessorTurma(tarefa.ClassId, usuarioId.Value);
         if (!isProfessor)
         {
@@ -442,10 +436,10 @@ public async Task<IActionResult> EntregarTarefa(Guid id, [FromBody] DeliveryInpu
         }
 
         var notas = await _tarefaQueries.ObterNotasPorTarefa(id);
-        
+
         return CustomResponse(notas);
     }
-    
+
     /// <summary>
     /// Obtém todas as entregas de uma tarefa específica
     /// </summary>
@@ -483,7 +477,12 @@ public async Task<IActionResult> EntregarTarefa(Guid id, [FromBody] DeliveryInpu
         var entregas = await _tarefaQueries.ObterEntregasPorTarefa(id);
         return CustomResponse(entregas);
     }
-    
+
+
+    /// <summary>
+    /// Obtém todas as tarefas de uma turma específica na perspectiva do aluno. Contém filtro de neurodivergência
+    /// </summary>
+    /// <param name="turmaId"></param>
     [HttpGet("aluno/turma/{turmaId:guid}")]
     public async Task<IActionResult> ObterTarefasParaAluno(Guid turmaId)
     {
@@ -513,5 +512,58 @@ public async Task<IActionResult> EntregarTarefa(Guid id, [FromBody] DeliveryInpu
 
         var tarefas = await _tarefaQueries.ObterTarefasFiltradas(turmaId, usuario.Neurodivergencia);
         return CustomResponse(tarefas);
+    }
+
+
+    /// <summary>
+    /// Obtém o gráfico de desempenho de uma aluno em uma turma
+    /// </summary>
+    /// <param name="turmaId">ID da turma</param>
+    /// <returns>Dados de desempenho da turma</returns>
+    /// <response code="200">Retorna os dados de desempenho da turma</response>
+    /// <response code="401">Quando o usuário não está autenticado</response>
+    /// <response code="403">Quando o usuário não é o professor da turma</response>
+    [HttpGet("desempenho/turma/{turmaId:guid}/aluno/{alunoId:guid}")]
+    public async Task<IActionResult> ObterDesempenhoTurmaAluno(Guid turmaId, Guid alunoId)
+    {
+        var usuarioId = ObterUsuarioId();
+        if (!usuarioId.HasValue)
+        {
+            AdicionarErro("Usuário não encontrado");
+            return CustomResponse();
+        }
+
+        var isProfessor = await _turmaQueries.VerificarProfessorTurma(turmaId, usuarioId.Value);
+        if (!isProfessor)
+        {
+            return BadRequest(new
+            {
+                success = false,
+                message = "Apenas o professor da turma pode acessar estas informações"
+            });
+        }
+
+        var aluno = await _usuarioQueries.ObterPorId(alunoId);
+        if (aluno == null)
+        {
+            return BadRequest(new
+            {
+                success = false,
+                message = "Aluno não encontrado"
+            });
+        }
+
+        var isAlunoMatriculado = await _turmaQueries.VerificarAlunoTurma(turmaId, alunoId);
+        if (!isAlunoMatriculado)
+        {
+            return BadRequest(new
+            {
+                success = false,
+                message = "O aluno não está matriculado nesta turma"
+            });
+        }
+
+        var desempenho = await _tarefaQueries.ObterDesempenhoTurma(turmaId, alunoId);
+        return CustomResponse(desempenho);
     }
 }

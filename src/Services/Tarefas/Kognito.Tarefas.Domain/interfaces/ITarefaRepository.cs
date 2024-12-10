@@ -12,8 +12,7 @@ public interface ITarefaRepository : IRepository<Tarefa>, IDisposable
     Task<IEnumerable<Tarefa>> ObterTarefasPorTurma(Guid turmaId);
     Task<Entrega> ObterEntregaPorIdAsync(Guid entregaId);
     Task<IEnumerable<Tarefa>> ObterTarefasFiltradas(Guid turmaId, Neurodivergencia? neurodivergenciaAluno);
-
-
+    Task<IEnumerable<Tarefa>> ObterTodasTarefasDoAluno(Guid alunoId);
 }
 
 

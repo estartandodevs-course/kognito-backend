@@ -13,4 +13,6 @@ public interface ITarefaQueries
     Task<IEnumerable<NotaViewModel>> ObterNotasPorTarefa(Guid tarefaId);
     Task<IEnumerable<EntregaViewModel>> ObterEntregasPorTarefa(Guid tarefaId);
     Task<IEnumerable<TarefaViewModel>> ObterTarefasFiltradas(Guid turmaId, Neurodivergencia? neurodivergenciaAluno);
+    Task<DesempenhoViewModel> ObterDesempenhoAluno(Guid alunoId);
+    Task<DesempenhoViewModel> ObterDesempenhoTurma(Guid turmaId, Guid alunoId);
 }
