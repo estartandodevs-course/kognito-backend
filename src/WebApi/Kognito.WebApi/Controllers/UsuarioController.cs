@@ -222,7 +222,7 @@ public class UsuariosController : MainController
         }
 
         var command = new CriarProfessorCommand(
-            model.Nome,
+            model.Name,
             model.Cpf,
             model.Email,
             model.Password

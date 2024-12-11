@@ -191,8 +191,10 @@ public class UsuariosCommandHandler : CommandHandler,
     public async Task<ValidationResult> Handle(CriarProfessorCommand request, CancellationToken cancellationToken)
     {
         if (!request.EstaValido()) return request.ValidationResult;
+        
+        string cpfSemFormatacao = request.Cpf.Replace(".", "").Replace("-", "");
 
-        var cpf = new Cpf(request.Cpf);
+        var cpf = new Cpf(cpfSemFormatacao);
         if (!cpf.EstaValido())
         {
             AdicionarErro("CPF inválido");

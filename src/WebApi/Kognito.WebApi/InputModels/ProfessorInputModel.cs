@@ -13,7 +13,7 @@ public class ProfessorInputModel
     /// </summary>
     /// <example>Maria Santos</example>
     [Required(ErrorMessage = "Informe um nome!")]
-    public string Nome { get; set; }
+    public string Name { get; set; }
 
     /// <summary>
     /// CPF do professor
