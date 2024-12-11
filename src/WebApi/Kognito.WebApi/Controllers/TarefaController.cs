@@ -68,7 +68,7 @@ public class TarefasController : MainController
             return BadRequest(new
             {
                 success = false,
-                message = "Você não tem permissão para criar uma tarefa nesta turma."
+                data = "Você não tem permissão para criar uma tarefa nesta turma."
             });
         }
 
@@ -123,7 +123,7 @@ public class TarefasController : MainController
             return BadRequest(new
             {
                 success = false,
-                message = "Você não tem permissão para acessar esta tarefa"
+                data = "Você não tem permissão para acessar esta tarefa"
             });
         }
 
@@ -197,7 +197,7 @@ public class TarefasController : MainController
             return BadRequest(new
             {
                 success = false,
-                message = "Você não está matriculado nesta turma"
+                data = "Você não está matriculado nesta turma"
             });
         }
 
@@ -208,7 +208,7 @@ public class TarefasController : MainController
             return BadRequest(new
             {
                 success = false,
-                message = "Você já entregou esta tarefa"
+                data = "Você já entregou esta tarefa"
             });
         }
 
@@ -263,7 +263,7 @@ public class TarefasController : MainController
             return BadRequest(new
             {
                 success = false,
-                message = "Você não tem permissão para atribuir notas"
+                data = "Você não tem permissão para atribuir notas"
             });
         }
 
@@ -304,7 +304,7 @@ public class TarefasController : MainController
             return BadRequest(new
             {
                 success = false,
-                message = "Você não tem permissão para remover uma tarefa."
+                data = "Você não tem permissão para remover uma tarefa."
             });
         }
 
@@ -313,11 +313,7 @@ public class TarefasController : MainController
 
         if (result.IsValid)
         {
-            return CustomResponse(new
-            {
-                mensagem = "Tarefa removida com sucesso!",
-                tarefaRemovida = tarefa
-            });
+            return CustomResponse("Tarefa removida com sucesso!");
         }
 
         return CustomResponse(result);
@@ -355,7 +351,7 @@ public class TarefasController : MainController
             return BadRequest(new
             {
                 success = false,
-                message = "Você não tem permissão para acessar as tarefas desta turma"
+                data = "Você não tem permissão para acessar as tarefas desta turma"
             });
         }
 
@@ -393,7 +389,7 @@ public class TarefasController : MainController
             return BadRequest(new
             {
                 success = false,
-                message = "Você não tem permissão para acessar as tarefas desta turma"
+                data = "Você não tem permissão para acessar as tarefas desta turma"
             });
         }
 
@@ -431,7 +427,7 @@ public class TarefasController : MainController
             return BadRequest(new
             {
                 success = false,
-                message = "Você não tem permissão para visualizar as notas desta tarefa"
+                data = "Você não tem permissão para visualizar as notas desta tarefa"
             });
         }
 
@@ -470,7 +466,7 @@ public class TarefasController : MainController
             return BadRequest(new
             {
                 success = false,
-                message = "Você não tem permissão para visualizar as entregas desta tarefa"
+                data = "Você não tem permissão para visualizar as entregas desta tarefa"
             });
         }
 
@@ -499,7 +495,7 @@ public class TarefasController : MainController
             return BadRequest(new
             {
                 success = false,
-                message = "Você não está matriculado nesta turma"
+                data = "Você não está matriculado nesta turma"
             });
         }
 
@@ -539,7 +535,7 @@ public class TarefasController : MainController
             return BadRequest(new
             {
                 success = false,
-                message = "Apenas o professor da turma pode acessar estas informações"
+                data = "Apenas o professor da turma pode acessar estas informações"
             });
         }
 
@@ -549,7 +545,7 @@ public class TarefasController : MainController
             return BadRequest(new
             {
                 success = false,
-                message = "Aluno não encontrado"
+                data = "Aluno não encontrado"
             });
         }
 
@@ -559,7 +555,7 @@ public class TarefasController : MainController
             return BadRequest(new
             {
                 success = false,
-                message = "O aluno não está matriculado nesta turma"
+                data = "O aluno não está matriculado nesta turma"
             });
         }
 
@@ -606,7 +602,7 @@ public class TarefasController : MainController
             return BadRequest(new
             {
                 success = false,
-                message = "Você não tem permissão para visualizar esta nota"
+                data = "Você não tem permissão para visualizar esta nota"
             });
         }
 

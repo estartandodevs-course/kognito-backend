@@ -64,7 +64,7 @@ public class TurmasController : MainController
         if (!professorId.HasValue)
         {
             AdicionarErro("Usuário não encontrado");
-            return NotFound();
+            return CustomResponse();
         }
 
         var turmas = await _turmaQueries.ObterTurmasPorProfessor(professorId.Value);
@@ -87,7 +87,7 @@ public class TurmasController : MainController
         if (!alunoId.HasValue)
         {
             AdicionarErro("Usuário não encontrado");
-            return NotFound();
+            return CustomResponse();
         }
 
         var turmas = await _turmaQueries.ObterTurmasPorAluno(alunoId.Value);
@@ -110,7 +110,7 @@ public class TurmasController : MainController
         if (turma == null)
         {
             AdicionarErro("Turma não encontrada");
-            return NotFound();
+            return CustomResponse();
         }
 
         return CustomResponse(turma);
@@ -155,7 +155,7 @@ public class TurmasController : MainController
             return BadRequest(new
             {
                 sucess = false,
-                message = "Você não tem permissão para editar esta turma"
+                data = "Você não tem permissão para editar esta turma"
             });
         }
         
@@ -231,7 +231,7 @@ public class TurmasController : MainController
         if (string.IsNullOrWhiteSpace(hashAcesso))
         {
             AdicionarErro("Hash de acesso inválido");
-            return BadRequest();
+            return CustomResponse();
         }
 
         if (turma.Teacher.Id == usuarioId.Value)
@@ -251,7 +251,7 @@ public class TurmasController : MainController
         if (result.IsValid)
             return CustomResponse(new
             {
-                message = "Ingresso na turma realizado com sucesso!",
+                data = "Ingresso na turma realizado com sucesso!",
                 classId = turma.Id
             });
 
@@ -281,7 +281,7 @@ public class TurmasController : MainController
             return BadRequest(new
             {
                 sucess = false,
-                message = "Você não tem permissão para editar esta turma"
+                data = "Você não tem permissão para editar esta turma"
             });
         }
 
@@ -393,7 +393,7 @@ public class TurmasController : MainController
                 return BadRequest(new
                 {
                     sucess = false,
-                    message = "Você não tem permissão para editar esta turma"
+                    data = "Você não tem permissão para editar esta turma"
                 });
             }
 
@@ -440,7 +440,7 @@ public class TurmasController : MainController
             return BadRequest(new
             {
                 sucess = false,
-                message = "Você não tem permissão para editar esta turma"
+                data = "Você não tem permissão para editar esta turma"
             });
         }
 

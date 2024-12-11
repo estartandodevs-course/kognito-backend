@@ -135,7 +135,7 @@ public class MetasController : MainController
         if (!usuarioId.HasValue)
         {
             AdicionarErro("Usuário não encontrado");
-            return NotFound();
+            return CustomResponse();
         }
 
         var command = new RemoverMetaCommand(id);
@@ -158,7 +158,7 @@ public class MetasController : MainController
         if (!usuarioId.HasValue)
         {
             AdicionarErro("Usuário não encontrado");
-            return NotFound();
+            return CustomResponse();
         }
 
         var command = new ConcluirMetaCommand(id);
@@ -181,7 +181,7 @@ public class MetasController : MainController
         if (!usuarioId.HasValue)
         {
             AdicionarErro("Usuário não encontrado");
-            return NotFound();
+            return CustomResponse();
         }
 
         var metas = await _usuarioQueries.ObterMetasConcluidasHoje(usuarioId.Value);

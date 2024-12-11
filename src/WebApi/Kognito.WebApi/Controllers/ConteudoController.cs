@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Kognito.WebApi.Controllers;
 
+[Authorize]
 [Route("api/conteudos")]
 public class ConteudosController : MainController
 {
@@ -19,7 +20,7 @@ public class ConteudosController : MainController
         _conteudoQueries = conteudoQueries;
         _mediatorHandler = mediatorHandler;
     }
-    
+
     /// <summary>
     /// Obtém todos os conteúdos associados a uma turma específica
     /// </summary>
@@ -35,11 +36,7 @@ public class ConteudosController : MainController
         try
         {
             var conteudos = await _conteudoQueries.ObterPorTurma(turmaId);
-            return CustomResponse(new
-            {
-                mensagem = "Conteúdos obtidos com sucesso",
-                conteudos = conteudos
-            });
+            return CustomResponse(conteudos);
         }
         catch (Exception ex)
         {
@@ -48,7 +45,7 @@ public class ConteudosController : MainController
         }
     }
 
-    
+
     /// <summary>
     /// Obtém a quantidade total de conteúdos em uma turma
     /// </summary>
@@ -64,7 +61,7 @@ public class ConteudosController : MainController
         try
         {
             var quantidade = await _conteudoQueries.ObterQuantidadeConteudosPorTurma(turmaId);
-            return CustomResponse(new { QuantidadeConteudos = quantidade });
+            return CustomResponse(new { quantity = quantidade });
         }
         catch (Exception ex)
         {
@@ -72,7 +69,7 @@ public class ConteudosController : MainController
             return CustomResponse();
         }
     }
-    
+
     /// <summary>
     /// Cria um novo conteúdo didático para uma turma
     /// </summary>
@@ -100,13 +97,9 @@ public class ConteudosController : MainController
             if (result.IsValid)
             {
                 var conteudoCriado = await _conteudoQueries.ObterPorId(command.Id);
-                return CustomResponse(new 
-                { 
-                    mensagem = "Conteúdo criado com sucesso!",
-                    conteudo = conteudoCriado 
-                });
+                return CustomResponse("Conteúdo criado com sucesso!");
             }
-            
+
             return CustomResponse(result);
         }
         catch (Exception ex)
@@ -144,13 +137,9 @@ public class ConteudosController : MainController
             if (result.IsValid)
             {
                 var conteudoAtualizado = await _conteudoQueries.ObterPorId(id);
-                return CustomResponse(new 
-                { 
-                    mensagem = "Conteúdo atualizado com sucesso!",
-                    conteudo = conteudoAtualizado 
-                });
+                return CustomResponse("Conteúdo atualizado com sucesso!");
             }
-            
+
             return CustomResponse(result);
         }
         catch (Exception ex)
@@ -182,14 +171,10 @@ public class ConteudosController : MainController
 
             var command = new ExcluirConteudoCommand(id);
             var result = await _mediatorHandler.EnviarComando(command);
-            
+
             if (result.IsValid)
-                return CustomResponse(new 
-                { 
-                    mensagem = "Conteúdo excluído com sucesso!",
-                    conteudoExcluido = conteudo 
-                });
-                
+                return CustomResponse("Conteúdo excluído com sucesso!");
+
             return CustomResponse(result);
         }
         catch (Exception ex)
