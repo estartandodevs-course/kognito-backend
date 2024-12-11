@@ -83,6 +83,6 @@ public class Usuario : Entity, IAggregateRoot
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum TipoUsuario
 {
-    Aluno,
-    Professor
+    Student,
+    Teacher
 }

@@ -209,7 +209,7 @@ public class UsuariosCommandHandler : CommandHandler,
         }
 
         var usuario = new Usuario(request.Nome, cpf);
-        usuario.AtribuirTipoUsuario(TipoUsuario.Professor);
+        usuario.AtribuirTipoUsuario(TipoUsuario.Teacher);
         var login = new Login(new Email(request.Email), new Senha(request.Senha));
         usuario.AtribuirLogin(login);
 
@@ -237,7 +237,7 @@ public class UsuariosCommandHandler : CommandHandler,
         }
 
         var usuario = new Usuario(request.Nome, cpf);
-        usuario.AtribuirTipoUsuario(TipoUsuario.Aluno);
+        usuario.AtribuirTipoUsuario(TipoUsuario.Student);
         var login = new Login(new Email(request.Email), new Senha(request.Senha));
         usuario.AtribuirLogin(login);
         usuario.AtribuirResponsavelEmail(request.EmailResponsavel);

@@ -60,7 +60,7 @@ public class UsuarioQueries : IUsuarioQueries
         var usuario = await _usuarioRepository.ObterPorId(usuarioId);
         if (usuario == null) return false;
 
-        return usuario.TipoUsuario == TipoUsuario.Aluno;
+        return usuario.TipoUsuario == TipoUsuario.Student;
     }
     
     public async Task<string> ObterResponsavelEmailPorId(Guid id)

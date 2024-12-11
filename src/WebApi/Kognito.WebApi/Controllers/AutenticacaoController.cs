@@ -46,8 +46,8 @@ public class AutenticacaoController : MainController
             AdicionarErro("Usuário ou Senha incorretos");
             return CustomResponse();
         }
-
-
+        
+        
         var userLogin = await GerarJwt(usuarioLogin.Email);
 
         return CustomResponse(userLogin);
@@ -75,11 +75,13 @@ public class AutenticacaoController : MainController
         claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.Id));
         claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email));
         claims.Add(new Claim("userId", domainUser.Id.ToString()));
+        claims.Add(new Claim("name", domainUser.Nome));
+        claims.Add(new Claim("role", domainUser.TipoUsuario.ToString()));
         claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
         claims.Add(new Claim(JwtRegisteredClaimNames.Nbf, ToUnixEpochDate(DateTime.UtcNow).ToString()));
         claims.Add(new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(DateTime.UtcNow).ToString(),
             ClaimValueTypes.Integer64));
-    
+
         foreach (var userRole in userRoles)
         {
             claims.Add(new Claim("role", userRole));
@@ -119,7 +121,7 @@ public class AutenticacaoController : MainController
             {
                 Id = user.Id,
                 Email = user.Email,
-                Claims = claims.Select(c => new UsuarioClaim { Type = c.Type, Value = c.Value })
+                Claims = claims.Select(c => new UsuarioClaim { Type = c.Type, Value = c.Value }),
             }
         };
     }
