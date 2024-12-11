@@ -20,7 +20,7 @@ public class UsuarioViewModel
             Id = usuario.Id,
             Role = usuario.TipoUsuario,
             Name = usuario.Nome,
-            Cpf = usuario.Cpf.Numero,
+            Cpf = usuario.Cpf.ObterNumeroFormatado(),
             Email = usuario.Login?.Email?.Endereco,
             Neurodivergencia = usuario.Neurodivergencia
         };

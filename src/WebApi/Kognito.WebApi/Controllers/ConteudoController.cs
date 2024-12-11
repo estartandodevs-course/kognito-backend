@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Kognito.WebApi.Controllers;
 
-
 [Route("api/conteudos")]
 public class ConteudosController : MainController
 {

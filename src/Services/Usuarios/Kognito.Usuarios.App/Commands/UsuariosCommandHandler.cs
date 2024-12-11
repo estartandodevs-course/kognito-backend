@@ -38,7 +38,9 @@ public class UsuariosCommandHandler : CommandHandler,
     {
         if (!request.EstaValido()) return request.ValidationResult;
 
-        var cpf = new Cpf(request.Cpf);
+        string cpfSemFormatacao = request.Cpf.Replace(".", "").Replace("-", "");
+        
+        var cpf = new Cpf(cpfSemFormatacao);
         if (!cpf.EstaValido())
         {
             AdicionarErro("CPF inválido");
