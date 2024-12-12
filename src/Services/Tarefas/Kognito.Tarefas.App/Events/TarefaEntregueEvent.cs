@@ -9,6 +9,7 @@ public class TarefaEntregueEvent : Event
     public string Conteudo { get; private set; }
     public DateTime EntregueEm { get; private set; }
     public bool Atrasada { get; private set; }
+    public Guid UsuarioId { get; set; }
 
     public TarefaEntregueEvent(Guid tarefaId, Guid alunoId, string conteudo, DateTime entregueEm, bool atrasada)
     {

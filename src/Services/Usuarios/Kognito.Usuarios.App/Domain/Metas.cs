@@ -9,8 +9,9 @@ public class Metas : Entity, IAggregateRoot
     public string Descricao { get; private set; }
     public bool Concluida { get; private set; }
     public DateTime CriadaEm { get; private set; }
-    public DateTime? ConcluidaEm { get; private set; } 
-    
+    public DateTime? ConcluidaEm { get; private set; }
+    public object? UsuarioId { get; }
+
     private Metas() 
     {
         CriadaEm = DateTime.Now;

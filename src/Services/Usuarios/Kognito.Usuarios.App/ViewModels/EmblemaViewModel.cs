@@ -12,6 +12,7 @@ public class EmblemaViewModel
     public bool Unlocked { get; set; }
     public DateTime? UnlockDate { get; set; }
     public Guid UserId { get; set; }
+    public static Func<Emblemas, int, EmblemaViewModel> Mapear { get; set; }
 
     public EmblemaViewModel() { }
 

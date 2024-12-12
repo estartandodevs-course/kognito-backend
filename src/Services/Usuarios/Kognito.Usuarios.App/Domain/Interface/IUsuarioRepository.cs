@@ -2,21 +2,22 @@ using EstartandoDevsCore.Data;
 
 namespace Kognito.Usuarios.App.Domain.Interface;
 
-public interface IUsuariosRepository : IRepository<Usuario>, IDisposable
+public interface IUsuariosRepository : IRepository<Usuario>, IEmblemaRepository
 {
+
     Task<IEnumerable<Usuario>> ObterTodosAsync();
     Task<Usuario> ObterPorEmail(string email);
     Task<IEnumerable<Emblemas>> ObterEmblemasAsync(Guid usuarioId);
     Task<IEnumerable<Metas>> ObterMetasAsync(Guid usuarioId);
     Task<Metas> ObterMetaPorId(Guid metaId);
     Task<Usuario> ObterPorCpf(string cpf);
-    void Adicionar(Usuario usuario);
-    void Atualizar(Usuario usuario);
+    void Adicionar(Usuario? usuario);
+    void Atualizar(Usuario? usuario);
     void AdicionarMeta(Metas meta);
     void AtualizarMeta(Metas meta);
     void RemoverMeta(Metas meta);
-    void Apagar(Func<Usuario, bool> predicate);
+    void Apagar(Func<Usuario?, bool> predicate);
     Task<Usuario> ObterPorCodigoRecuperacao(string codigo);
-    Task<Usuario> ObterPorCodigoPai(Guid codigoPai);
-    Task<IEnumerable<Usuario>> ObterPorResponsavelEmail(string email);
+    Task<Usuario?> ObterPorCodigoPai(Guid codigoPai);
+    Task<IEnumerable<Usuario?>> ObterPorResponsavelEmail(string email);
 }

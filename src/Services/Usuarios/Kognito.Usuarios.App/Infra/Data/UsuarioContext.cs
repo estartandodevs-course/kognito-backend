@@ -1,84 +1,84 @@
-﻿using System;
-using EstartandoDevsCore.Data;
-using EstartandoDevsCore.DomainObjects;
-using EstartandoDevsCore.Messages;
-using EstartandoDevsCore.Ultilities;
-using EstartandoDevsCore.Mediator;
+﻿using Microsoft.EntityFrameworkCore;
 using Kognito.Usuarios.App.Domain;
-using FluentValidation.Results;
-using Microsoft.EntityFrameworkCore;
+using EstartandoDevsCore.Data;
 
 namespace Kognito.Usuarios.App.Infra.Data;
 
 public class UsuarioContext : DbContext, IUnitOfWorks
 {
-    private readonly IMediatorHandler _mediatorHandler;
+    public UsuarioContext(DbContextOptions<UsuarioContext> options) : base(options)
+    {
+    }
 
     public DbSet<Usuario> Usuarios { get; set; }
-    public DbSet<Emblemas> Emblemas { get; set; }
     public DbSet<Metas> Metas { get; set; }
-
-    public UsuarioContext(DbContextOptions<UsuarioContext> options, IMediatorHandler mediatorHandler)
-        : base(options)
-    {
-        _mediatorHandler = mediatorHandler;
-    }
+    public DbSet<Emblemas> Emblemas { get; set; }
+    public DbSet<Entregas> Entregas { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Ignore<ValidationResult>();
-        modelBuilder.Ignore<Event>();
-        
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(UsuarioContext).Assembly);
+        modelBuilder.Entity<Usuario>(e =>
+        {
+            e.ToTable("Usuarios");
+            e.HasKey(p => p.Id);
+            e.HasMany(u => u.Emblemas)
+                .WithOne()
+                .HasForeignKey(e => e.UsuarioId);
+            e.HasMany(u => u.Metas)
+                .WithOne()
+                .HasForeignKey(m => m.UsuarioId);
+        });
+
+        modelBuilder.Entity<Emblemas>(e =>
+        {
+            e.ToTable("Emblemas");
+            e.HasKey(p => p.Id);
+            e.Property(p => p.Nome)
+                .IsRequired()
+                .HasColumnType("varchar(100)");
+            e.Property(p => p.Descricao)
+                .IsRequired()
+                .HasColumnType("varchar(200)");
+            e.Property(p => p.OrdemDesbloqueio)
+                .IsRequired();
+            e.Property(p => p.Desbloqueado)
+                .IsRequired()
+                .HasDefaultValue(false);
+        });
+
+        modelBuilder.Entity<Metas>(e =>
+        {
+            e.ToTable("Metas");
+            e.HasKey(p => p.Id);
+        });
+
+        modelBuilder.Entity<Entregas>(e =>
+        {
+            e.ToTable("Entregas");
+            e.HasKey(p => p.Id);
+            e.Property(p => p.UsuarioId)
+                .IsRequired();
+        });
+
+        base.OnModelCreating(modelBuilder);
     }
 
     public async Task<bool> Commit()
     {
-        var cetZone = ZonaDeTempo.ObterZonaDeTempo();
+        return await base.SaveChangesAsync() > 0;
+    }
 
-        foreach (var entry in ChangeTracker.Entries()
-            .Where(entry => entry.Entity.GetType().GetProperty("DataDeCadastro") != null))
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (!optionsBuilder.IsConfigured)
         {
-            if (entry.State == EntityState.Added)
-            {
-                entry.Property("DataDeCadastro").CurrentValue = 
-                    TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, cetZone);
-            }
-
-            if (entry.State == EntityState.Modified)
-            {
-                entry.Property("DataDeCadastro").IsModified = false;
-                entry.Property("DataDeAlteracao").CurrentValue = 
-                    TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, cetZone);
-            }
+            optionsBuilder.UseSqlServer("Server=localhost;Database=KognitoDb;Trusted_Connection=True;MultipleActiveResultSets=true");
         }
-
-        var sucesso = await SaveChangesAsync() > 0;
-
-        if (sucesso) await _mediatorHandler.PublicarEventos(this);
-
-        return sucesso;
     }
 }
 
-public static class MediatorExtension
+public class Entregas
 {
-    public static async Task PublicarEventos<T>(this IMediatorHandler mediator, T ctx) where T : DbContext
-    {
-        var domainEntities = ctx.ChangeTracker
-            .Entries<Entity>()
-            .Where(x => x.Entity.Notificacoes != null && x.Entity.Notificacoes.Any());
-
-        var domainEvents = domainEntities
-            .SelectMany(x => x.Entity.Notificacoes)
-            .ToList();
-
-        domainEntities.ToList()
-            .ForEach(entity => entity.Entity.LimparEventos());
-
-        var tasks = domainEvents
-            .Select(async (domainEvent) => { await mediator.PublicarEvento(domainEvent); });
-
-        await Task.WhenAll(tasks);
-    }
+    public object? Id { get; set; }
+    public object UsuarioId { get; }
 }

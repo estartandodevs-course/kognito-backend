@@ -1,36 +1,40 @@
-﻿using MediatR;
-using Microsoft.Extensions.DependencyInjection;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using EstartandoDevsCore.Mediator;
+using Kognito.Tarefas.App.Events;
+using Kognito.Usuarios.App.Commands;
 using Kognito.Usuarios.App.Domain.Interface;
+using MediatR;
 
-namespace Kognito.Tarefas.App.Events;
+namespace Kognito.Usuarios.App.Events;
 
 public class TarefaEntregueEventHandler : INotificationHandler<TarefaEntregueEvent>
 {
-    private readonly IServiceProvider _serviceProvider;
+    private readonly IMediatorHandler _mediatorHandler;
+    private readonly IEmblemaRepository _emblemaRepository;
 
-    public TarefaEntregueEventHandler(IServiceProvider serviceProvider)
+    public TarefaEntregueEventHandler(
+        IMediatorHandler mediatorHandler,
+        IEmblemaRepository emblemaRepository)
     {
-        _serviceProvider = serviceProvider;
+        _mediatorHandler = mediatorHandler;
+        _emblemaRepository = emblemaRepository;
     }
-
+    
     public async Task Handle(TarefaEntregueEvent notification, CancellationToken cancellationToken)
     {
-        using (var scope = _serviceProvider.CreateScope())
+        try
         {
-            var usuarioRepository = scope.ServiceProvider.GetRequiredService<IUsuariosRepository>();
-            
-            var usuario = await usuarioRepository.ObterPorId(notification.AlunoId);
-            
-            if (usuario == null) return;
-            
-            if (notification.Atrasada)
-                usuario.ResetarOfensiva();
-            else
-                usuario.AcrescentarOfensiva();
-            
-            usuarioRepository.Atualizar(usuario);
-            
-            await usuarioRepository.UnitOfWork.Commit();
+            var quantidadeEntregas = await _emblemaRepository
+                .ObterQuantidadeEntregasUsuario(notification.UsuarioId);
+                
+            await _mediatorHandler.EnviarComando(
+                new DesbloquearEmblemaCommand(notification.UsuarioId, quantidadeEntregas));
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Erro ao processar evento de tarefa entregue", ex);
         }
     }
 }
