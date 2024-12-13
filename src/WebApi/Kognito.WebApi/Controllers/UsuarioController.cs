@@ -5,6 +5,7 @@ using EstartandoDevsCore.ValueObjects;
 using Kognito.Tarefas.App.Queries;
 using Kognito.Usuarios.App.Commands;
 using Kognito.Usuarios.App.Queries;
+using Kognito.Usuarios.App.ViewModels;
 using Kognito.WebApi.InputModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -31,7 +32,6 @@ public class UsuariosController : MainController
         _mediatorHandler = mediatorHandler;
         _userManager = userManager;
         _tarefaQueries = tarefaQueries;
-
     }
 
     private async Task<Guid?> ObterUsuarioIdPorIdentityId()
@@ -75,7 +75,7 @@ public class UsuariosController : MainController
 
         return CustomResponse(usuario);
     }
-    
+
     /// <summary>
     /// Obtém os dados de um usuário específico por ID
     /// </summary>
@@ -107,20 +107,105 @@ public class UsuariosController : MainController
     /// <response code="200">Retorna a lista de emblemas</response>
     /// <response code="404">Quando o usuário não é encontrado</response>
     [Authorize]
-    [HttpGet("/emblemas")]
-    public async Task<IActionResult> ObterEmblemas()
+    [HttpGet("emblemas")]
+    public async Task<IActionResult> VerificarEmblemas()
     {
-        if (!ModelState.IsValid) return CustomResponse(ModelState);
-
         var usuarioId = ObterUsuarioId();
         if (!usuarioId.HasValue)
         {
             AdicionarErro("Usuário não encontrado");
-            return NotFound();
+            return CustomResponse();
         }
 
-        var emblemas = await _usuarioQueries.ObterEmblemas(usuarioId.Value);
-        return CustomResponse(emblemas);
+        var desempenho = await _tarefaQueries.ObterDesempenhoAluno(usuarioId.Value);
+        var totalEntregas = desempenho.SubmitedAssignments + desempenho.lateAssignments;
+
+        var emblemasMetas = new List<EmblemaViewModel>();
+
+        if (totalEntregas >= 1)
+            emblemasMetas.Add(new EmblemaViewModel
+            {
+                Name = "Primeira Entrega",
+                Description = "Parabéns por fazer sua primeira entrega!",
+                UnlockedOn = DateTime.Now
+            });
+
+        if (totalEntregas >= 5)
+            emblemasMetas.Add(new EmblemaViewModel
+            {
+                Name = "Entregador Iniciante",
+                Description = "Complete 5 entregas",
+                UnlockedOn = DateTime.Now
+            });
+
+        if (totalEntregas >= 10)
+            emblemasMetas.Add(new EmblemaViewModel
+            {
+                Name = "Entregador Bronze",
+                Description = "Complete 10 entregas",
+                UnlockedOn = DateTime.Now
+            });
+
+        if (totalEntregas >= 25)
+            emblemasMetas.Add(new EmblemaViewModel
+            {
+                Name = "Entregador Prata",
+                Description = "Complete 25 entregas",
+                UnlockedOn = DateTime.Now
+            });
+
+        if (totalEntregas >= 50)
+            emblemasMetas.Add(new EmblemaViewModel
+            {
+                Name = "Entregador Ouro",
+                Description = "Complete 50 entregas",
+                UnlockedOn = DateTime.Now
+            });
+
+        if (totalEntregas >= 75)
+            emblemasMetas.Add(new EmblemaViewModel
+            {
+                Name = "Entregador Platina",
+                Description = "Complete 75 entregas",
+                UnlockedOn = DateTime.Now
+            });
+
+        if (totalEntregas >= 100)
+            emblemasMetas.Add(new EmblemaViewModel
+            {
+                Name = "Entregador Diamante",
+                Description = "Complete 100 entregas",
+                UnlockedOn = DateTime.Now
+            });
+
+        if (totalEntregas >= 150)
+            emblemasMetas.Add(new EmblemaViewModel
+            {
+                Name = "Mestre das Entregas",
+                Description = "Complete 150 entregas",
+                UnlockedOn = DateTime.Now
+            });
+
+        if (totalEntregas >= 200)
+            emblemasMetas.Add(new EmblemaViewModel
+            {
+                Name = "Grão-Mestre das Entregas",
+                Description = "Complete 200 entregas",
+                UnlockedOn = DateTime.Now
+            });
+
+        if (totalEntregas >= 300)
+            emblemasMetas.Add(new EmblemaViewModel
+            {
+                Name = "Lendário das Entregas",
+                Description = "Complete 300 entregas",
+                UnlockedOn = DateTime.Now
+            });
+
+        return CustomResponse(new
+        {
+            emblemas = emblemasMetas
+        });
     }
 
     /// <summary>
@@ -155,7 +240,6 @@ public class UsuariosController : MainController
     /// <response code="200">Senha alterada com sucesso</response>
     /// <response code="400">Quando os dados são inválidos</response>
     /// <response code="404">Quando o usuário não é encontrado</response>
-
     [Authorize]
     [HttpPost("mudar-senha")]
     public async Task<ActionResult> ChangePassword(AlterarSenhaInputModel model)
@@ -291,7 +375,7 @@ public class UsuariosController : MainController
         var createdUser = await _usuarioQueries.ObterPorEmail(model.Email);
         return CustomResponse(createdUser);
     }
-    
+
     /// <summary>
     /// Adiciona uma neurodivergência ao perfil do usuário
     /// </summary>
@@ -313,12 +397,13 @@ public class UsuariosController : MainController
             return NotFound();
         }
 
-        var command = new AdicionarNeurodivergenciaCommand(usuarioId.Value, model.parentCode, model.Neurodivergence.ToString());
+        var command =
+            new AdicionarNeurodivergenciaCommand(usuarioId.Value, model.parentCode, model.Neurodivergence.ToString());
         var result = await _mediatorHandler.EnviarComando(command);
 
         return CustomResponse(result);
     }
-    
+
     /// <summary>
     /// Atualiza o perfil do usuário autenticado
     /// </summary>
@@ -348,7 +433,7 @@ public class UsuariosController : MainController
         var usuarioAtualizado = await _usuarioQueries.ObterPorId(usuarioId.Value);
         return CustomResponse(usuarioAtualizado);
     }
-    
+
     /// <summary>
     /// Solicita recuperação de senha
     /// </summary>
@@ -369,7 +454,7 @@ public class UsuariosController : MainController
 
         return CustomResponse("Email de recuperação enviado com sucesso!");
     }
-    
+
     /// <summary>
     /// Redefine a senha do usuário usando o código de recuperação
     /// </summary>
@@ -388,7 +473,7 @@ public class UsuariosController : MainController
 
         return CustomResponse(result);
     }
-    
+
     /// <summary>
     /// Obtém o gráfico de desempenho do aluno em todas as suas turmas
     /// </summary>
@@ -419,4 +504,31 @@ public class UsuariosController : MainController
         return CustomResponse(desempenho);
     }
 
+    /// <summary>
+    /// Retorna neurodivergência do usuário autenticado
+    /// </summary>
+    /// <returns></returns>
+    [Authorize]
+    [HttpGet("neurodivergencia")]
+    public async Task<IActionResult> ObterNeurodivergencia()
+    {
+        var usuarioId = ObterUsuarioId();
+        if (!usuarioId.HasValue)
+        {
+            AdicionarErro("Usuário não encontrado");
+            return CustomResponse();
+        }
+
+        var usuario = await _usuarioQueries.ObterPorId(usuarioId.Value);
+        if (usuario == null)
+        {
+            AdicionarErro("Usuário não encontrado");
+            return NotFound();
+        }
+
+        return CustomResponse(new
+        {
+            neurodivergencia = usuario.Neurodivergencia
+        });
+    }
 }

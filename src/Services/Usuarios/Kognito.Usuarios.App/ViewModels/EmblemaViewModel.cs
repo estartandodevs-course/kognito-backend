@@ -4,7 +4,6 @@ namespace Kognito.Usuarios.App.ViewModels;
 
 public class EmblemaViewModel
 {
-    public Guid Id { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
     public DateTime? UnlockedOn { get; set; }
@@ -15,7 +14,6 @@ public class EmblemaViewModel
 
         return new EmblemaViewModel
         {
-            Id = emblema.Id,
             Name = emblema.Nome,
             Description = emblema.Descricao,
             UnlockedOn = emblema.DesbloqueadoEm
