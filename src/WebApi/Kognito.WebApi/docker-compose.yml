@@ -1,0 +1,21 @@
+﻿services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: kognito-sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Xbaybxdb$
+      - MSSQL_PID=Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    networks:
+      - kognito-network
+
+networks:
+  kognito-network:
+    driver: bridge
+
+volumes:
+  sqlserver_data:

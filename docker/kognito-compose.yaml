@@ -1,0 +1,13 @@
+services:
+  api-kognito:
+    image: api-kognito:1.0.0
+    container_name: api-kognito
+    build:
+      context: ../src
+      dockerfile: ./WebApi/Kognito.WebApi/Dockerfile
+    restart: always
+    ports:
+      - "5225:5225"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:5225;http://+5225 

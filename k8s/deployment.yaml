@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kognitoapi-deployment
+  namespace: estartandodevs
+  labels:
+    app: kognitoapi
+spec:
+  selector:
+    matchLabels:
+      app: kognitoapi
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: kognitoapi
+    spec:
+      containers:
+        - name: kognitoapi
+          image: conectedu.azurecr.io/api-kognito:latest
+          envFrom:
+            - configMapRef:
+                name: kognitoconfiguration
+          resources:
+            requests:
+              cpu: 256m
+              memory: 512Mi
+            limits:
+              cpu: 1024m
+              memory: 2048Mi
+          ports:
+            - containerPort: 5225
+              name: kognitoapi
+      imagePullSecrets:
+        - name: conectedurepo
+      restartPolicy: Always
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: kognitoapi-service
+  namespace: estartandodevs
+spec:
+  selector:
+    app: kognitoapi
+  type: ClusterIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 10800
+  ports:
+    - name: kognitoapi
+      protocol: TCP
+      port: 80
+      targetPort: 5225
+      
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kognitowebapi
+  namespace: estartandodevs
+  annotations:
+    nginx.org/client-max-body-size: 64m
+    nginx.ingress.kubernetes.io/proxy-body-size: 64m
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "36000"
+spec:
+  rules:
+    - host: kognitoapi.estartandodevs.com.br
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: kognitoapi-service
+                port:
+                  number: 80

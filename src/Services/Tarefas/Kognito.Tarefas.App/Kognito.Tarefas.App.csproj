@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EstartandoDevs.Core" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Turmas\Kognito.Turmas.App\Kognito.Turmas.App.csproj" />
+    <ProjectReference Include="..\..\Usuarios\Kognito.Usuarios.App\Kognito.Usuarios.App.csproj" />
+    <ProjectReference Include="..\Kognito.Tarefas.Domain\Kognito.Tarefas.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
